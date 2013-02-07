@@ -1,4 +1,4 @@
-
+#!/bin/bash
 cd frontend
 dart2js *.dart --minify
 cd ..
