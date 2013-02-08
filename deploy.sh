@@ -7,6 +7,7 @@ REMOTEUSER="theenablers"
 HOST="singleplayerdrinkinggames.com"
 
 rsync -rv --copy-links backend/web_root/* $REMOTEUSER@$HOST:~/singleplayerdrinkinggames.com
+rsync -avz backend/db_functions.php $REMOTEUSER@$HOST:~/
 
 HASH=`git rev-parse HEAD`
 USER=`whoami`
