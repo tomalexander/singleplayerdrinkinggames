@@ -16,7 +16,7 @@ function open_db()
         $db_connections += 1;
         return $global_db;
     }
-    $global_db = new PDO("mysql:host=mysql.singleplayerdrinkinggames.com;dbma,e=singleplayerdb", "theenablers", "alcoholic");
+    $global_db = new PDO("mysql:host=mysql.singleplayerdrinkinggames.com;dbname=singleplayerdb", "theenablers", "alcoholic");
     $db_connections += 1;
     return $global_db;
 }

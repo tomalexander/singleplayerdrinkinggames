@@ -20,7 +20,7 @@ function create_user($username, $password)
     $salt = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 20);
     $hashed_salt = hash("sha256", $salt);
     $hashed_password = hash("sha256", $password);
-    $combined_password = hash("sha256", $hashed_password . $hashed_salt)
+    $combined_password = hash("sha256", $hashed_password . $hashed_salt);
     $insert = "INSERT INTO users (username, password, salt) VALUES (:username, :password, :salt)";
     $stmt = $db->prepare($insert);
     $stmt->bindParam(":username", $username);
@@ -29,6 +29,7 @@ function create_user($username, $password)
     if (! $stmt->execute())
     {
         close_db();
+        print_r($stmt->errorInfo());
         return 2; //statement failed to execute
     }
     close_db();
@@ -47,10 +48,11 @@ function username_exists($username)
     $db = open_db();
     $result = $db->query("SELECT * FROM users WHERE `username`=\"{$username}\"");
     close_db();
-    if ($result)
+    if ($result->fetch())
     {
         return true;
+    } else {
+        return false;
     }
-    return false;
 }
 ?>
