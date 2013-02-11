@@ -25,7 +25,7 @@ function create_user($username, $password, $email)
         close_db();
         return 1;
     }
-    $salt = bin2hex(openssl_random_pseudo_bytes(32));
+    $salt = base64_encode(openssl_random_pseudo_bytes(32));
     $combined_password = hash("sha256", $password . $salt);
     $insert = "INSERT INTO users (username, password, salt) VALUES (:username, :password, :salt)";
     $stmt = $db->prepare($insert);
