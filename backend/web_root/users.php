@@ -88,7 +88,7 @@ function login($username, $password)
     $result = $db->query("SELECT * FROM users WHERE `username`=\"{$username}\"");
     foreach ($result as $row)
     {
-        $combined_password = hash("sha256", $password . $row["salt"]):
+        $combined_password = hash("sha256", $password . $row["salt"]);
         if ($combined_password == $row["password"])
         {
             $uuid = uniqid("", true);
