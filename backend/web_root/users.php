@@ -27,11 +27,12 @@ function create_user($username, $password, $email)
     }
     $salt = base64_encode(openssl_random_pseudo_bytes(32));
     $combined_password = hash("sha256", $password . $salt);
-    $insert = "INSERT INTO users (username, password, salt) VALUES (:username, :password, :salt)";
+    $insert = "INSERT INTO users (username, password, salt, email) VALUES (:username, :password, :salt, :email)";
     $stmt = $db->prepare($insert);
     $stmt->bindParam(":username", $username);
     $stmt->bindParam(":password", $combined_password);
     $stmt->bindParam(":salt", $salt);
+    $stmt->bindParam(":email", $email);
     if (! $stmt->execute())
     {
         close_db();
