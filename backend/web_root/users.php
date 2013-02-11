@@ -95,7 +95,7 @@ function login($username, $password)
         $combined_password = hash("sha256", $hashed_password . $hashed_salt);
         if ($combined_password == $row["password"])
         {
-            $uuid = uniqid();
+            $uuid = uniqid("", true);
             $userid = get_user_id($username);
             $db->exec("UPDATE active_logins SET `uuid`=\"{$uuid}\" WHERE userid={$userid}");
             close_db();
