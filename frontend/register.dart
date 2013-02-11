@@ -30,7 +30,9 @@ class register_form
     form.nodes.add(new Text("E-Mail:"));
     form.nodes.add(new Element.html("<input type=\"email\" name=\"email\" required>"));
     form.nodes.add(new Element.html("<br>"));
-    form.nodes.add(new Element.html("<input type=\"submit\" value=\"Create Account\">"));
+    SubmitButtonInputElement submit = new Element.html("<input type=\"submit\" value=\"Create Account\">");
+    form.nodes.add(submit);
+    form.on.submit.add((e) {submit.disabled = true;});
   }
 }
 
@@ -45,10 +47,5 @@ main() {
 }
 
 main_wrapped() {
-  var button = new ButtonElement();
-  button..id = 'confirm'
-        ..text = 'Click to Confirm'
-        ..classes.add('important')
-        ..on.click.add((e) => window.alert('Confirmed!'));
   query('#registration').children.add(new register_form().content);
 }
