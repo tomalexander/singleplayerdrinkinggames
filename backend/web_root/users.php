@@ -1,15 +1,23 @@
 <?php
 include "../db_functions.php";
 
+class user
+{
+    public $id;
+    public $username;
+    public $email;
+}
+
 /** 
  * Create a user in the database
  * 
  * @param username The username for the new user
  * @param password The password for the new user
+ * @param email The email for the new user
  * 
- * @return 0 = success, 1 = username already exists, 2 = mysql query failed
+ * @return uuid = success, 1 = username already exists, 2 = mysql query failed
  */
-function create_user($username, $password)
+function create_user($username, $password, $email)
 {
     $db = open_db();
     if (username_exists($username))
@@ -32,8 +40,20 @@ function create_user($username, $password)
         print_r($stmt->errorInfo());
         return 2; //statement failed to execute
     }
+
+    $id = get_user_id($username);
+    $insert = "INSERT INTO active_logins (userid) VALUES (:userid)";
+    $stmt = $db->prepare($insert);
+    $stmt->bindParam(":userid", $id);
+    if (! $stmt->execute())
+    {
+        close_db();
+        print_r($stmt->errorInfo());
+        return 2; //statement failed to execute
+    }
+    $uuid = login($username, $password);
     close_db();
-    return 0;
+    return $uuid;
 }
 
 /** 
@@ -54,5 +74,87 @@ function username_exists($username)
     } else {
         return false;
     }
+}
+
+/** 
+ * Log the user in
+ * 
+ * @param username The username
+ * @param password The password for the user, not hashed or salted 
+ * 
+ * @return the UUID for the user or null if the login fails
+ */
+function login($username, $password)
+{
+    $db = open_db();
+    $result = $db->query("SELECT * FROM users WHERE `username`=\"{$username}\"");
+    $hashed_password = hash("sha256", $password);
+    foreach ($result as $row)
+    {
+        $hashed_salt = hash("sha256", $row["salt"]);
+        $combined_password = hash("sha256", $hashed_password . $hashed_salt);
+        if ($combined_password == $row["password"])
+        {
+            $uuid = uniqid();
+            $userid = get_user_id($username);
+            $db->exec("UPDATE active_logins SET `uuid`=\"{$uuid}\" WHERE userid={$userid}");
+            close_db();
+            return $uuid;
+        }
+    }
+    close_db();
+    return null;
+}
+
+/** 
+ * Get the userid for the username
+ * 
+ * @param username The user to look up
+ * 
+ * @return the userid or -1 if not found
+ */
+function get_user_id($username)
+{
+    $db = open_db();
+    $result = $db->query("SELECT * FROM users WHERE `username`=\"{$username}\"");
+    close_db();
+    foreach ($result as $row)
+    {
+        return intval($row["id"]);
+    }
+    return -1;
+}
+
+/** 
+ * Return a user object for the corresponding uuid
+ * 
+ * @param uuid The logged in UUID
+ * 
+ * @return a user object for the logged in user or null if they are not logged in
+ */
+function get_login($uuid)
+{
+    $db = open_db();
+    $ret = new user;
+    $result = $db->query("SELECT * FROM active_logins WHERE `uuid`=\"{$uuid}\"");
+    $id = -1;
+    foreach ($result as $row)
+    {
+        $id = $row["userid"];
+    }
+    if ($id == -1) // UUID not logged in
+    {
+        close_db();
+        return null;
+    }
+    $result = $db->query("SELECT * FROM users WHERE `id`=\"{$id}\"");
+    foreach ($result as $row)
+    {
+        $ret->id = $id;
+        $ret->username = $row["username"];
+        $ret->email = $row["email"];
+    }
+    close_db();
+    return $ret;
 }
 ?>
