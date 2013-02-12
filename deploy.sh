@@ -1,8 +1,31 @@
 #!/bin/bash
+DEBUG=false
+HELP=false
+while getopts dh option
+do
+    case "${option}"
+        in
+        d) DEBUG=true;;
+        h) HELP=true;;
+    esac
+done
+
+if [ $HELP == true ]
+then
+    echo "Usage: deploy.sh [-h] [-d]"
+    echo "   -d: Debug build, does not run minify"
+    exit
+fi
+
 cd frontend
 for f in *.dart
 do
-    dart2js -o${f%.dart}.js --minify $f
+    if [ $DEBUG == true ]
+    then
+        dart2js -o${f%.dart}.js $f
+    else
+        dart2js -o${f%.dart}.js --minify $f
+    fi
 done
 cd ..
 

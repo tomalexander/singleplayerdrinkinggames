@@ -1,4 +1,5 @@
 import 'dart:html';
+import "dart:json";
 
 class login_form
 {
@@ -7,18 +8,18 @@ class login_form
   {
     content = new Element.html("<div>Loading Login Form</div>");
     String uuid = "";
-    for (int i = 0; i < HttpRequest.cookies.length; ++i)
-      {
-        Cookie current = HttpRequest.cookies[i];
-        if (current.name != "uuid")
-          continue;
-        uuid = current.value;
-      }
+    // for (int i = 0; i < HttpRequest.cookies.length; ++i)
+    //   {
+    //     Cookie current = HttpRequest.cookies[i];
+    //     if (current.name != "uuid")
+    //       continue;
+    //     uuid = current.value;
+    //   }
     if (uuid == "")
       {
         create_form(null);
       } else {
-      var request = new HttpRequest.get("get_login_details.php?uuid=${uuid}", create_form);
+      HttpRequest.request("get_login_details.php?uuid=${uuid}").then(create_form);
     }
   }
   
@@ -35,5 +36,12 @@ class login_form
 
 main()
 {
-  query("#login").children.add(new login_form().content);
+  try
+    {
+      query("#login").children.add(new login_form().content);
+    }
+  catch (ex)
+    {
+      document.window.alert(ex.toString());
+    }
 }
