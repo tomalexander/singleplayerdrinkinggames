@@ -14,7 +14,12 @@ class login_form
           continue;
         uuid = current.value;
       }
-    var request = new HttpRequest.get("get_login_details.php?uuid=${uuid}", create_form);
+    if (uuid == "")
+      {
+        create_form(null);
+      } else {
+      var request = new HttpRequest.get("get_login_details.php?uuid=${uuid}", create_form);
+    }
   }
   
   void create_form(HttpRequest req)
@@ -26,4 +31,9 @@ class login_form
       document.window.alert(ex.toString());
     }
   }
+}
+
+main()
+{
+  query("#login").children.add(new login_form().content);
 }
