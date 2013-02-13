@@ -42,16 +42,12 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
     $game_name = htmlspecialchars($game_name);
     $short_desc = htmlspecialchars($short_desc);
     $long_desc = htmlspecialchars($long_desc);
-    $supplies = htmlspecialchars($supplies);
-    $instructions = htmlspecialchars($instructions);
-    $insert = "INSERT INTO games (game_name, submitter_id, short_description, long_description, supplies, instructions) VALUES (:game_name, :submitter_id, :short_description, :long_description, :supplies, :instructions)";
+    $insert = "INSERT INTO games (game_name, submitter_id, short_description, long_description) VALUES (:game_name, :submitter_id, :short_description, :long_description)";
     $stmt = $db->prepare($insert);
     $stmt->bindParam(":game_name", $game_name);
     $stmt->bindParam(":submitter_id", $submitter_id);
     $stmt->bindParam(":short_description", $short_desc);
     $stmt->bindParam(":long_description", $long_desc);
-    $stmt->bindParam(":supplies", $supplies);
-    $stmt->bindParam(":instructions", $instructions);
     if (! $stmt->execute())
     {
         close_db();
@@ -60,6 +56,56 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
     }
 
     $id = get_game_id($game_name);
+    if(count($supplies > 0)
+    {
+        // Now add the supplies to the supplies table and the instructions to the instructions table
+        $insert = "INSERT INTO supplies (game_id, supply) VALUES (?,?)";
+        // Add as many fields as we have supplies
+        for($i = 1; $1 < count($supplies); $i++)
+        {
+            $insert .= ", (?,?)";
+        }
+        // Generate array of supplies to insert
+        $supp_arr = array();
+        foreach($supplies as $supply)
+        {
+            $supp_arr_tmp = array($id, htmlspecialchars($supply));
+            $supp_arr = array_merge($supp_arr, supp_arr_tmp);
+        }
+        $stmt = $db->prepare($insert);
+        if (! $stmt->execute($supp_arr))
+        {
+            close_db();
+            print_r($stmt->errorInfo());
+            return 2; //statement failed to execute
+        }
+    }
+    
+    // Do the same for instructions
+    if(count($instructions > 0)
+    {
+        $insert = "INSERT INTO instructions (game_id, instruction) VALUES (?,?)";
+        
+        for($i = 1; $1 < count($instructions); $i++)
+        {
+            $insert .= ", (?,?)";
+        }
+        
+        $inst_arr = array();
+        foreach($instructions as $instruction)
+        {
+            $inst_arr_tmp = array($id, htmlspecialchars($instruction));
+            $inst_arr = array_merge($inst_arr, $inst_arr_tmp);
+        }
+        $stmt = $db->prepare($insert);
+        if (! $stmt->execute($inst_arr))
+        {
+            close_db();
+            print_r($stmt->errorInfo());
+            return 2; //statement failed to execute
+        }
+    }
+    
     close_db();
     return $id;
 }
@@ -104,6 +150,55 @@ function game_exists_id($game_id)
     }
 }
 
+/** 
+ * Return an array of supplies for the corresponding game id
+ * 
+ * @param id The game ID
+ * 
+ * @return array of supplies for the given game or null if none exist
+ */
+function get_supplies($game_id)
+{
+    $db = open_db();
+    $ret = array();
+    if(!game_exists($game_id))
+    {
+        return $ret;
+    }
+    $result = $db->query("SELECT * FROM supplies WHERE `game_id`=\"{$game_id}\"");
+    close_db();
+    foreach($result as $row)
+    {
+        $ret[] = $row["supply"];
+    }
+
+    return $ret;
+}
+
+/** 
+ * Return an array of instructions for the corresponding game id
+ * 
+ * @param id The game ID
+ * 
+ * @return array of instructions for the given game or an empty array if none exist
+ */
+function get_instructions($game_id)
+{
+    $db = open_db();
+    $ret = array();
+    if(!game_exists($game_id))
+    {
+        return $ret;
+    }
+    $result = $db->query("SELECT * FROM instructions WHERE `game_id`=\"{$game_id}\"");
+    close_db();
+    foreach($result as $row)
+    {
+        $ret[] = $row["instruction"];
+    }
+
+    return $ret;
+}
 
 /** 
  * Get the id for the game name
@@ -124,20 +219,6 @@ function get_game_id($game_name)
     return -1;
 }
 
-public $game_id;
-    public $game_name;
-    public $submitter_id;
-    public $submitter_username;
-    public $short_description;
-    
-    public $long_description;
-    public $supplies;
-    public $instructions;
-    
-    public $upvote_count;
-    public $downvote_count;
-    public $report_count;
-    
 /** 
  * Return a game object for the corresponding id
  * 
@@ -153,7 +234,7 @@ function get_game($game_id)
     {
         return null;
     }
-    $result = $db->query("SELECT * FROM users WHERE `id`=\"{$game_id}\"");
+    $result = $db->query("SELECT * FROM games WHERE `id`=\"{$game_id}\"");
     foreach ($result as $row)
     {
         $ret->game_id = $row["id"];
@@ -162,8 +243,8 @@ function get_game($game_id)
         $ret->submitter_username = "PLACEHOLDER";
         $ret->short_description = $ret["short_description"];
         $ret->long_description = $ret["long_description"];
-        $ret->supplies = $ret["supplies"];
-        $ret->instructions = $ret["instructions"];
+        $ret->supplies = get_supplies($game_id);
+        $ret->instructions = get_instructions($game_id);
         $ret->upvote_count = 0;
         $ret->downvote_count = 0;
         $ret->report_count = 0;
