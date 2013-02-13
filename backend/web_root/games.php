@@ -1,5 +1,5 @@
 <?php
-include "../db_functions.php";
+//include "../db_functions.php";
 
 class game
 {
@@ -29,7 +29,7 @@ class game
  * @param supplies Any necessary supplies as a comma separated list 
  * @param instructions Instructions for play as a comma separated list
  * 
- * @return game_id = success, 1 = game_name already exists, 2 = mysql query failed
+ * @return game_id = success, -1 = game_name already exists, -2 = mysql query failed
  */
 function create_game($game_name, $submitter_id, $short_desc, $long_desc, $supplies, $instructions)
 {
@@ -37,7 +37,7 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
     if (game_exists($game_name))
     {
         close_db();
-        return 1;
+        return -1;
     }
     $game_name = htmlspecialchars($game_name);
     $short_desc = htmlspecialchars($short_desc);
@@ -52,7 +52,7 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
     {
         close_db();
         print_r($stmt->errorInfo());
-        return 2; //statement failed to execute
+        return -2; //statement failed to execute
     }
 
     $id = get_game_id($game_name);
@@ -77,7 +77,7 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
         {
             close_db();
             print_r($stmt->errorInfo());
-            return 2; //statement failed to execute
+            return -2; //statement failed to execute
         }
     }
     
@@ -102,7 +102,7 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
         {
             close_db();
             print_r($stmt->errorInfo());
-            return 2; //statement failed to execute
+            return -2; //statement failed to execute
         }
     }
     
