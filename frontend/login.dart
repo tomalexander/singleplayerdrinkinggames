@@ -15,22 +15,28 @@ void get_string(String address, String url_data, callback)
   request.send(url_data); // perform the async POST
 }
 
+String get_cookie(String name)
+{
+  List<String> cookies = document.cookie.split(":");
+  for (int i = 0; i < cookies.length; ++i)
+    {
+      List<String> split = cookies[i].split("=");
+      if (split[0] == name)
+        {
+          return split[1];
+        }
+    }
+  return null;
+}
+
 class login_form
 {
   DivElement content;
   login_form()
   {
     content = new Element.html("<div>Loading Login Form</div>");
-    String uuid = "511aca9452c650.25872024";
-    document.window.alert(document.cookie);
-    // for (int i = 0; i < HttpRequest.cookies.length; ++i)
-    //   {
-    //     Cookie current = HttpRequest.cookies[i];
-    //     if (current.name != "uuid")
-    //       continue;
-    //     uuid = current.value;
-    //   }
-    if (uuid == "")
+    String uuid = get_cookie("login_uuid");
+    if (uuid == null)
       {
         create_form(null);
       } else {
