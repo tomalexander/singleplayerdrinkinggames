@@ -11,16 +11,16 @@ import 'dart:html';
  */
 void get_string(String address, String url_data, callback)
 {
-  HttpRequest request = new HttpRequest();
+    HttpRequest request = new HttpRequest();
   
-  request.on.load.add((Event event) {
-    callback(request.responseText);
-  });
+    request.on.load.add((Event event) {
+            callback(request.responseText);
+        });
   
-  // POST the data to the server
-  request.open("POST", address, true);
-  request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  request.send(url_data); // perform the async POST
+    // POST the data to the server
+    request.open("POST", address, true);
+    request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    request.send(url_data); // perform the async POST
 }
 
 /** 
@@ -33,25 +33,23 @@ void get_string(String address, String url_data, callback)
  */
 String get_string_synchronous(String address, String url_data)
 {
-  HttpRequest request = new HttpRequest();
+    HttpRequest request = new HttpRequest();
   
-  // POST the data to the server
-  request.open("POST", address, false);
-  request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  request.send(url_data); // perform the sync POST
-  return request.responseText;
+    // POST the data to the server
+    request.open("POST", address, false);
+    request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    request.send(url_data); // perform the sync POST
+    return request.responseText;
 }
 
 String get_cookie(String name)
 {
-  List<String> cookies = document.cookie.split(";");
-  for (int i = 0; i < cookies.length; ++i)
-    {
-      List<String> split = cookies[i].split("=");
-      if (split[0] == name)
-        {
-          return split[1];
+    List<String> cookies = document.cookie.split(";");
+    for (int i = 0; i < cookies.length; ++i) {
+        List<String> split = cookies[i].split("=");
+        if (split[0] == name) {
+            return split[1];
         }
     }
-  return null;
+    return null;
 }
