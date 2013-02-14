@@ -20,6 +20,11 @@ fi
 cd frontend
 for f in *.dart
 do
+    echo $f
+    if ! grep -Fq "main()" $f # Only compile dart files that contain main()
+    then
+        continue
+    fi
     if [ $DEBUG == true ]
     then
         dart2js -o${f%.dart}.js $f
