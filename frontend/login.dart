@@ -15,7 +15,7 @@ Map get_login_details()
   String uuid = get_cookie("login_uuid");
   String response = get_string_synchronous("get_login_details.php", 'uuid=${uuid}');
   try {
-    Map ret = JSON.parse(response);
+    Map ret = parse(response);
     if (ret.containsKey("id"))
       {
         return ret;
