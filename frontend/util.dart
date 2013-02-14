@@ -44,7 +44,7 @@ String get_string_synchronous(String address, String url_data)
 
 String get_cookie(String name)
 {
-  List<String> cookies = document.cookie.split(":");
+  List<String> cookies = document.cookie.split(";");
   for (int i = 0; i < cookies.length; ++i)
     {
       List<String> split = cookies[i].split("=");

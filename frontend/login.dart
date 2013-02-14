@@ -37,17 +37,30 @@ class login_form
     if (user_data == null)
       {
         //User not logged in
-        content.nodes.clear();
-        content.nodes.add(new Text("Not Logged In"));
+        create_form();
       } else {
       content.nodes.clear();
       content.nodes.add(new Text("Logged in as: ${user_data['username']}"));
+      content.nodes.add(new Element.html("<br>"));
+      content.nodes.add(new Element.html("<a href=\"logout.php\">Log Out</a>"));
     }
   }
   
-  void create_form(String response)
+  void create_form()
   {
-    
+    content.nodes.clear();
+    FormElement form = new Element.html("<form action=\"login.php\" method=\"POST\"></form>");
+    content.nodes.add(form);
+    form.nodes.add(new Text("Username:"));
+    form.nodes.add(new Element.html("<input type=\"text\" name=\"username\" required>"));
+    form.nodes.add(new Element.html("<br>"));
+    form.nodes.add(new Text("Password:"));
+    InputElement password = new Element.html("<input type=\"password\" name=\"password\" required>");
+    form.nodes.add(password);
+    form.nodes.add(new Element.html("<br>"));
+    SubmitButtonInputElement submit = new Element.html("<input type=\"submit\" value=\"Log In\">");
+    form.nodes.add(submit);
+    form.on.submit.add((e) {submit.disabled = true;});
   }
 }
 
