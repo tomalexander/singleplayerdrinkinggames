@@ -11,8 +11,7 @@ $db_connections = 0;
 function open_db()
 {
     global $global_db, $db_connections;
-    if ($db_connections > 0)
-    {
+    if ($db_connections > 0) {
         $db_connections += 1;
         return $global_db;
     }
@@ -29,12 +28,10 @@ function open_db()
 function close_db()
 {
     global $global_db, $db_connections;
-    if ($db_connections > 0)
-    {
+    if ($db_connections > 0) {
         $db_connections -= 1;
     }
-    if ($db_connections == 0)
-    {
+    if ($db_connections == 0) {
         $global_db = null; //Close the connection
     }
 }

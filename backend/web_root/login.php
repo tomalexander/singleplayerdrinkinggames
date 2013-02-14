@@ -7,8 +7,7 @@ function main()
     $password = $_REQUEST["password"];
     
     $uuid = login($username, $password);
-    if ($uuid == null)
-    {
+    if ($uuid == null) {
         header("refresh:5;url=https://singleplayerdrinkinggames.com/");
         setcookie("login_uuid","", time()-3600);
         die("Log In Failed");
