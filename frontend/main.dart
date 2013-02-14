@@ -5,17 +5,16 @@ class nav_bar
     DivElement content;
     nav_bar()
     {
-        content = new Element.html("<div></div>");
-        nav_links = ["Games", "Good Booze", "Logout"];
-        nav_links.forEach( (e) {
-            link_html = new Element.html("<a> ${e} </html>");
-            content.nodes.add(link_html);
+        content = new DivElement();
+        var link_list = ["Home", "Games", "Booze"];
+        link_list.forEach( (e) {
+            var link_html = new Element.html("<a href=/${e}.html> ${e} </a>");
+            content.children.add(link_html);
         });
     }
 }
 
-main() 
-{
+main() {
 
     try {
         main_wrapped();
@@ -25,7 +24,6 @@ main()
     }
 }
 
-main_wrapped() 
-{
-    query('#main').children.add(new nav_bar().content);
+main_wrapped() {
+  query('#main').children.add(new nav_bar().content);
 }
