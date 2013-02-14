@@ -1,32 +1,30 @@
+library login;
+
 import 'dart:html';
 import 'dart:json';
+import 'util.dart';
 
-void get_string(String address, String url_data, callback)
+/** 
+ * Get the login details for the current user
+ *
+ *
+ * @return A map with keys "id" "username" and "email" for the current logged in user, or null if the user is not logged in
+ */
+Map get_login_details()
 {
-  HttpRequest request = new HttpRequest();
-  
-  request.on.load.add((Event event) {
-    callback(request.responseText);
-  });
-  
-  // POST the data to the server
-  request.open("POST", address, true);
-  request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  request.send(url_data); // perform the async POST
-}
-
-String get_cookie(String name)
-{
-  List<String> cookies = document.cookie.split(":");
-  for (int i = 0; i < cookies.length; ++i)
-    {
-      List<String> split = cookies[i].split("=");
-      if (split[0] == name)
-        {
-          return split[1];
-        }
+  String uuid = get_cookie("login_uuid");
+  String response = get_string_synchronous("get_login_details.php", 'uuid=${uuid}');
+  try {
+    Map ret = JSON.parse(response);
+    if (ret.containsKey("id"))
+      {
+        return ret;
+      } else {
+      return null;
     }
-  return null;
+  } catch (err) {
+    return null;
+  }
 }
 
 class login_form
@@ -35,24 +33,21 @@ class login_form
   login_form()
   {
     content = new Element.html("<div>Loading Login Form</div>");
-    String uuid = get_cookie("login_uuid");
-    if (uuid == null)
+    Map user_data = get_login_details();
+    if (user_data == null)
       {
-        create_form(null);
+        //User not logged in
+        content.nodes.clear();
+        content.nodes.add(new Text("Not Logged In"));
       } else {
-      get_string("get_login_details.php", 'uuid=${uuid}', create_form);
+      content.nodes.clear();
+      content.nodes.add(new Text("Logged in as: ${user_data['username']}"));
     }
   }
   
   void create_form(String response)
   {
-    document.window.alert(response);
-    Map parsed_user_details;
-    try {
-      parsed_user_details = JSON.parse(response);
-    } catch(err) {
-      document.window.alert(err.toString());
-    }
+    
   }
 }
 
