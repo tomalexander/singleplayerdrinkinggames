@@ -213,7 +213,8 @@ function get_game($game_id) {
         $ret->game_id = $row["id"];
         $ret->game_name = $row["game_name"];
         $ret->submitter_id = $row["submitter_id"];
-        $ret->submitter_username = "PLACEHOLDER";
+        $user_result = $db->query("SELECT * FROM users WHERE `id`=\"{$ret->submitter_id}\"");
+        $ret->submitter_username = $user_result["id"];
         $ret->short_description = $ret["short_description"];
         $ret->long_description = $ret["long_description"];
         $ret->supplies = get_supplies($game_id);

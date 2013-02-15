@@ -4,7 +4,7 @@ include "games.php";
 
 function main() {
     $game_name = $_REQUEST["game_name"];
-    $submitter_id = 1;
+    $submitter_id = 0;
     $short_desc = $_REQUEST["short_description"];
     $long_desc = $_REQUEST["long_description"];
     $supplies = $_REQUEST["supplies"];
