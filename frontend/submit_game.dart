@@ -94,6 +94,15 @@ class submit_game_form {
 }
 
 void main() {
+    try {
+        main_wrapped();
+    } on Exception
+    catch (ex) {
+        document.window.alert(ex.toString());
+    }
+}
+
+void main_wrapped() {
   query('#game-submission').children.add(new submit_game_form().content);
 }
 
