@@ -1,5 +1,5 @@
 <?php
-include "../db_functions.php";
+include_once "../db_functions.php";
 
 class game {
     public $game_id;
@@ -28,13 +28,17 @@ class game {
  * @param supplies Any necessary supplies as a comma separated list 
  * @param instructions Instructions for play as a comma separated list
  * 
- * @return game_id = success, -1 = game_name already exists, -2 = mysql query failed
+ * @return game_id = success, -1 = game_name already exists, -2 = mysql query failed, -3 = empty fields passed
  */
 function create_game($game_name, $submitter_id, $short_desc, $long_desc, $supplies, $instructions) {
     $db = open_db();
     if (game_exists($game_name)) {
         close_db();
         return -1;
+    }
+    if((!isset($game_name) || $game_name == "") || (!isset($submitter_id)) || (!isset($short_desc) || $short_desc == "") || (!isset($long_desc) || $long_desc == "")) {
+        close_db();
+        return -3;
     }
     $game_name = htmlspecialchars($game_name);
     $short_desc = htmlspecialchars($short_desc);
@@ -52,18 +56,18 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
     }
 
     $id = get_game_id($game_name);
-    if(count($supplies > 0) {
+    if(count($supplies > 0)) {
         // Now add the supplies to the supplies table and the instructions to the instructions table
         $insert = "INSERT INTO supplies (game_id, supply) VALUES (?,?)";
         // Add as many fields as we have supplies
-        for($i = 1; $1 < count($supplies); $i++) {
+        for($i = 1; $i < count($supplies); $i++) {
             $insert .= ", (?,?)";
         }
         // Generate array of supplies to insert
         $supp_arr = array();
         foreach($supplies as $supply) {
             $supp_arr_tmp = array($id, htmlspecialchars($supply));
-            $supp_arr = array_merge($supp_arr, supp_arr_tmp);
+            $supp_arr = array_merge($supp_arr, $supp_arr_tmp);
         }
         $stmt = $db->prepare($insert);
         if (! $stmt->execute($supp_arr)) {
@@ -74,10 +78,10 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
     }
     
     // Do the same for instructions
-    if(count($instructions > 0) {
+    if(count($instructions > 0)) {
         $insert = "INSERT INTO instructions (game_id, instruction) VALUES (?,?)";
         
-        for($i = 1; $1 < count($instructions); $i++) {
+        for($i = 1; $i < count($instructions); $i++) {
             $insert .= ", (?,?)";
         }
         
@@ -125,7 +129,7 @@ function game_exists($game_name) {
  */
 function game_exists_id($game_id) {
     $db = open_db();
-    $result = $db->query("SELECT * FROM games WHERE `id`=\"{$game_id}\"");
+    $result = $db->query("SELECT * FROM games WHERE `game_id`=\"{$game_id}\"");
     close_db();
     if ($result->fetch()) {
         return true;
@@ -145,6 +149,7 @@ function get_supplies($game_id) {
     $db = open_db();
     $ret = array();
     if(!game_exists($game_id)) {
+        close_db();
         return $ret;
     }
     $result = $db->query("SELECT * FROM supplies WHERE `game_id`=\"{$game_id}\"");
@@ -167,6 +172,7 @@ function get_instructions($game_id) {
     $db = open_db();
     $ret = array();
     if(!game_exists($game_id)) {
+        close_db();
         return $ret;
     }
     $result = $db->query("SELECT * FROM instructions WHERE `game_id`=\"{$game_id}\"");
@@ -187,10 +193,10 @@ function get_instructions($game_id) {
  */
 function get_game_id($game_name) {
     $db = open_db();
-    $result = $db->query("SELECT * FROM gamess WHERE `game_name`=\"{$game_name}\"");
+    $result = $db->query("SELECT * FROM games WHERE `game_name`=\"{$game_name}\"");
     close_db();
     foreach ($result as $row) {
-        return intval($row["id"]);
+        return intval($row["game_id"]);
     }
     return -1;
 }
@@ -206,11 +212,12 @@ function get_game($game_id) {
     $db = open_db();
     $ret = new game;
     if(!game_exists($game_id)) {
+        close_db();
         return null;
     }
-    $result = $db->query("SELECT * FROM games WHERE `id`=\"{$game_id}\"");
+    $result = $db->query("SELECT * FROM games WHERE `game_id`=\"{$game_id}\"");
     foreach ($result as $row) {
-        $ret->game_id = $row["id"];
+        $ret->game_id = $row["game_id"];
         $ret->game_name = $row["game_name"];
         $ret->submitter_id = $row["submitter_id"];
         $user_result = $db->query("SELECT * FROM users WHERE `id`=\"{$ret->submitter_id}\"");
