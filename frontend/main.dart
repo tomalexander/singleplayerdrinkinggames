@@ -7,8 +7,14 @@ class nav_bar
     {
         content = new DivElement();
         var link_list = ["Home", "Games", "Booze"];
+        var link_map = {
+            "Home" : "index",
+            "Games" : "games",
+            "Booze" : "booze"
+        };
         link_list.forEach( (e) {
-            var link_html = new Element.html("<a href=/${e}.html> ${e} </a>");
+            var page = link_map[e];
+            var link_html = new Element.html("<a href=/${page}.html> ${e} </a>");
             content.children.add(link_html);
         });
     }
