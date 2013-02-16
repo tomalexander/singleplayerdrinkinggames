@@ -54,8 +54,8 @@ String get_cookie(String name)
     List<String> cookies = document.cookie.split(";");
     for (int i = 0; i < cookies.length; ++i) {
         List<String> split = cookies[i].split("=");
-        if (split[0] == name) {
-            return split[1];
+        if (split[0].trim() == name.trim()) {
+            return split[1].trim();
         }
     }
     return null;
