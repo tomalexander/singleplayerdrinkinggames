@@ -6,6 +6,7 @@ class nav_bar
     nav_bar()
     {
         content = new DivElement();
+        content.id = "nav_bar";
         var link_list = ["Home", "Games", "Booze"];
         var link_map = {
             "Home" : "index",
