@@ -27,7 +27,11 @@ class tree
             tree_element new_element = new tree_element(data[i][0], parent, data[i][2]);
             hierarchy[data[i][0]] = new_element;
             
-            content.nodes.add(new_element.content);
+            if (parent == null) {
+                content.nodes.add(new_element.content);
+            } else {
+                parent.children.nodes.add(new_element.content);
+            }
         }
     }
 }
