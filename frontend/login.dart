@@ -56,7 +56,7 @@ class login_form
         form.nodes.add(new Element.html("<br>"));
         SubmitButtonInputElement submit = new Element.html("<input type=\"submit\" value=\"Log In\">");
         form.nodes.add(submit);
-        form.on.submit.add((e) {submit.disabled = true;});
+        form.onSubmit.listen((e) {submit.disabled = true;});
     }
 }
 

@@ -17,7 +17,7 @@ class register_form
         form.nodes.add(new Text("Confirm Password:"));
         InputElement confirm_password = new Element.html("<input type=\"password\" name=\"confirm_password\" required>");
         form.nodes.add(confirm_password);
-        confirm_password.on.input.add((e) {
+        confirm_password.onInput.listen((e) {
                 if (password.value != confirm_password.value) {
                     confirm_password.setCustomValidity("The passwords do not match");
                 } else {
@@ -30,7 +30,7 @@ class register_form
         form.nodes.add(new Element.html("<br>"));
         SubmitButtonInputElement submit = new Element.html("<input type=\"submit\" value=\"Create Account\">");
         form.nodes.add(submit);
-        form.on.submit.add((e) {submit.disabled = true;});
+        form.onSubmit.listen((e) {submit.disabled = true;});
     }
 }
 

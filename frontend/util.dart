@@ -13,7 +13,7 @@ void get_string(String address, String url_data, callback)
 {
     HttpRequest request = new HttpRequest();
   
-    request.on.load.add((Event event) {
+    request.onLoad.listen((Event event) {
             callback(request.responseText);
         });
   
