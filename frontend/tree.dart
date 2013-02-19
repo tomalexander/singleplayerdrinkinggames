@@ -24,7 +24,7 @@ class tree
             if (data[i][0] != data[i][1]) {
                 parent = hierarchy[data[i][1]];
             }
-            tree_element new_element = new tree_element(data[i][0], parent, data[i][2]);
+            tree_element new_element = new tree_element(data[i][0], parent, data[i][2], hidden_element);
             hierarchy[data[i][0]] = new_element;
             
             if (parent == null) {
@@ -44,17 +44,22 @@ class tree_element
     int id;
     tree_element parent;
     String text;
-    tree_element(int _id, tree_element _parent, String _text) {
+    InputElement target;
+    tree_element(int _id, tree_element _parent, String _text, InputElement _target) {
         text = _text;
         id = _id;
         parent = _parent;
+        target = _target;
         content = new Element.html("<div></div>");
         button = new ButtonElement();
         button..id = 'expand${id}'
             ..text = '+'
             ..onClick.listen((e) => toggle_children());
         content.nodes.add(button);
-        content.nodes.add(new Text(text));
+        DivElement clickable = new Element.html("<div style=\"display: inline-block;\">${text}</div>");
+        content.nodes.add(clickable);
+        clickable.onClick.listen((e) {target.value = "${id}";
+                document.window.alert("Clicked ${id}");});
         children = new Element.html("<div>children</div>");
         content.nodes.add(children);
         hide_children();
