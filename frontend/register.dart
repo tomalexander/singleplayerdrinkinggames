@@ -1,4 +1,5 @@
 import 'dart:html';
+import 'nav_bar.dart';
 
 class register_form
 {
@@ -43,5 +44,9 @@ main() {
 }
 
 main_wrapped() {
+    query('#main').children.add(new nav_bar().content);
+    var reg_div = new DivElement();
+    reg_div.id = "registration";
+    query('#main').children.add(reg_div);
     query('#registration').children.add(new register_form().content);
 }

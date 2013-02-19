@@ -3,6 +3,7 @@ library login;
 import 'dart:html';
 import 'dart:json';
 import 'util.dart';
+import 'nav_bar.dart';
 
 /** 
  * Get the login details for the current user
@@ -63,6 +64,10 @@ class login_form
 main()
 {
     try {
+        query('#main').children.add(new nav_bar().content);
+        var login_div = new DivElement();
+        login_div.id="login";
+        query('#main').children.add(login_div);
         query("#login").children.add(new login_form().content);
     } catch (ex) {
         document.window.alert(ex.toString());
