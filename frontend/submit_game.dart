@@ -1,4 +1,5 @@
 import 'dart:html';
+import 'nav_bar.dart';
 
 class submit_game_form {
   DivElement content;
@@ -103,6 +104,10 @@ void main() {
 }
 
 void main_wrapped() {
-  query('#game-submission').children.add(new submit_game_form().content);
+    query('#main').children.add(new nav_bar().content);
+    var game_div = new DivElement();
+    game_div.id = "game-submission";
+    query('#main').children.add(game_div);
+    query('#game-submission').children.add(new submit_game_form().content);
 }
 
