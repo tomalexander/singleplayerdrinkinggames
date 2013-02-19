@@ -1,4 +1,5 @@
 import 'dart:html';
+import 'nav_bar.dart';
 
 class register_form
 {
@@ -17,7 +18,7 @@ class register_form
         form.nodes.add(new Text("Confirm Password:"));
         InputElement confirm_password = new Element.html("<input type=\"password\" name=\"confirm_password\" required>");
         form.nodes.add(confirm_password);
-        confirm_password.on.input.add((e) {
+        confirm_password.onInput.listen((e) {
                 if (password.value != confirm_password.value) {
                     confirm_password.setCustomValidity("The passwords do not match");
                 } else {
@@ -30,7 +31,7 @@ class register_form
         form.nodes.add(new Element.html("<br>"));
         SubmitButtonInputElement submit = new Element.html("<input type=\"submit\" value=\"Create Account\">");
         form.nodes.add(submit);
-        form.on.submit.add((e) {submit.disabled = true;});
+        form.onSubmit.listen((e) {submit.disabled = true;});
     }
 }
 
@@ -43,5 +44,9 @@ main() {
 }
 
 main_wrapped() {
+    query('#main').children.add(new nav_bar().content);
+    var reg_div = new DivElement();
+    reg_div.id = "registration";
+    query('#main').children.add(reg_div);
     query('#registration').children.add(new register_form().content);
 }

@@ -3,6 +3,7 @@ library login;
 import 'dart:html';
 import 'dart:json';
 import 'util.dart';
+import 'nav_bar.dart';
 
 /** 
  * Get the login details for the current user
@@ -56,13 +57,17 @@ class login_form
         form.nodes.add(new Element.html("<br>"));
         SubmitButtonInputElement submit = new Element.html("<input type=\"submit\" value=\"Log In\">");
         form.nodes.add(submit);
-        form.on.submit.add((e) {submit.disabled = true;});
+        form.onSubmit.listen((e) {submit.disabled = true;});
     }
 }
 
 main()
 {
     try {
+        query('#main').children.add(new nav_bar().content);
+        var login_div = new DivElement();
+        login_div.id="login";
+        query('#main').children.add(login_div);
         query("#login").children.add(new login_form().content);
     } catch (ex) {
         document.window.alert(ex.toString());
