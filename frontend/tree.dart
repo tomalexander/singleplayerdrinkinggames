@@ -1,4 +1,5 @@
 import 'dart:html';
+import 'dart:json';
 
 class tree
 {
@@ -16,6 +17,61 @@ class tree
         name = _name;
         InputElement hidden_element = new Element.html("<input type=\"hidden\" name=\"${name}\">");
         content.nodes.add(hidden_element);
+        Map<int, tree_element> hierarchy = new Map<int, tree_element>();
+        for (int i = 0; i < data.length; ++i)
+        {
+            tree_element parent = null;
+            if (data[i][0] != data[i][1]) {
+                parent = hierarchy[data[i][1]];
+            }
+            tree_element new_element = new tree_element(data[i][0], parent, data[i][2]);
+            hierarchy[data[i][0]] = new_element;
+            
+            content.nodes.add(new_element.content);
+        }
+    }
+}
+
+class tree_element
+{
+    DivElement content;
+    DivElement children;
+    ButtonElement button;
+    int id;
+    tree_element parent;
+    String text;
+    tree_element(int _id, tree_element _parent, String _text) {
+        text = _text;
+        id = _id;
+        parent = _parent;
+        content = new Element.html("<div></div>");
+        button = new ButtonElement();
+        button..id = 'expand${id}'
+            ..text = '+'
+            ..onClick.listen((e) => toggle_children());
+        content.nodes.add(button);
+        content.nodes.add(new Text(text));
+        children = new Element.html("<div>children</div>");
+        content.nodes.add(children);
+        hide_children();
+    }
+
+    void toggle_children() {
+        if (children.hidden) {
+            show_children();
+        } else {
+            hide_children();
+        }
+    }
+    
+    void show_children() {
+        children.hidden = false;
+        button.text = '-';
+    }
+
+    void hide_children() {
+        children.hidden = true;
+        button.text = '+';
     }
 }
 
