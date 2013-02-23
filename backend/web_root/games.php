@@ -208,6 +208,8 @@ function get_game_id($game_name) {
  * 
  * @return a game object for the game or null if it does not exist
  */
+
+
 function get_game($game_id) {
     $db = open_db();
     $ret = new game;
@@ -233,5 +235,21 @@ function get_game($game_id) {
     }
     close_db();
     return $ret;
+}
+
+/**
+ * Return a list of game information
+ *
+ * @return list of valid game objects
+ */
+
+function get_game_list() {
+    $db = open_db();
+    $result = $db->query("SELECT * FROM games");
+    $list = array();
+    foreach ($result as $item) {
+        $list[] = $item;
+    }
+    return $list;
 }
 ?>
