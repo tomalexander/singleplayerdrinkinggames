@@ -5,6 +5,7 @@ class tree
 {
     DivElement content;
     String name;
+    List<tree_element> elements;
 
     /** 
      * Construct a tree
@@ -13,6 +14,7 @@ class tree
      * @param data A list of lists. Each sub-element contains the fields (id, parentid, text)
      */
     tree(String _name, List data) {
+        elements = new List<tree_element>();
         content = new Element.tag("div");
         name = _name;
         InputElement hidden_element = new Element.html("<input type=\"hidden\" name=\"${name}\">");
@@ -24,8 +26,9 @@ class tree
             if (data[i][0] != data[i][1]) {
                 parent = hierarchy[data[i][1]];
             }
-            tree_element new_element = new tree_element(data[i][0], parent, data[i][2], hidden_element);
+            tree_element new_element = new tree_element(data[i][0], parent, data[i][2], hidden_element, elements);
             hierarchy[data[i][0]] = new_element;
+            elements.add(new_element);
             
             if (parent == null) {
                 content.nodes.add(new_element.content);
@@ -40,27 +43,34 @@ class tree_element
 {
     DivElement content;
     DivElement children;
+    DivElement clickable;
     ButtonElement button;
     int id;
     tree_element parent;
     String text;
     InputElement target;
-    tree_element(int _id, tree_element _parent, String _text, InputElement _target) {
+    List<tree_element> elements;
+    tree_element(int _id, tree_element _parent, String _text, InputElement _target, List<tree_element> _elements) {
         text = _text;
         id = _id;
         parent = _parent;
         target = _target;
+        elements = _elements;
         content = new Element.html("<div></div>");
         button = new ButtonElement();
         button..id = 'expand${id}'
             ..text = '+'
             ..onClick.listen((e) => toggle_children());
         content.nodes.add(button);
-        DivElement clickable = new Element.html("<div style=\"display: inline-block;\">${text}</div>");
+        clickable = new Element.html("<div style=\"display: inline-block;\">${text}</div>");
         content.nodes.add(clickable);
+        children = new Element.html("<div class=\"tree_children\"></div>");
         clickable.onClick.listen((e) {target.value = "${id}";
-                document.window.alert("Clicked ${id}");});
-        children = new Element.html("<div>children</div>");
+                for (int i = 0; i < elements.length; ++i) {
+                    elements[i].clickable.style.background = "";
+                }
+                clickable.style.background = "orange";
+            });
         content.nodes.add(children);
         hide_children();
     }
