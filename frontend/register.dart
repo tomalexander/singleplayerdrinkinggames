@@ -1,3 +1,4 @@
+library register;
 import 'dart:html';
 import 'nav_bar.dart';
 
@@ -33,20 +34,4 @@ class register_form
         form.nodes.add(submit);
         form.onSubmit.listen((e) {submit.disabled = true;});
     }
-}
-
-main() {
-    try {
-        main_wrapped();
-    } on Exception catch (ex) {
-        document.window.alert(ex.toString());
-    }
-}
-
-main_wrapped() {
-    query('#main').children.add(new nav_bar().content);
-    var reg_div = new DivElement();
-    reg_div.id = "registration";
-    query('#main').children.add(reg_div);
-    query('#registration').children.add(new register_form().content);
 }
