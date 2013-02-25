@@ -4,15 +4,18 @@ import 'register.dart';
 import 'login.dart';
 
 void display_register() {
-    window.history.pushState(null, "Register an Account", "${window.location.pathname}#register");
     query("#content").children.clear();
     query("#content").children.add(new register_form().content);
 }
 
 void display_login() {
-    window.history.pushState(null, "Log In", "${window.location.pathname}#login");
     query("#content").children.clear();
     query("#content").children.add(new login_form().content);
+}
+
+void display_main_page() {
+    query("#content").children.clear();
+    query("#content").children.add(new Text("Main Page"));
 }
 
 void handle_history() {
@@ -25,7 +28,9 @@ void handle_history() {
             case "register":
                 display_register();
                 break;
+            case "index":
             default:
+                display_main_page();
                 break;
             }
         });
