@@ -66,8 +66,8 @@ class tree_element
         content.nodes.add(clickable);
         children = new Element.html("<div class=\"tree_children\"></div>");
         clickable.onClick.listen((e) {target.value = "${id}";
-                for (int i = 0; i < elements.length; ++i) {
-                    elements[i].clickable.classes.remove("tree_element_selected");
+                for (tree_element elem in elements) {
+                    elem.clickable.classes.remove("tree_element_selected");
                 }
                 clickable.classes.add("tree_element_selected");
             });
