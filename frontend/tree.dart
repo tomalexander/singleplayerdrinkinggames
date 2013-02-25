@@ -62,14 +62,14 @@ class tree_element
             ..text = '+'
             ..onClick.listen((e) => toggle_children());
         content.nodes.add(button);
-        clickable = new Element.html("<div style=\"display: inline-block;\">${text}</div>");
+        clickable = new Element.html("<div class=\"tree_element\">${text}</div>");
         content.nodes.add(clickable);
         children = new Element.html("<div class=\"tree_children\"></div>");
         clickable.onClick.listen((e) {target.value = "${id}";
                 for (int i = 0; i < elements.length; ++i) {
-                    elements[i].clickable.style.background = "";
+                    elements[i].clickable.classes.remove("tree_element_selected");
                 }
-                clickable.style.background = "orange";
+                clickable.classes.add("tree_element_selected");
             });
         content.nodes.add(children);
         hide_children();
