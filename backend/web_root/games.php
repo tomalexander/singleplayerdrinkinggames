@@ -213,7 +213,7 @@ function get_game_id($game_name) {
 function get_game($game_id) {
     $db = open_db();
     $ret = new game;
-    if(!game_exists($game_id)) {
+    if(!game_exists_id($game_id)) {
         close_db();
         return null;
     }
@@ -223,9 +223,9 @@ function get_game($game_id) {
         $ret->game_name = $row["game_name"];
         $ret->submitter_id = $row["submitter_id"];
         $user_result = $db->query("SELECT * FROM users WHERE `id`=\"{$ret->submitter_id}\"");
-        $ret->submitter_username = $user_result["id"];
-        $ret->short_description = $ret["short_description"];
-        $ret->long_description = $ret["long_description"];
+        //$ret->submitter_username = $user_result["id"];
+        $ret->short_description = $row["short_description"];
+        $ret->long_description = $row["long_description"];
         $ret->supplies = get_supplies($game_id);
         $ret->instructions = get_instructions($game_id);
         $ret->upvote_count = 0;
