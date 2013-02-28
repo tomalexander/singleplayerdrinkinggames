@@ -4,6 +4,7 @@ import 'register.dart';
 import 'login.dart';
 import 'list_games.dart';
 import 'submit_game.dart';
+import 'util.dart';
 
 void display_register() {
     query("#content").children.clear();

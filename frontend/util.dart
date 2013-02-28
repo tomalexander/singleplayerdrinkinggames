@@ -61,6 +61,13 @@ String get_cookie(String name)
     return null;
 }
 
+/** 
+ * Get a variable from the url after the hash. Format #var1=val1;var2=val2....
+ *
+ * @param name The name of the variable which is the left side of the equals sign
+ *
+ * @return The value of the variable or null if not found
+ */
 String get_url_variable(String name)
 {
     String hash_string = window.location.hash.replaceFirst('#', '');
