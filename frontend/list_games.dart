@@ -18,7 +18,7 @@ class list_games_form {
                 InfoDiv.classes.add('game_name');
                 var gamename = game["game_name"];
                 var gameid = game["game_id"];
-                var link = new Element.html("<a href=view_game.html#${gameid}>${gamename}</a>");
+                var link = new Element.html("<a href=/#page=view_game;gameid=${gameid}>${gamename}</a>");
                 InfoDiv.children.add(link);
                 content.children.add(InfoDiv);
             });
