@@ -1,14 +1,7 @@
 import 'dart:html';
 import 'dart:json';
-import 'dart:uri';
 import 'nav_bar.dart';
 import 'util.dart';
-
-String encodeMap(Map data) {
-    return data.keys.map((k) {
-        return '${encodeUriComponent(k)}=${encodeUriComponent(data[k])}';
-    }).join('&');
-}
 
 class show_game_form {
     DivElement content;
@@ -16,11 +9,17 @@ class show_game_form {
     show_game_form() {
         content = new Element.html("<div></div>");
         content.id = "view_game";
-        var hash = window.location.hash.slice(1);
-        var postdata = {"gameid":hash};
-        String encodedData = encodeMap(postdata);
-        get_string("view_game.php", encodedData, (resp) {
-            content.text = resp;
+        get_string("list_games.php", "", (resp) {
+            List games = parse(resp);
+            games.forEach( (Map game) {
+                DivElement InfoDiv = new DivElement();
+                InfoDiv.classes.add('game_name');
+                var gamename = game["game_name"];
+                var gameid = game["game_id"];
+                var link = new Element.html("<a href=view_game.html#${gameid}>${gamename}</a>");
+                InfoDiv.children.add(link);
+                content.children.add(InfoDiv);
+            });
         });
     }
 }

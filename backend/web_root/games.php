@@ -221,9 +221,11 @@ function get_game($game_id) {
         $ret->game_name = $row["game_name"];
         $ret->submitter_id = $row["submitter_id"];
         $user_result = $db->query("SELECT * FROM users WHERE `id`=\"{$ret->submitter_id}\"");
-        $ret->submitter_username = $user_result["id"];
-        $ret->short_description = $ret["short_description"];
-        $ret->long_description = $ret["long_description"];
+        foreach ($user_result as $user_row) {
+            $ret->submitter_username = $user_row["id"];
+        }
+        $ret->short_description = $row["short_description"];
+        $ret->long_description = $row["long_description"];
         $ret->supplies = get_supplies($game_id);
         $ret->instructions = get_instructions($game_id);
         $ret->upvote_count = 0;
