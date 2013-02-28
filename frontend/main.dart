@@ -3,6 +3,7 @@ import 'nav_bar.dart';
 import 'register.dart';
 import 'login.dart';
 import 'list_games.dart';
+import 'submit_game.dart';
 
 void display_register() {
     query("#content").children.clear();
@@ -24,9 +25,19 @@ void display_list_games() {
     query("#content").children.add(new list_games_form().content);
 }
 
+void display_game_submission() {
+    query("#content").children.clear();
+    query("#content").children.add(new submit_game_form().content);
+}
+
 void handle_history() {
     window.onPopState.listen((event) {
-            String page_name = window.location.hash.replaceFirst('#', '');
+            String page_name = get_url_variable("page");
+            if (page_name == null)
+            {
+                display_main_page();
+                return;
+            }
             switch (page_name) {
             case "login":
                 display_login();
@@ -36,6 +47,8 @@ void handle_history() {
                 break;
             case "list_games":
                 display_list_games();
+            case "game_submission":
+                display_game_submission();
                 break;
             case "index":
             default:

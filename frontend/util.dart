@@ -61,6 +61,19 @@ String get_cookie(String name)
     return null;
 }
 
+String get_url_variable(String name)
+{
+    String hash_string = window.location.hash.replaceFirst('#', '');
+    List<String> variables = hash_string.split(";");
+    for (int i = 0; i < variables.length; ++i) {
+        List<String> split = variables[i].split("=");
+        if (split[0].trim() == name.trim()) {
+            return split[1].trim();
+        }
+    }
+    return null;
+}
+
 /** 
  * Generate the date time string for cookies
  *
