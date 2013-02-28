@@ -18,9 +18,27 @@ void display_main_page() {
     query("#content").children.add(new Text("Main Page"));
 }
 
+String get_url_variable(String name)
+{
+    String hash_string = window.location.hash.replaceFirst('#', '');
+    List<String> variables = hash_string.split(";");
+    for (int i = 0; i < variables.length; ++i) {
+        List<String> split = variables[i].split("=");
+        if (split[0].trim() == name.trim()) {
+            return split[1].trim();
+        }
+    }
+    return null;
+}
+
 void handle_history() {
     window.onPopState.listen((event) {
-            String page_name = window.location.hash.replaceFirst('#', '');
+            String page_name = get_url_variable("page");
+            if (page_name == null)
+            {
+                display_main_page();
+                return;
+            }
             switch (page_name) {
             case "login":
                 display_login();

@@ -18,7 +18,7 @@ class nav_bar
         };
         link_list.forEach( (e) {
             var page = link_map[e];
-            var link_html = new Element.html("<a href=/#${page}> ${e} </a>");
+            var link_html = new Element.html("<a href=/#page=${page}> ${e} </a>");
             content.children.add(link_html);
         });
     }
