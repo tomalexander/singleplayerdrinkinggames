@@ -11,7 +11,7 @@ class nav_bar
         var link_list = ["Home", "Games", "Booze", "Login", "Register", "Submit Game"];
         var link_map = {
             "Home" : "index",
-            "Games" : "games",
+            "Games" : "list_games",
             "Booze" : "booze",
             "Login" : "login",
             "Register" : "register",

@@ -2,7 +2,9 @@ import 'dart:html';
 import 'nav_bar.dart';
 import 'register.dart';
 import 'login.dart';
+import 'list_games.dart';
 import 'submit_game.dart';
+import 'view_game.dart';
 import 'util.dart';
 
 void display_register() {
@@ -18,6 +20,16 @@ void display_login() {
 void display_main_page() {
     query("#content").children.clear();
     query("#content").children.add(new Text("Main Page"));
+}
+
+void display_list_games() {
+    query("#content").children.clear();
+    query("#content").children.add(new list_games_form().content);
+}
+
+void display_view_game() {
+    query("#content").children.clear();
+    query("#content").children.add(new view_game_form().content);
 }
 
 void display_game_submission() {
@@ -40,6 +52,12 @@ void handle_history() {
             case "register":
                 display_register();
                 break;
+            case "list_games":
+                display_list_games();
+                break;
+            case "view_game":
+                display_view_game();
+                break;
             case "game_submission":
                 display_game_submission();
                 break;
@@ -47,6 +65,7 @@ void handle_history() {
             default:
                 display_main_page();
                 break;
+
             }
         });
 }
