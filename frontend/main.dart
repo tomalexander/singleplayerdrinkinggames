@@ -2,6 +2,7 @@ import 'dart:html';
 import 'nav_bar.dart';
 import 'register.dart';
 import 'login.dart';
+import 'submit_game.dart';
 
 void display_register() {
     query("#content").children.clear();
@@ -16,19 +17,6 @@ void display_login() {
 void display_main_page() {
     query("#content").children.clear();
     query("#content").children.add(new Text("Main Page"));
-}
-
-String get_url_variable(String name)
-{
-    String hash_string = window.location.hash.replaceFirst('#', '');
-    List<String> variables = hash_string.split(";");
-    for (int i = 0; i < variables.length; ++i) {
-        List<String> split = variables[i].split("=");
-        if (split[0].trim() == name.trim()) {
-            return split[1].trim();
-        }
-    }
-    return null;
 }
 
 void display_game_submission() {
