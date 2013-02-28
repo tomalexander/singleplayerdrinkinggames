@@ -2,6 +2,7 @@ import 'dart:html';
 import 'nav_bar.dart';
 import 'register.dart';
 import 'login.dart';
+import 'submit_game.dart';
 
 void display_register() {
     query("#content").children.clear();
@@ -18,6 +19,11 @@ void display_main_page() {
     query("#content").children.add(new Text("Main Page"));
 }
 
+void display_game_submission() {
+    query("#content").children.clear();
+    query("#content").children.add(new submit_game_form().content);
+}
+
 void handle_history() {
     window.onPopState.listen((event) {
             String page_name = window.location.hash.replaceFirst('#', '');
@@ -27,6 +33,9 @@ void handle_history() {
                 break;
             case "register":
                 display_register();
+                break;
+            case "game_submission":
+                display_game_submission();
                 break;
             case "index":
             default:
