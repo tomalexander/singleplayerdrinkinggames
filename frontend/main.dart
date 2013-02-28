@@ -3,6 +3,7 @@ import 'nav_bar.dart';
 import 'register.dart';
 import 'login.dart';
 import 'submit_game.dart';
+import 'util.dart';
 
 void display_register() {
     query("#content").children.clear();
