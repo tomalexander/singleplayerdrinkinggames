@@ -13,8 +13,11 @@ class show_game_form {
             List games = parse(resp);
             games.forEach( (Map game) {
                 DivElement InfoDiv = new DivElement();
-                InfoDiv.text = game["game_name"];
                 InfoDiv.classes.add('game_name');
+                var gamename = game["game_name"];
+                var gameid = game["game_id"];
+                var link = new Element.html("<a href=view_game.html#${gameid}>${gamename}</a>");
+                InfoDiv.children.add(link);
                 content.children.add(InfoDiv);
             });
         });
