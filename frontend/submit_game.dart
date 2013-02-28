@@ -1,11 +1,11 @@
+library submit_game;
 import 'dart:html';
-import 'nav_bar.dart';
 
 class submit_game_form {
   DivElement content;
   
   submit_game_form() {
-    content = new Element.html("<div></div>");
+    content = new Element.html("<div id=\"game-submission\"></div>");
     FormElement form = new FormElement();
     form.action = "submit_game.php";
     form.method = "POST";
@@ -47,33 +47,6 @@ class submit_game_form {
     de.nodes.add(instruction_div);
     form.nodes.add(de);
     
-    /*
-    form.nodes.add(new Text("Supplies"));
-    
-    ButtonElement addButton = new ButtonElement();
-    addButton.type = "button";
-    addButton.onClick.listen(addSupplyItem);
-    addButton.text = "+";
-    supplyList = new OListElement();
-    form.nodes.add(supplyList);
-    DivElement de = new Element.html("<div></div>");
-    de.nodes.add(new Element.html("<input type=\"text\" name=\"supplies[]\">"));
-    de.nodes.add(addButton);
-    supplyList.append(de);
-    form.nodes.add(new Element.html("<br>"));
-    
-    form.nodes.add(new Text("Instructions"));
-    addButton = new ButtonElement();
-    addButton.type = "button";
-    addButton.onClick.listen(addInstructionItem);
-    addButton.text = "+";
-    instructionList = new OListElement();
-    form.nodes.add(instructionList);
-    de = new Element.html("<div></div>");
-    de.nodes.add(new Element.html("<input type=\"text\" name=\"instructions[]\">"));
-    de.nodes.add(addButton);
-    instructionList.append(de);
-*/
     SubmitButtonInputElement submit = new Element.html("<input type=\"submit\" value=\"Create Game\">");
     form.nodes.add(submit);
     form.onSubmit.listen((e) {submit.disabled = true;});
@@ -107,85 +80,32 @@ class submit_game_form {
   }
   
   void add_instruction_item(DivElement to_insert_after, {bool first_item : false}) {
-  DivElement new_item = new Element.html("<div class=\"item\"></div>");
-  Element new_box = new Element.html("<input id=\"instructions\" name=\"instructions[]\" class=\"instructions\" type=\"text\" placeholder=\"Add Instruction Here: 255 characters\" maxlength=\"255\">");
-  Element new_add_button = new Element.html("<input id=\"add-instruction-button\" name=\"add-instruction-button\" class=\"add-instruction-button\" type=\"button\" value=\"+\">");
-  Element new_remove_button = new Element.html("<input id=\"remove-instruction-button\" name=\"remove-instruction-button\" class=\"add-instruction-button\" type=\"button\" value=\"-\">");
+    DivElement new_item = new Element.html("<div class=\"item\"></div>");
+    Element new_box = new Element.html("<input id=\"instructions\" name=\"instructions[]\" class=\"instructions\" type=\"text\" placeholder=\"Add Instruction Here: 255 characters\" maxlength=\"255\">");
+    Element new_add_button = new Element.html("<input id=\"add-instruction-button\" name=\"add-instruction-button\" class=\"add-instruction-button\" type=\"button\" value=\"+\">");
+    Element new_remove_button = new Element.html("<input id=\"remove-instruction-button\" name=\"remove-instruction-button\" class=\"add-instruction-button\" type=\"button\" value=\"-\">");
 
-  new_add_button.onClick.listen((e) => add_instruction_item(new_item));
-  new_remove_button.onClick.listen((e) { 
-                                         // grab [parent]'s [parent], remove [parent], add a new item if none exist
-                                         DivElement parent_parent = new_add_button.parent.parent;
-                                         new_add_button.parentNode.remove();
-                                         if(parent_parent.nodes.length < 1){
-                                           add_instruction_item(parent_parent, first_item : true);
-                                         }
-                                       });
+    new_add_button.onClick.listen((e) => add_instruction_item(new_item));
+    new_remove_button.onClick.listen((e) { 
+                                           // grab [parent]'s [parent], remove [parent], add a new item if none exist
+                                           DivElement parent_parent = new_add_button.parent.parent;
+                                           new_add_button.parentNode.remove();
+                                           if(parent_parent.nodes.length < 1){
+                                             add_instruction_item(parent_parent, first_item : true);
+                                           }
+                                         });
   
-  new_item.nodes.add(new_box);
-  new_item.nodes.add(new_add_button);
-  new_item.nodes.add(new_remove_button);
+    new_item.nodes.add(new_box);
+    new_item.nodes.add(new_add_button);
+    new_item.nodes.add(new_remove_button);
   
-  if(first_item) {
-    to_insert_after.insertAdjacentElement("afterBegin", new_item);
-  } else {
-    to_insert_after.insertAdjacentElement("afterEnd", new_item);
-  }
-}
-  
-  /*
-  void addSupplyItem(Event e) {
-    DivElement de = new Element.html("<div></div>");
-    Element newBox = new Element.html("<input type=\"text\" name=\"supplies[]\">");
-    ButtonElement removeButton = new ButtonElement();
-    removeButton.type = "button";
-    removeButton.on.click.add((e) => removeButton.parentNode.remove());
-    removeButton.text = "-";
-    ButtonElement addButton = new ButtonElement();
-    addButton.on.click.add(addSupplyItem);
-    addButton.type = "button";
-    addButton.text = "+";
-    
-    de.nodes.add(newBox);
-    de.nodes.add(addButton);
-    de.nodes.add(removeButton);
-    supplyList.append(de);
-  }
-  
-  void addInstructionItem(Event e) {
-    DivElement de = new Element.html("<div></div>");
-    Element newBox = new Element.html("<input type=\"text\" name=\"instructions[]\">");
-    ButtonElement removeButton = new ButtonElement();
-    removeButton.type = "button";
-    removeButton.on.click.add((e) => removeButton.parentNode.remove());
-    removeButton.text = "-";
-    ButtonElement addButton = new ButtonElement();
-    addButton.type = "button";
-    addButton.on.click.add(addInstructionItem);
-    addButton.text = "+";
-    
-    de.nodes.add(newBox);
-    de.nodes.add(addButton);
-    de.nodes.add(removeButton);
-    instructionList.append(de);
-  }
-  */
-}
-
-void main() {
-    try {
-        main_wrapped();
-    } on Exception
-    catch (ex) {
-        document.window.alert(ex.toString());
+    if(first_item) {
+      to_insert_after.insertAdjacentElement("afterBegin", new_item);
+    } else {
+      to_insert_after.insertAdjacentElement("afterEnd", new_item);
     }
+  }
 }
 
-void main_wrapped() {
-    query('#main').children.add(new nav_bar().content);
-    var game_div = new DivElement();
-    game_div.id = "game-submission";
-    query('#main').children.add(game_div);
-    query('#game-submission').children.add(new submit_game_form().content);
-}
+
 

@@ -31,6 +31,11 @@ String get_url_variable(String name)
     return null;
 }
 
+void display_game_submission() {
+    query("#content").children.clear();
+    query("#content").children.add(new submit_game_form().content);
+}
+
 void handle_history() {
     window.onPopState.listen((event) {
             String page_name = get_url_variable("page");
@@ -45,6 +50,9 @@ void handle_history() {
                 break;
             case "register":
                 display_register();
+                break;
+            case "game_submission":
+                display_game_submission();
                 break;
             case "index":
             default:
