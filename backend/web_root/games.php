@@ -148,7 +148,7 @@ function game_exists_id($game_id) {
 function get_supplies($game_id) {
     $db = open_db();
     $ret = array();
-    if(!game_exists($game_id)) {
+    if(!game_exists_id($game_id)) {
         close_db();
         return $ret;
     }
@@ -171,7 +171,7 @@ function get_supplies($game_id) {
 function get_instructions($game_id) {
     $db = open_db();
     $ret = array();
-    if(!game_exists($game_id)) {
+    if(!game_exists_id($game_id)) {
         close_db();
         return $ret;
     }
@@ -208,12 +208,10 @@ function get_game_id($game_name) {
  * 
  * @return a game object for the game or null if it does not exist
  */
-
-
 function get_game($game_id) {
     $db = open_db();
     $ret = new game;
-    if(!game_exists($game_id)) {
+    if(!game_exists_id($game_id)) {
         close_db();
         return null;
     }
@@ -242,7 +240,6 @@ function get_game($game_id) {
  *
  * @return list of valid game objects
  */
-
 function get_game_list() {
     $db = open_db();
     $result = $db->query("SELECT * FROM games");
