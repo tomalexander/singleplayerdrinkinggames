@@ -14,7 +14,7 @@ class nav_bar
             "Games" : "games",
             "Booze" : "booze",
             "Login" : "login",
-            "Register" : "register"
+            "Register" : "register",
             "Submit Game" : "game_submission"
         };
         link_list.forEach( (e) {

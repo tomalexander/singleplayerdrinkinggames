@@ -1,3 +1,4 @@
+library submit_game;
 import 'dart:html';
 
 class submit_game_form {
