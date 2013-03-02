@@ -1,0 +1,41 @@
+@startuml
+title SinglePlayerDrinkingGames Domain Model
+
+
+object Game
+object : Title
+object : Instructions
+object : Materials
+
+object User
+object : Identifying Name
+object : Authentication Method
+
+object test
+
+note left of test
+    Front Page
+        -Makes them want to drink
+    List Games
+        -See listing of games
+        -Filter the Listing
+    Game Pages
+        -See instructions
+        -Comment
+        -Vote
+    Login Page
+        -Login Bitches
+        -Captcha
+    Register Page
+        -See above bitches
+    Submit Game
+        -Submit a new game
+    Objects
+        Games
+        Users
+            Identified Users
+            Non Identified Users
+        Pages
+end note
+
+@enduml
