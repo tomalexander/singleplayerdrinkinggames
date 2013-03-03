@@ -1,0 +1,12 @@
+@startuml
+title SinglePlayerDrinkingGames Deployment Diagram
+
+node "singleplayerdrinkinggames.com" {
+    
+}
+
+database "dreamhost" {
+
+}
+
+@enduml
