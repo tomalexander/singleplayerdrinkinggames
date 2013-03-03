@@ -1,0 +1,13 @@
+* Functionality
+- Submit Game
+- View Game
+- Create Account
+- Log In
+- Comment on game
+- HTTPS
+* Usability
+- Website uses a consistent color scheme and layout for every page
+* Reliability
+* Performance
+* Supportability
+- 
