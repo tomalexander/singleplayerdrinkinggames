@@ -1,12 +1,29 @@
 @startuml
 title SinglePlayerDrinkingGames Deployment Diagram
 
-node "singleplayerdrinkinggames.com" {
-    
+node Drinker {
+    [Web Browser]
 }
 
-database "dreamhost" {
-
+node "Web Server (Debian 6.06 Squeeze)" as Web {
+    [Apache Server]
+    [PHP Server]
 }
+
+
+database "Database Server" as DB {
+    [mysql]
+}
+
+[Apache Server] ..> [PHP Server] : CGI
+[Web Browser] ..> [Apache Server] : HTTPS
+[PHP Server] ..> [mysql] : TCP
+
+note bottom of [Apache Server] : Apache Version 2.2.22
+note bottom of [PHP Server] :  PHP Version 5.3.13
+note bottom of [mysql] :  MySql Version 5.1.56
+
+Drinker -- Web : Public Internet
+Web -- DB : DreamHost Internal Network
 
 @enduml
