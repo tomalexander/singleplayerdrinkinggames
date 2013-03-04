@@ -3,15 +3,18 @@ title SinglePlayerDrinkingGames Domain Model
 
 
 object Game
-object : Title
-object : Instructions
-object : Materials
+Game : Title
+Game : Instructions
+Game : Materials
+Game : Rating
 
-object User
-object : Identifying Name
-object : Authentication Method
+object "User Record" as UR
+UR : Identifying Name
+UR : Authentication Details
 
-object test
+object "Anonymous User" as Anon
+
+object "Logged In User" as User
 
 note left of test
     Front Page
