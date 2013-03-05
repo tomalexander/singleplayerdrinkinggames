@@ -1,13 +1,71 @@
+#+TITLE:     Supplemental Specification
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:t todo:t pri:nil tags:t
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+#+XSLT:
+#+LaTeX_CLASS_OPTIONS: [12pt,letterpaper,bookmarks=false,colorlinks=true,linkcolor=blue,pdfstartview=FitH]
 * Functionality
-- Submit Game
-- View Game
-- Create Account
-- Log In
-- Comment on game
-- HTTPS
+** Must
+1. The user will be able to submit a new game
+2. The user will be able to select a game from a list
+3. The user will be able to see the rules to the game
+4. The user will be able to create a new account
+5. The user will be able to log into his account using his username and password
+6. While logged in, the user will be able to log out of his account
+7. The session will be encrypted using HTTPS
+** Should
+1. The user will be able to search using keywords for a game
+2. The user will be able to see derivative games
+3. The user will be able to comment on a game
+4. The user will be able to see comments posted by other users on a game
+5. The user will be able to upvote/downvote a game
+** Could
+1. The user will be able to chat with other people who are on the site
+2. The user will be able to participate in an online power hour
+3. The power hour will go around the users in a round-robin fashion allowing each player to chose a topic to cheers to
+4. Games and comments will be able to be flagged as offensive for moderator review
+5. Multiple failed login attempts could lock the user account for 10 minutes
+6. A captcha could be used to reduce spam
 * Usability
-- Website uses a consistent color scheme and layout for every page
+** Must
+1. Website uses a consistent color scheme and layout for every page
+2. Input fields will use HTML5 form validation to inform a user when their input is insufficient
+3. All major pages will be accessible from the main page through a navigation bar
+** Should
+1. Fields should have a caption that appears when hovered over to explain the field
 * Reliability
+** Must
+1. Comments will appear in a deterministic order
+** Should
+1. Forms not requiring server-side validation will not allow submission without the fields filled out properly
 * Performance
+** Must
+1. Under a broadband connection, all pages of the site must load in under 1 second
+2. The majority of page changes will be processed through server side functionality to reduce data sent through the server
+** Should
+1. No more than 2 megabytes of images will be present on each page
+** Could
+1. Asynchronously preload server-side data for the pages to allow for faster page switching
+** Won't
+1. The user will not be able to log in or out without a full page reload
 * Supportability
-- 
+** Must
+1. Server side functionality will be separated into mulitple PHP scripts to keep things modular, allowing for new functionality to be added without interfering with old functionality
+2. PHP functions used by multiple scripts will be imported rather than duplicated
+3. All server side functions will return the common format of JSON, allowing for consistent code and for multiple frontends to be developed
+4. Server side scripts will be able to be called directly from the browser to display the JSON output for debugging
+5. The site must display properly on the latest stable release of Chromium and Firefox
+6. The user will not require any installation other than the web browser
+** Should
+1. All functions used imported by an external file will have documentation in the comments above the function
+2. Code will follow a consistent K&R style of indentation
+** Could
+1. The site could display semi-properly on the latest stable release of Internet Explorer
+2. All functions could have documentation in the comments above the function
