@@ -1,0 +1,27 @@
+#+TITLE:     Contribution Summary
+#+AUTHOR:    
+#+EMAIL:     
+#+DATE:      
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:nil toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:t todo:t pri:nil tags:t
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+#+XSLT:
+* Contributions
+| Task                        | Person   |
+|-----------------------------+----------|
+| Domain Model                | Tate     |
+| Supplemental Specifications | Tom      |
+| Deployment Diagram          | Colin    |
+| Use Cases                   | Rob      |
+| Work Breakdown Structure    | Colin    |
+| Updated Schedule            | Colin    |
+| Contribution Summary        | Tom      |
+| Fix Inception Items         | Colin    |
+| Status Report               | Everyone |
