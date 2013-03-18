@@ -23,7 +23,13 @@ class view_game_form {
         var postdata = {"gameid":gameid};
         String encodedData = encodeMap(postdata);
         get_string("view_game.php", encodedData, (resp) {
-            content.text = resp;
+            var parsed_resp = parse(resp);
+            var gn_div = new Element.html("<div></div>");
+            gn_div.text = "Name : ${parsed_resp["game_name"]}";
+            content.children.add(gn_div);
+            var rest_div = new Element.html("<div></div>");
+            rest_div.text = resp;
+            content.children.add(gn_div);
         });
     }
 }
