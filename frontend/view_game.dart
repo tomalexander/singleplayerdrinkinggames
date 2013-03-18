@@ -16,20 +16,24 @@ String encodeMap(Map data) {
 class view_game_form {
     DivElement content;
 
+    display_div(content) {
+        var new_div = new Element.html("<div></div>");
+        new_div.text = content;
+        this.content.children.add(new_div);
+    }
+
     view_game_form() {
-        content = new Element.html("<div></div>");
-        content.id = "view_game";
+        this.content = new Element.html("<div></div>");
+        this.content.id = "view_game";
         var gameid = get_url_variable("gameid");
         var postdata = {"gameid":gameid};
         String encodedData = encodeMap(postdata);
         get_string("view_game.php", encodedData, (resp) {
             var parsed_resp = parse(resp);
-            var gn_div = new Element.html("<div></div>");
-            gn_div.text = "Name : ${parsed_resp["game_name"]}";
-            content.children.add(gn_div);
-            var rest_div = new Element.html("<div></div>");
-            rest_div.text = resp;
-            content.children.add(gn_div);
+            this.display_div("Name : ${parsed_resp["game_name"]}");
+            this.display_div("Description : ${parsed_resp["short_description"]}");
+            this.display_div("Description : ${parsed_resp["long_description"]}");
+            this.display_div(resp);
         });
     }
 }
