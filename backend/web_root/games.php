@@ -3,6 +3,7 @@ include_once "../db_functions.php";
 
 class game {
     public $game_id;
+    public $creation_time;
     public $game_name;
     public $submitter_id;
     public $submitter_username;
@@ -40,9 +41,9 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
         close_db();
         return -3;
     }
-    $game_name = htmlspecialchars($game_name);
-    $short_desc = htmlspecialchars($short_desc);
-    $long_desc = htmlspecialchars($long_desc);
+    $game_name = mysql_real_escape_string($game_name);
+    $short_desc = mysql_real_escape_string($short_desc);
+    $long_desc = mysql_real_escape_string($long_desc);
     $insert = "INSERT INTO games (game_name, submitter_id, short_description, long_description) VALUES (:game_name, :submitter_id, :short_description, :long_description)";
     $stmt = $db->prepare($insert);
     $stmt->bindParam(":game_name", $game_name);
@@ -66,7 +67,7 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
         // Generate array of supplies to insert
         $supp_arr = array();
         foreach($supplies as $supply) {
-            $supp_arr_tmp = array($id, htmlspecialchars($supply));
+            $supp_arr_tmp = array($id, mysql_real_escape_string($supply));
             $supp_arr = array_merge($supp_arr, $supp_arr_tmp);
         }
         $stmt = $db->prepare($insert);
@@ -87,7 +88,7 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
         
         $inst_arr = array();
         foreach($instructions as $instruction) {
-            $inst_arr_tmp = array($id, htmlspecialchars($instruction));
+            $inst_arr_tmp = array($id, mysql_real_escape_string($instruction));
             $inst_arr = array_merge($inst_arr, $inst_arr_tmp);
         }
         $stmt = $db->prepare($insert);
@@ -111,6 +112,7 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
  */
 function game_exists($game_name) {
     $db = open_db();
+    $game_name = mysql_real_escape_string($game_name);
     $result = $db->query("SELECT * FROM games WHERE `game_name`=\"{$game_name}\"");
     close_db();
     if ($result->fetch()) {
@@ -155,7 +157,7 @@ function get_supplies($game_id) {
     $result = $db->query("SELECT * FROM supplies WHERE `game_id`=\"{$game_id}\"");
     close_db();
     foreach($result as $row) {
-        $ret[] = $row["supply"];
+        $ret[] = htmlspecialchars($row["supply"]);
     }
 
     return $ret;
@@ -178,7 +180,7 @@ function get_instructions($game_id) {
     $result = $db->query("SELECT * FROM instructions WHERE `game_id`=\"{$game_id}\"");
     close_db();
     foreach($result as $row) {
-        $ret[] = $row["instruction"];
+        $ret[] = htmlspecialchars($row["instruction"]);
     }
 
     return $ret;
@@ -193,6 +195,7 @@ function get_instructions($game_id) {
  */
 function get_game_id($game_name) {
     $db = open_db();
+    $game_name = mysql_real_escape_string($game_name);
     $result = $db->query("SELECT * FROM games WHERE `game_name`=\"{$game_name}\"");
     close_db();
     foreach ($result as $row) {
@@ -215,17 +218,18 @@ function get_game($game_id) {
         close_db();
         return null;
     }
-    $result = $db->query("SELECT * FROM games WHERE `game_id`=\"{$game_id}\"");
+    $result = $db->query("SELECT *,UNIX_TIMESTAMP(creation_time) FROM games WHERE `game_id`=\"{$game_id}\"");
     foreach ($result as $row) {
         $ret->game_id = $row["game_id"];
-        $ret->game_name = $row["game_name"];
+        $ret->creation_time = $row["UNIX_TIMESTAMP(creation_time)"];
+        $ret->game_name = htmlspecialchars($row["game_name"]);
         $ret->submitter_id = $row["submitter_id"];
         $user_result = $db->query("SELECT * FROM users WHERE `id`=\"{$ret->submitter_id}\"");
         foreach ($user_result as $user_row) {
-            $ret->submitter_username = $user_row["id"];
+            $ret->submitter_username = htmlspecialchars($user_row["id"]);
         }
-        $ret->short_description = $row["short_description"];
-        $ret->long_description = $row["long_description"];
+        $ret->short_description = htmlspecialchars($row["short_description"]);
+        $ret->long_description = htmlspecialchars($row["long_description"]);
         $ret->supplies = get_supplies($game_id);
         $ret->instructions = get_instructions($game_id);
         $ret->upvote_count = 0;

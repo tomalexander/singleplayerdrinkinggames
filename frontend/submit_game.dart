@@ -1,31 +1,48 @@
 library submit_game;
 import 'dart:html';
+import 'login.dart';
 
 class submit_game_form {
   DivElement content;
   
   submit_game_form() {
     content = new Element.html("<div id=\"game-submission\"></div>");
+    Map user_data = get_login_details();
+    if ( user_data != null) {
+        // User logged in, create form
+        create_form(user_data['id']);
+    } else {
+      // User not logged in, tell them they're dumb
+      content.nodes.clear();
+      content.nodes.add(new Text("You must be logged in to submit a game."));
+      //content.nodes.add(new login_form());
+    }
+  }
+
+  void create_form(user_id) {
+    content.nodes.clear();
     FormElement form = new FormElement();
     form.action = "submit_game.php";
     form.method = "POST";
     content.nodes.add(form);
     
+    form.nodes.add(new Element.html("<input type=\"hidden\" name=\"submitter_id\" value=\"${user_id}\">"));
+ 
     DivElement de = new Element.html("<div class=\"row\"></div>");
     de.nodes.add(new Element.html("<label class=\"col1\" for=\"game-name\">Game Name:</label>"));
-    de.nodes.add(new Element.html("<input class=\"col2\" type=\"text\" name=\"game-name\" maxlength=\"255\" placeholder=\"Game Name Goes Here: 255 characters\" required>"));
+    de.nodes.add(new Element.html("<input class=\"col2\" type=\"text\" name=\"game_name\" maxlength=\"255\" placeholder=\"Game Name Goes Here: 255 characters\" required>"));
     
     form.nodes.add(de);
     
     de = new Element.html("<div class=\"row\"></div>");
     de.nodes.add(new Element.html("<label class=\"col1\" for=\"short-description\">Short Description:</label>"));
-    de.nodes.add(new Element.html("<input class=\"col2\" type=\"text\" name=\"short-description\" maxlength=\"255\" placeholder=\"Short Description: 255 characters\" required>"));
+    de.nodes.add(new Element.html("<input class=\"col2\" type=\"text\" name=\"short_description\" maxlength=\"255\" placeholder=\"Short Description: 255 characters\" required>"));
     
     form.nodes.add(de);
     
     de = new Element.html("<div class=\"row\"></div>");
     de.nodes.add(new Element.html("<label class=\"col1\" for=\"long-description\">Long Description:</label>"));
-    de.nodes.add(new Element.html("<textarea class=\"col2\" rows=\"4\" name=\"long-description\" maxlength=\"1023\" placeholder=\"Long Description: 1023 characters\" required>"));
+    de.nodes.add(new Element.html("<textarea class=\"col2\" rows=\"4\" name=\"long_description\" maxlength=\"1023\" placeholder=\"Long Description: 1023 characters\" required>"));
     
     form.nodes.add(de);
     
