@@ -18,7 +18,7 @@ void get_string(String address, String url_data, callback)
         });
   
     // POST the data to the server
-    request.open("POST", address, true);
+    request.open("POST", address, async: true);
     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     request.send(url_data); // perform the async POST
 }
@@ -36,7 +36,7 @@ String get_string_synchronous(String address, String url_data)
     HttpRequest request = new HttpRequest();
   
     // POST the data to the server
-    request.open("POST", address, false);
+    request.open("POST", address, async: false);
     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     request.send(url_data); // perform the sync POST
     return request.responseText;
