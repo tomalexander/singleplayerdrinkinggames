@@ -16,10 +16,10 @@ String encodeMap(Map data) {
 class view_game_form {
     DivElement content;
 
-    display_div(content) {
-        var new_div = new Element.html("<div></div>");
-        new_div.text = content;
-        this.content.children.add(new_div);
+    display_pre(content) {
+        var new_pre = new Element.html("<pre></pre>");
+        new_pre.text = content;
+        this.content.children.add(new_pre);
     }
 
     view_game_form() {
@@ -30,10 +30,12 @@ class view_game_form {
         String encodedData = encodeMap(postdata);
         get_string("view_game.php", encodedData, (resp) {
             var parsed_resp = parse(resp);
-            this.display_div("Name : ${parsed_resp["game_name"]}");
-            this.display_div("Description : ${parsed_resp["short_description"]}");
-            this.display_div("Description : ${parsed_resp["long_description"]}");
-            this.display_div(resp);
+            this.display_pre("Name : ${parsed_resp["game_name"]}");
+            this.display_pre("Short Description : ${parsed_resp["short_description"]}");
+            this.display_pre("Long Description : ${parsed_resp["long_description"]}");
+            this.display_pre("Instructions:\n${parsed_resp["instructions"].join("\n")}");
+            this.display_pre("Supplies:\n${parsed_resp["supplies"].join("\n")}");
+            //this.display_pre(resp);
         });
     }
 }
