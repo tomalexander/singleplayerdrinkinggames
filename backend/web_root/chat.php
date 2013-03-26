@@ -45,7 +45,7 @@ if ($action == "send") {
     $room = isset($_REQUEST["room"]) ? $_REQUEST["room"] : "main";
     $last_id = isset($_REQUEST["last_id"]) ? $_REQUEST["last_id"] : 0;
     $db = open_db();
-    $result = $db->query("SELECT chat.id,chat.message,UNIX_TIMESTAMP(chat.time),(SELECT username FROM users WHERE id=chat.userid LIMIT 1) FROM chat WHERE `room`=\"{$room}\" AND `id`>{$last_id};");
+    $result = $db->query("SELECT chat.id,chat.message,UNIX_TIMESTAMP(chat.time),(SELECT username FROM users WHERE id=chat.userid LIMIT 1) FROM chat WHERE `room`=\"{$room}\" AND `id`>{$last_id} ORDER BY chat.id ASC;");
     $ret = array();
     foreach ($result as $row) {
         $current = new chat_message;
