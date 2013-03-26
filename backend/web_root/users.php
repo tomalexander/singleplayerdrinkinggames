@@ -116,6 +116,24 @@ function get_user_id($username)
 }
 
 /** 
+ * Get the username for the userid
+ * 
+ * @param userid The user id to look up
+ * 
+ * @return the username or null if not found
+ */
+function get_user_name($userid)
+{
+    $db = open_db();
+    $result = $db->query("SELECT * FROM users WHERE `id`=\"{$userid}\"");
+    close_db();
+    foreach ($result as $row) {
+        return $row["username"];
+    }
+    return null;
+}
+
+/** 
  * Return a user object for the corresponding uuid
  * 
  * @param uuid The logged in UUID

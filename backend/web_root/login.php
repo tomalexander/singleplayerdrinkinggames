@@ -1,5 +1,5 @@
 <?php
-include "users.php";
+include_once "users.php";
 
 function main()
 {
