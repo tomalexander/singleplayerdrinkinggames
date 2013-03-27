@@ -1,5 +1,4 @@
 <?php
-include "users.php";
 include "games.php";
 
 function main() {

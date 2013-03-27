@@ -31,6 +31,7 @@ class view_game_form {
         get_string("view_game.php", encodedData, (resp) {
             var parsed_resp = parse(resp);
             this.display_pre("Name : ${parsed_resp["game_name"]}");
+            this.display_pre("Submitter : ${parsed_resp["submitter_username"]}");
             this.display_pre("Short Description : ${parsed_resp["short_description"]}");
             this.display_pre("Long Description : ${parsed_resp["long_description"]}");
             this.display_pre("Instructions:\n${parsed_resp["instructions"].join("\n")}");

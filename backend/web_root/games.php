@@ -41,9 +41,6 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
         close_db();
         return -3;
     }
-    $game_name = mysql_real_escape_string($game_name);
-    $short_desc = mysql_real_escape_string($short_desc);
-    $long_desc = mysql_real_escape_string($long_desc);
     $insert = "INSERT INTO games (game_name, submitter_id, short_description, long_description) VALUES (:game_name, :submitter_id, :short_description, :long_description)";
     $stmt = $db->prepare($insert);
     $stmt->bindParam(":game_name", $game_name);
@@ -67,7 +64,7 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
         // Generate array of supplies to insert
         $supp_arr = array();
         foreach($supplies as $supply) {
-            $supp_arr_tmp = array($id, mysql_real_escape_string($supply));
+            $supp_arr_tmp = array($id, $supply);
             $supp_arr = array_merge($supp_arr, $supp_arr_tmp);
         }
         $stmt = $db->prepare($insert);
@@ -88,7 +85,7 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
         
         $inst_arr = array();
         foreach($instructions as $instruction) {
-            $inst_arr_tmp = array($id, mysql_real_escape_string($instruction));
+            $inst_arr_tmp = array($id, $instruction);
             $inst_arr = array_merge($inst_arr, $inst_arr_tmp);
         }
         $stmt = $db->prepare($insert);
@@ -112,10 +109,17 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
  */
 function game_exists($game_name) {
     $db = open_db();
-    $game_name = mysql_real_escape_string($game_name);
-    $result = $db->query("SELECT * FROM games WHERE `game_name`=\"{$game_name}\"");
+    $query = "SELECT * FROM games WHERE 'game_name' = :game_name";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(":game_name", $game_name);
+    if(!$stmt->execute()) {
+      close_db();
+      print_r($stmt->errorinfo());
+      return false;
+    }
+    $result = $stmt->fetchAll();
     close_db();
-    if ($result->fetch()) {
+    if ($result) {
         return true;
     } else {
         return false;
@@ -131,9 +135,17 @@ function game_exists($game_name) {
  */
 function game_exists_id($game_id) {
     $db = open_db();
-    $result = $db->query("SELECT * FROM games WHERE `game_id`=\"{$game_id}\"");
+    $query = "SELECT * FROM games WHERE game_id = :game_id";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(":game_id", $game_id);
+    if(!$stmt->execute()) {
+      close_db();
+      print_r($stmt->errorinfo());
+      return false;
+    }
+    $result = $stmt->fetchAll();
     close_db();
-    if ($result->fetch()) {
+    if ($result) {
         return true;
     } else {
         return false;
@@ -154,7 +166,15 @@ function get_supplies($game_id) {
         close_db();
         return $ret;
     }
-    $result = $db->query("SELECT * FROM supplies WHERE `game_id`=\"{$game_id}\"");
+    $query = "SELECT * FROM supplies WHERE game_id = :game_id";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(":game_id", $game_id);
+    if(!$stmt->execute()) {
+      close_db();
+      print_r($stmt->errorinfo());
+      return $ret;
+    }
+    $result = $stmt->fetchAll();
     close_db();
     foreach($result as $row) {
         $ret[] = htmlspecialchars($row["supply"]);
@@ -177,7 +197,15 @@ function get_instructions($game_id) {
         close_db();
         return $ret;
     }
-    $result = $db->query("SELECT * FROM instructions WHERE `game_id`=\"{$game_id}\"");
+    $query = "SELECT * FROM instructions WHERE game_id = :game_id";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(":game_id", $game_id);
+    if(!$stmt->execute()) {
+      close_db();
+      print_r($stmt->errorinfo());
+      return $ret;
+    }
+    $result = $stmt->fetchAll();
     close_db();
     foreach($result as $row) {
         $ret[] = htmlspecialchars($row["instruction"]);
@@ -195,8 +223,15 @@ function get_instructions($game_id) {
  */
 function get_game_id($game_name) {
     $db = open_db();
-    $game_name = mysql_real_escape_string($game_name);
-    $result = $db->query("SELECT * FROM games WHERE `game_name`=\"{$game_name}\"");
+    $query = "SELECT * FROM games WHERE game_name = :game_name";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(":game_name", $game_name);
+    if(!$stmt->execute()) {
+      close_db();
+      print_r($stmt->errorinfo());
+      return -1;
+    }
+    $result = $stmt->fetchAll();
     close_db();
     foreach ($result as $row) {
         return intval($row["game_id"]);
@@ -218,15 +253,24 @@ function get_game($game_id) {
         close_db();
         return null;
     }
-    $result = $db->query("SELECT *,UNIX_TIMESTAMP(creation_time) FROM games WHERE `game_id`=\"{$game_id}\"");
+    $query = "SELECT *,UNIX_TIMESTAMP(creation_time) FROM games WHERE game_id = :game_id";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(":game_id", $game_id);
+    if(!$stmt->execute()) {
+      close_db();
+      print_r($stmt->errorinfo());
+      return -1;
+    }
+    $result = $stmt->fetchAll();
     foreach ($result as $row) {
+        //echo "ROW: " . $row . "<br>";
         $ret->game_id = $row["game_id"];
         $ret->creation_time = $row["UNIX_TIMESTAMP(creation_time)"];
         $ret->game_name = htmlspecialchars($row["game_name"]);
         $ret->submitter_id = $row["submitter_id"];
         $user_result = $db->query("SELECT * FROM users WHERE `id`=\"{$ret->submitter_id}\"");
         foreach ($user_result as $user_row) {
-            $ret->submitter_username = htmlspecialchars($user_row["id"]);
+            $ret->submitter_username = htmlspecialchars($user_row["username"]);
         }
         $ret->short_description = htmlspecialchars($row["short_description"]);
         $ret->long_description = htmlspecialchars($row["long_description"]);
@@ -256,5 +300,3 @@ function get_game_list() {
     return $list;
 }
 ?>
-
-
