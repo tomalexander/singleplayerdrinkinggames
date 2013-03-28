@@ -276,8 +276,26 @@ function get_game($game_id) {
         $ret->long_description = htmlspecialchars($row["long_description"]);
         $ret->supplies = get_supplies($game_id);
         $ret->instructions = get_instructions($game_id);
-        $ret->upvote_count = 0;
-        $ret->downvote_count = 0;
+        $query = "SELECT COUNT(*) FROM votes WHERE game_id = :game_id AND vote = 1";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(":game_id", $ret->game_id);
+        if(!$stmt->execute()) {
+            $ret->upvote_count = 0;
+        } else {
+            foreach($stmt->fetchAll() as $s) {
+                $ret->upvote_count = $s["COUNT(*)"];
+            }
+        }
+        $query = "SELECT COUNT(*) FROM votes WHERE game_id = :game_id AND vote = -1";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(":game_id", $ret->game_id);
+        if(!$stmt->execute()) {
+            $ret->downvote_count = 0;
+        } else {
+            foreach($stmt->fetchAll() as $s) {
+                $ret->downvote_count = $s["COUNT(*)"];
+            }
+        }
         $ret->report_count = 0;
         $ret->view_count = 0;
     }
@@ -298,5 +316,85 @@ function get_game_list() {
         $list[] = $item;
     }
     return $list;
+}
+
+/** 
+ * Adds or Changes a vote
+ * 
+ * @param game_id The game ID
+ * @param voter_id The user voting
+ * @param vote the vote to record
+ */
+function vote($game_id, $voter_id, $vote) {
+    $db = open_db();
+    $query = "";
+    $ret = 0;
+    // Check their previous vote if any
+    $old_vote = get_vote($game_id, $voter_id);
+    $remove = false;
+    // Add if it is different from their old and an allowed value
+    if(($vote == $old_vote) || ($vote != -1 && $vote != 1)) {
+        // Else remove it from the table
+        $query = "DELETE FROM votes WHERE game_id = :game_id AND voter_id = :voter_id";
+        $remove = true;
+    } else {
+        $query = "UPDATE votes SET vote = :vote WHERE voter_id = :voter_id AND game_id = :game_id"; 
+    }
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(":game_id", $game_id);
+    $stmt->bindParam(":voter_id", $voter_id);
+    if(!$remove) {
+        $stmt->bindParam(":vote", $vote);
+    }
+    if(!$stmt->execute()) {
+        print_r($stmt->errorinfo());
+        close_db();
+        return intval($ret);
+    }
+    if($stmt->rowCount() > 0 || $remove) {
+        close_db();
+        $ret = ($remove) ? 0 : $vote;
+        return intval($ret);
+    }
+
+    $query = "INSERT INTO votes (game_id, voter_id, vote) VALUES (:game_id, :voter_id, :vote)";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(":game_id", $game_id);
+    $stmt->bindParam(":voter_id", $voter_id);
+    $stmt->bindParam(":vote", $vote);
+    if(!$stmt->execute()) {
+        print_r($stmt->errorinfo());
+        close_db();
+        return intval($ret);
+    }
+    $ret = $vote;
+    close_db();
+    return intval($ret);
+}
+
+/** 
+ * Get a user's vote for a game
+ * 
+ * @param game_id The game ID
+ * @param voter_id The user to search for
+ *
+ * @return vote the vote on record or 0 if none recorded / error
+ */
+function get_vote($game_id, $voter_id) {
+    $db = open_db();
+    $query = "SELECT vote FROM votes WHERE game_id = :game_id AND voter_id = :voter_id";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(":game_id", $game_id);
+    $stmt->bindParam(":voter_id", $voter_id);
+    if(!$stmt->execute()) {
+        close_db();
+        return 0;
+    }
+    $result = $stmt->fetchAll();
+    $ret = 0;
+    foreach ($result as $row) {
+        $ret = intval($row["vote"]);
+    }
+    return $ret;
 }
 ?>
