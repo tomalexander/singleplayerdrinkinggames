@@ -67,16 +67,3 @@ class chat_box
         }
     }
 }
-
-void main() {
-    try {
-        main_wrapped();
-    } on Exception
-    catch (ex) {
-        document.window.alert(ex.toString());
-    }
-}
-
-void main_wrapped() {
-    query('#main').children.add(new chat_box("main").content);
-}
