@@ -15,9 +15,11 @@ class chat_box
     InputElement input_message;
     ButtonElement submit_message;
     Timer refresh;
+    String original_hash;
 
     chat_box(String _room) {
         room = _room;
+        original_hash = window.location.hash;
         last_id = 0;
         content = new Element.html("<div class=\"chat_window\"></div>");
         chat_window = new Element.html("<textarea cols=60 rows=20 readonly></textarea>");
@@ -40,6 +42,8 @@ class chat_box
         bottom_bar.nodes.add(submit_message);
         content.nodes.add(new Element.html("<div class=\"spacer\"></div>"));
         refresh = new Timer.periodic(const Duration(seconds:2), (Timer timer) {
+                if (window.location.hash != original_hash)
+                    refresh.cancel();
                 update_box();
             });
         update_box();
