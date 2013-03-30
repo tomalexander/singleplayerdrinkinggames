@@ -9,8 +9,8 @@ class submit_game_form {
     content = new Element.html("<div id=\"game-submission\"></div>");
     Map user_data = get_login_details();
     if ( user_data != null) {
-        // User logged in, create form
-        create_form(user_data['id']);
+      // User logged in, create form
+      create_form(user_data['id']);
     } else {
       // User not logged in, tell them they're dumb
       content.nodes.clear();
@@ -18,7 +18,7 @@ class submit_game_form {
       //content.nodes.add(new login_form());
     }
   }
-
+  
   void create_form(user_id) {
     content.nodes.clear();
     FormElement form = new FormElement();
@@ -27,7 +27,7 @@ class submit_game_form {
     content.nodes.add(form);
     
     form.nodes.add(new Element.html("<input type=\"hidden\" name=\"submitter_id\" value=\"${user_id}\">"));
- 
+    
     DivElement de = new Element.html("<div class=\"row\"></div>");
     de.nodes.add(new Element.html("<label class=\"col1\" for=\"game-name\">Game Name:</label>"));
     de.nodes.add(new Element.html("<input class=\"col2\" type=\"text\" name=\"game_name\" maxlength=\"255\" placeholder=\"Game Name Goes Here: 255 characters\" required>"));
@@ -77,14 +77,14 @@ class submit_game_form {
     
     new_add_button.onClick.listen((e) => add_supply_item(new_item));
     new_remove_button.onClick.listen((e) { 
-                                           // grab [parent]'s [parent], remove [parent], add a new item if none exist
-                                           DivElement parent_parent = new_add_button.parent.parent;
-                                           new_add_button.parentNode.remove();
-                                           if(parent_parent.nodes.length < 1){
-                                             add_supply_item(parent_parent, first_item : true);
-                                           }
-                                         });
-   
+        // grab [parent]'s [parent], remove [parent], add a new item if none exist
+        DivElement parent_parent = new_add_button.parent.parent;
+        new_add_button.parentNode.remove();
+        if(parent_parent.nodes.length < 1){
+          add_supply_item(parent_parent, first_item : true);
+        }
+      });
+    
     new_item.nodes.add(new_box);
     new_item.nodes.add(new_add_button);
     new_item.nodes.add(new_remove_button);
@@ -101,21 +101,21 @@ class submit_game_form {
     Element new_box = new Element.html("<input id=\"instructions\" name=\"instructions[]\" class=\"instructions\" type=\"text\" placeholder=\"Add Instruction Here: 255 characters\" maxlength=\"255\">");
     Element new_add_button = new Element.html("<input id=\"add-instruction-button\" name=\"add-instruction-button\" class=\"add-instruction-button\" type=\"button\" value=\"+\">");
     Element new_remove_button = new Element.html("<input id=\"remove-instruction-button\" name=\"remove-instruction-button\" class=\"add-instruction-button\" type=\"button\" value=\"-\">");
-
+    
     new_add_button.onClick.listen((e) => add_instruction_item(new_item));
     new_remove_button.onClick.listen((e) { 
-                                           // grab [parent]'s [parent], remove [parent], add a new item if none exist
-                                           DivElement parent_parent = new_add_button.parent.parent;
-                                           new_add_button.parentNode.remove();
-                                           if(parent_parent.nodes.length < 1){
-                                             add_instruction_item(parent_parent, first_item : true);
-                                           }
-                                         });
-  
+        // grab [parent]'s [parent], remove [parent], add a new item if none exist
+        DivElement parent_parent = new_add_button.parent.parent;
+        new_add_button.parentNode.remove();
+        if(parent_parent.nodes.length < 1){
+          add_instruction_item(parent_parent, first_item : true);
+        }
+      });
+    
     new_item.nodes.add(new_box);
     new_item.nodes.add(new_add_button);
     new_item.nodes.add(new_remove_button);
-  
+    
     if(first_item) {
       to_insert_after.insertAdjacentElement("afterBegin", new_item);
     } else {
