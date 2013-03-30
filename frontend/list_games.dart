@@ -26,20 +26,3 @@ class list_games_form {
     }
 }
 
-void main() {
-    try {
-        main_wrapped();
-    } on Exception
-    catch (ex) {
-        document.window.alert(ex.toString());
-    }
-}
-
-void main_wrapped() {
-    query('#main').children.add(new nav_bar().content);
-    var game_div = new DivElement();
-    game_div.id = "game-view";
-    query('#main').children.add(game_div);
-    query('#game-view').children.add(new list_games_form().content);
-}
-

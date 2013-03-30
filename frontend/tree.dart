@@ -93,16 +93,3 @@ class tree_element
         button.text = '+';
     }
 }
-
-main() {
-    try {
-        main_wrapped();
-    } on Exception catch (ex) {
-        document.window.alert(ex.toString());
-    }
-}
-
-main_wrapped() {
-    String json_data = "[[1,1,\"Candy\"],[2,1,\"igloo\"],[3,2,\"sloth\"],[4,2,\"tree\"]]";
-    query('#tree').children.add(new tree("submit_name", parse(json_data)).content);
-}
