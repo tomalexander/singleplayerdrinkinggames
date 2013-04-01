@@ -131,7 +131,8 @@ package "Frontend Dart" {
         +add_instruction_item(to_insert_after : DivElement, "{first_item = false}" : bool) : void
     }
 
-    tree "1" --> "*"  tree_element : has
+    tree "1" o-- "*"  tree_element : has
+    tree_element "1" o-- "*" tree_element : has
 }
 
 "Backend PHP API Layer" --> "MySQL Database" : accesses

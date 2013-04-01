@@ -128,15 +128,16 @@
         +add_instruction_item(to_insert_after : DivElement, "{first_item = false}" : bool) : void
     }
 
-    tree "1" --> "*"  tree_element : has
+    tree "1" o-- "*"  tree_element : has
+    tree_element "1" o-- "*" tree_element : has
 
 
 view_game_form -> game : uses
-list_games_form -> game : uses
+list_games_form --> game : uses
 chat_box -> chat_message : uses
 login_form -> user : uses
-register_form -> user : uses
-submit_game_form -> game : uses
+register_form --> user : uses
+submit_game_form --> game : uses
 
 game --> game_table : queries
 game --> user_table : queries
