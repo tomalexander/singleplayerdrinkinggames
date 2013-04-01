@@ -1,0 +1,152 @@
+@startuml
+
+    class user_table <<(T,orchid)>> {
+    }
+    class active_login_table <<(T,orchid)>> {
+    }
+    class game_table <<(T,orchid)>> {
+    }
+    class instruction_table <<(T,orchid)>> {
+    }
+    class supply_table <<(T,orchid)>> {
+    }
+    class vote_table <<(T,orchid)>> {
+    }
+    class comment_table <<(T,orchid)>> {
+    }
+    class chat_table <<(T,orchid)>> {
+    }
+
+
+    class chat_message {
+        +id : int
+        +username : String
+        +message : String
+        +timestamp : int
+    }
+    class user {
+        +id : int
+        +username : String
+        +email : String
+    }
+    class game {
+        +game_id : int
+        +creation_time : int
+        +game_name : String
+        +submitter_id : int
+        +submitter_username : String
+        +short_description : String
+        +long_description : String
+        +supplies : array<String>
+        +instructions : array<String>
+        +upvote_count : int
+        +downvote_count : int
+        +report_count : int
+        +view_count : int
+    }
+
+
+    class view_game_form {
+        +content : DivElement
+        ==
+        +view_game_form()
+        --
+        +display_pre(content : String) : void
+        +process_vote(gameid : int, vote : int) : int
+        +get_vote(gameid : int) : int
+        +redo_buttons(vote_val : int, down_button : ButtonElement, up_button : ButtonElement) : void
+        +vote_buttons(gameid) : void
+    }
+    class list_games_form {
+        +content : DivElement
+        ==
+        +list_games_form()
+    }
+    class chat_box {
+        +content : DivElement
+        +room : String
+        +last_id : int
+        +chat_window : TextAreaElement
+        +input_message : InputElement
+        +submit_message : ButtonElement
+        +refresh : Timer
+        +original_hash : String
+        ==
+        +chat_box(_room : String)
+        --
+        +send_message() : void
+        +update_box() : void
+    }
+    class login_form {
+        +content : DivElement
+        ==
+        +login_form()
+        --
+        +create_form() : void
+    }
+    class register_form {
+        +content : DivElement
+        ==
+        +register_form()
+    }
+    class tree {
+        +content : DivElement
+        +name : String
+        +elements : List<tree_element>
+        ==
+        +tree(_name : String, data : List)
+    }
+    class tree_element {
+        +content : DivElement
+        +children : DivElement
+        +clickable : DivElement
+        +button : ButtonElement
+        +id : int
+        +parent : tree_element
+        +text : String
+        +target : InputElement
+        +elements : List<tree_elements>
+        ==
+        +tree_element(_id : int, _parent : tree_element, _text : String, _target : InputElement, _elements : List<tree_element)
+        --
+        +toggle_children() : void
+        +show_children() : void
+        +hide_children() : void
+    }
+    class nav_bar {
+        +content : DivElement
+        ==
+        +nav_bar()
+    }
+    class submit_game_form {
+        +content : DivElement
+        ==
+        +submit_game_form()
+        --
+        +create_form(user_id : int)
+        +add_supply_item(to_insert_after : DivElement, "{first_item = false}" : bool) : void
+        +add_instruction_item(to_insert_after : DivElement, "{first_item = false}" : bool) : void
+    }
+
+    tree "1" --> "*"  tree_element : has
+
+
+view_game_form -> game : uses
+list_games_form -> game : uses
+chat_box -> chat_message : uses
+login_form -> user : uses
+register_form -> user : uses
+submit_game_form -> game : uses
+
+game --> game_table : queries
+game --> user_table : queries
+game --> supply_table : queries
+game --> instruction_table : queries
+game --> vote_table : queries
+user --> user_table : queries
+user --> active_login_table : queries
+chat_message --> user_table : queries
+chat_message --> chat_table : queries
+
+
+@enduml
