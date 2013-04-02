@@ -1,0 +1,44 @@
+#+TITLE:     Status Report and Contributions
+#+AUTHOR:    
+#+EMAIL:     craftkiller@alpha
+#+DATE:      2013-04-01 Mon
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:t todo:t pri:nil tags:t
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+#+XSLT:
+* Contributions
+| Task                 | Name     |
+|----------------------+----------|
+| Iterative Release    | Everyone |
+| Design Approach      | Tom      |
+| Sequence Diagrams    | Rob      |
+| Static Class Diagram | Tate     |
+* Status Report
+** What We've Done
+- Fixed some bugs with voting
+- Finished construction for stakeholder deliverable #1
+- Worked on deliverables
+- Created a demo subdomain to ensure a consistent submission
+- Implemented Game voting
+- Implemented chat
+- Started working on search function.
+- Worked on game submission page
+- Began work on the comments system
+- Worked on game viewing
+** Risks Identified
+- Dart-markdown library has a dependency issue
+- No index defined on a couple tables in the MySQL database
+** Risks Mitigated
+- Fixed issue with Firefox window.onPopState events
+- The async parameter to the HttpRequest became a named parameter in the most recent dart update
+** Plans
+- Continue Next Construction Phase
+- Get Keyword searching working
+- Clean up game viewing and listing pages
