@@ -19,14 +19,21 @@ class markdown_node {
 
 class markdown_headline extends markdown_node {
     int level;
-    String content;
-    markdown_headline(int _level, String _content) : super() {
+    markdown_headline(int _level, String content) : super() {
         level = _level;
-        content = _content;
+        List<markdown_node> subcontent = generate_markdown_nodes(content);
+        for (markdown_node cur in subcontent) {
+            children.add(cur);
+        }
     }
 
     String generate_html() {
-        return "<h${level}>${content}</h${level}>";
+        String ret = "<h${level}>";
+        for (markdown_node cur in children) {
+            ret = "${ret}${cur.generate_html()}";
+        }
+        ret = "${ret}</h${level}>";
+        return ret;
     }
 }
 
@@ -37,7 +44,71 @@ class markdown_paragraph extends markdown_node {
     }
 
     String generate_html() {
-        return "<p>${content}</p>";
+        String ret = "<p>";
+        for (markdown_node cur in children) {
+            ret = "${ret}${cur.generate_html();}";
+        }
+        ret = "${ret}</p>";
+        return ret;
+    }
+}
+
+class markdown_blockquote extends markdown_node {
+    String content;
+    markdown_blockquote(String _content) : super() {
+        content = _content;
+    }
+
+    String generate_html() {
+        String ret = "<blockquote>";
+        for (markdown_node cur in children) {
+            ret = "${ret}${cur.generate_html();}";
+        }
+        ret = "${ret}</blockquote>";
+        return ret;
+    }
+}
+
+class markdown_emphasis extends markdown_node {
+    String content;
+    markdown_emphasis(String _content) : super() {
+        content = _content;
+    }
+
+    String generate_html() {
+        String ret = "<em>";
+        for (markdown_node cur in children) {
+            ret = "${ret}${cur.generate_html();}";
+        }
+        ret = "${ret}</em>";
+        return ret;
+    }
+}
+
+class markdown_strong extends markdown_node {
+    String content;
+    markdown_emphasis(String _content) : super() {
+        content = _content;
+    }
+
+    String generate_html() {
+        String ret = "<strong>";
+        for (markdown_node cur in children) {
+            ret = "${ret}${cur.generate_html();}";
+        }
+        ret = "${ret}</strong>";
+        return ret;
+    }
+}
+
+class markdown_plaintext extends markdown_node {
+    String content;
+    markdown_plaintext(String _content) : super() {
+        content = _content;
+    }
+
+    String generate_html() {
+        return content;
     }
 }
 
@@ -57,6 +128,11 @@ main() {
     } catch (ex) {
         document.window.alert(ex.toString());
     }
+}
+
+List<markdown_node> generate_markdown_nodes(String content) {
+    List<markdown_node> ret = new List<markdown_node>();
+    return ret;
 }
 
 main_wrapped() {
