@@ -5,6 +5,7 @@ import 'login.dart';
 import 'list_games.dart';
 import 'submit_game.dart';
 import 'view_game.dart';
+import 'main_page.dart';
 import 'util.dart';
 
 void display_register() {
@@ -19,7 +20,7 @@ void display_login() {
 
 void display_main_page() {
     query("#content").children.clear();
-    query("#content").children.add(new Text("Main Page"));
+    query("#content").children.add(new main_page().content);
 }
 
 void display_list_games() {
