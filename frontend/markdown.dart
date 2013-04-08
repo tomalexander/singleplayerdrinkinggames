@@ -6,11 +6,47 @@ import 'dart:uri';
 import 'util.dart';
 import 'dart:core';
 
+class markdown_node {
+    List<markdown_node> children;
+    markdown_node() {
+        children = new List<markdown_node>();
+    }
+
+    String generate_html() {
+        return "ERROR: SHOULD BE OVERRIDDEN";
+    }
+}
+
+class markdown_headline extends markdown_node {
+    int level;
+    String content;
+    markdown_headline(int _level, String _content) : super() {
+        level = _level;
+        content = _content;
+    }
+
+    String generate_html() {
+        return "<h${level}>${content}</h${level}>";
+    }
+}
+
+class markdown_paragraph extends markdown_node {
+    String content;
+    markdown_paragraph(String _content) : super() {
+        content = _content;
+    }
+
+    String generate_html() {
+        return "<p>${content}</p>";
+    }
+}
+
 class markdown_field {
     DivElement content;
 
     markdown_field(String inp) {
-        this.content = new Element.html("<div></div>");
+        content = new Element.html("<div></div>");
+        content.nodes.add(new Text(new markdown_headline(2, "igloo").generate_html()));
     }
 }
 
