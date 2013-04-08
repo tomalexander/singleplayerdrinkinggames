@@ -325,7 +325,7 @@ function get_game_list() {
  */
 function get_sidebar_game_list() {
     $db = open_db();
-    $result = $db->query("SELECT * FROM games LIMIT 5 ORDER BY RAND()");
+    $result = $db->query("SELECT * FROM games ORDER BY RAND() LIMIT 5");
     $list = array();
     foreach ($result as $item) {
         $list[] = $item;
