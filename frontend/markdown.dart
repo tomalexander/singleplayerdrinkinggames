@@ -117,7 +117,10 @@ class markdown_field {
 
     markdown_field(String inp) {
         content = new Element.html("<div></div>");
-        content.nodes.add(new Text(new markdown_headline(2, "igloo").generate_html()));
+        List<markdown_node> top_nodes = generate_markdown_nodes(inp);
+        for (markdown_node cur in top_nodes) {
+            content.nodes.add(new Text(cur.generate_html()));
+        }
     }
 }
 
@@ -132,6 +135,27 @@ main() {
 
 List<markdown_node> generate_markdown_nodes(String content) {
     List<markdown_node> ret = new List<markdown_node>();
+
+    RegExp plain_header = new RegExp(r"^(#+) ([^#\n]+)#*\n", multiLine: true);
+    if (plain_header.hasMatch(content)) {
+        Match found = plain_header.firstMatch(content);
+        int start = found.start;
+        int end = found.end;
+        String before = content.substring(0, start);
+        String after = content.substring(end);
+        for (markdown_node cur in generate_markdown_nodes(before)) {
+            ret.add(cur);
+        }
+        ret.add(new markdown_plaintext(found.group(0)));
+        for (markdown_node cur in generate_markdown_nodes(after)) {
+            ret.add(cur);
+        }
+        // for (var match in plain_header.allMatches(content)) {
+        //     ret.add(new markdown_plaintext(match.group(2)));
+        // }
+    }
+
+    // ret.add(new markdown_plaintext(content));
     return ret;
 }
 
