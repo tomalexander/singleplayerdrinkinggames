@@ -146,16 +146,15 @@ List<markdown_node> generate_markdown_nodes(String content) {
         for (markdown_node cur in generate_markdown_nodes(before)) {
             ret.add(cur);
         }
-        ret.add(new markdown_plaintext(found.group(0)));
+        int header_depth = found.group(1).trim().length;
+        ret.add(new markdown_headline(header_depth, found.group(2)));
         for (markdown_node cur in generate_markdown_nodes(after)) {
             ret.add(cur);
         }
-        // for (var match in plain_header.allMatches(content)) {
-        //     ret.add(new markdown_plaintext(match.group(2)));
-        // }
+        return ret;
     }
 
-    // ret.add(new markdown_plaintext(content));
+    ret.add(new markdown_plaintext(content));
     return ret;
 }
 
