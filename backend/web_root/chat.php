@@ -4,6 +4,15 @@ include_once "users.php";
 
 $action = $_REQUEST["action"];
 
+/*
+ * Class containing the chat message.
+ * 
+ * @Param id The chat messages' ID
+ * @Param username The name of the user that posted the message.
+ * @Param message The actual contents of the message.
+ * @Param timestamp The time the message was posted.
+ */
+
 class chat_message
 {
     public $id;
@@ -12,6 +21,10 @@ class chat_message
     public $timestamp;
 }
 
+/*
+ * Deletes chat messages that are more than 60 seconds old.
+ */
+
 function cleanup_old_chats()
 {
     $db = open_db();
@@ -19,8 +32,14 @@ function cleanup_old_chats()
     close_db();
 }
 
+/*
+ * Post a message
+ * 
+ * @Param uuid The ID of the user sending the message.
+ * @Param room The chat room to post the message to.
+ * @Param message The text of the message.
+ */
 if ($action == "send") {
-    // Post a message
     $uuid = $_REQUEST["uuid"];
     $room = isset($_REQUEST["room"]) ? $_REQUEST["room"] : "main";
     $message = $_REQUEST["message"];

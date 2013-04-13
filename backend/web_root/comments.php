@@ -15,6 +15,6 @@ function get_game_list($test_game_id) {
     return $list;
 }
 
-$test_game_id = $_REQUEST["ID"];
+$test_game_id = $_REQUEST["gameid"];
 echo json_encode(get_game_list($test_game_id));
 ?>
