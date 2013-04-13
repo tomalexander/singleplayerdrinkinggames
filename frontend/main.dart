@@ -38,12 +38,12 @@ void display_game_submission() {
 }
 
 void handle_history() {
+    // Handle all page routing and history based on "page" url variable
     String page_name = get_url_variable("page");
-    if (page_name == null)
-        {
+    if (page_name == null) {
             display_main_page();
             return;
-        }
+    }
     switch (page_name) {
       case "login":
         display_login();
@@ -61,15 +61,14 @@ void handle_history() {
         display_game_submission();
         break;
       case "index":
+        /* Falls Through */
       default:
         display_main_page();
-      break;
-
+        break;
     }
 }
 
 main() {
-
     try {
         main_wrapped();
     } catch (ex) {
