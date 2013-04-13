@@ -27,7 +27,7 @@ do
     echo $f
     if [ $DEBUG == true ]
     then
-        dart2js -o${f%.dart}.js $f
+        dart2js -o${f%.dart}.js -c $f
     else
         dart2js -o${f%.dart}.js --minify $f
     fi

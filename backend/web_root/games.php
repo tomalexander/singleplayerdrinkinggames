@@ -318,6 +318,21 @@ function get_game_list() {
     return $list;
 }
 
+/**
+ * Return a list of game information to display on the homepage sidebar
+ *
+ * @return list of valid game objects
+ */
+function get_sidebar_game_list() {
+    $db = open_db();
+    $result = $db->query("SELECT * FROM games ORDER BY RAND() LIMIT 5");
+    $list = array();
+    foreach ($result as $item) {
+        $list[] = $item;
+    }
+    return $list;
+}
+
 /** 
  * Adds or Changes a vote
  * 
