@@ -5,6 +5,7 @@ import 'login.dart';
 import 'list_games.dart';
 import 'submit_game.dart';
 import 'view_game.dart';
+import 'main_page.dart';
 import 'util.dart';
 
 void display_register() {
@@ -19,7 +20,7 @@ void display_login() {
 
 void display_main_page() {
     query("#content").children.clear();
-    query("#content").children.add(new Text("Main Page"));
+    query("#content").children.add(new main_page().content);
 }
 
 void display_list_games() {
@@ -38,12 +39,12 @@ void display_game_submission() {
 }
 
 void handle_history() {
+    // Handle all page routing and history based on "page" url variable
     String page_name = get_url_variable("page");
-    if (page_name == null)
-        {
+    if (page_name == null) {
             display_main_page();
             return;
-        }
+    }
     switch (page_name) {
       case "login":
         display_login();
@@ -61,15 +62,14 @@ void handle_history() {
         display_game_submission();
         break;
       case "index":
+        /* Falls Through */
       default:
         display_main_page();
-      break;
-
+        break;
     }
 }
 
 main() {
-
     try {
         main_wrapped();
     } catch (ex) {

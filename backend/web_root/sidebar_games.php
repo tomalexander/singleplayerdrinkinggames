@@ -3,11 +3,11 @@ include "users.php";
 include "games.php";
 
 /*
- * Returns list of games from the games database.
+ * Fetches the data for the games list in the sidebar.
  */
-
+ 
 function main() {
-    $result = get_game_list();
+    $result = get_sidebar_game_list();
     echo json_encode($result);
 }
 

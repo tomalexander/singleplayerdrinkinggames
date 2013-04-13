@@ -1,6 +1,17 @@
 <?php
 include "games.php";
 
+/*
+ * Submits a new game to the database, but returns an error
+ * message if there already exsists a game with the same name.
+ * 
+ * @Param game_name The name of the game being created.
+ * @Param submitter_id The ID of the user submitting the game.
+ * @Param short_description A short description of the game.
+ * @Param supplies The supplies required for the game.
+ * @Param instructions The instructions for playing the game.
+ */
+
 function main() {
     $game_name = $_REQUEST["game_name"];
     $submitter_id = $_REQUEST["submitter_id"];

@@ -1,6 +1,11 @@
 <?php
 include "users.php";
-
+/*
+ * Registers a new user, and then sets a cookie that logs the user in.
+ * 
+ * @Param username: The name the user wants to create an account for.
+ * @Param password: the password that goes with the new user's account.
+ */
 function main()
 {
     $username = $_REQUEST["username"];

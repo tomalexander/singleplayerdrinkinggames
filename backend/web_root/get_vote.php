@@ -1,11 +1,15 @@
 <?php
 include "games.php";
 include "users.php";
-
+/*
+ * Returns what the current user voted for.
+ * 
+ * @param game_id The id of the game the user is voting for.
+ * @param uuid The id of the user.
+ */
 function main() {
     $game_id = $_REQUEST["game_id"];
     $uuid = $_REQUEST["uuid"];
-    $vote = $_REQUEST["vote"];
     
     $ret = Array();
     $ret["vote"] = 0;
