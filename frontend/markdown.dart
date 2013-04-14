@@ -13,12 +13,14 @@ class markdown_regex {
     String after;
     Match found;
     bool has_match;
-    markdown_regex(RegExp _regex, Function _callback) {
+    Function process_function;
+    markdown_regex(RegExp _regex, Function _callback, {Function process: generate_markdown_nodes}) {
         regex = _regex;
         callback = _callback;
         start = -1;
         end = -1;
         has_match = false;
+        process_function = process;
     }
 
     void populate_variables(String inp) {
@@ -39,13 +41,13 @@ class markdown_regex {
         if (!has_match)
             return ret;
         
-        for (markdown_node cur in generate_markdown_nodes(before)) {
+        for (markdown_node cur in process_function(before)) {
             ret.add(cur);
         }
         // call the callback
         ret.add(callback(found));
 
-        for (markdown_node cur in generate_markdown_nodes(after)) {
+        for (markdown_node cur in process_function(after)) {
             ret.add(cur);
         }
         return ret;
@@ -67,10 +69,11 @@ class markdown_headline extends markdown_node {
     int level;
     markdown_headline(int _level, String content) : super() {
         level = _level;
-        List<markdown_node> subcontent = generate_markdown_nodes(content);
-        for (markdown_node cur in subcontent) {
-            children.add(cur);
-        }
+        // List<markdown_node> subcontent = generate_markdown_nodes(content);
+        // for (markdown_node cur in subcontent) {
+        //     children.add(cur);
+        // }
+        children.add(new markdown_plaintext(content));
     }
 
     String generate_html() {
@@ -84,13 +87,11 @@ class markdown_headline extends markdown_node {
 }
 
 class markdown_paragraph extends markdown_node {
-    String content;
     markdown_paragraph(String _content) : super() {
-        content = _content;
+        children.add(new markdown_plaintext(_content));
     }
 
     String generate_html() {
-        return "<p>${content}</p>";
         String ret = "<p>";
         for (markdown_node cur in children) {
             ret = "${ret}${cur.generate_html()}";
@@ -193,6 +194,7 @@ List<markdown_node> generate_markdown_nodes(String content) {
     RegExp blockquote = new RegExp(r"(^> ?.*?$\n?)+", multiLine: true);
     RegExp underline_big_header = new RegExp(r"^(.+)\n=+\n?", multiLine: true);
     RegExp underline_little_header = new RegExp(r"^(.+)\n-+\n?", multiLine: true);
+    
     regular_expressions.add(new markdown_regex(plain_header, (Match found) {
                 int header_depth = found.group(1).trim().length;
                 return new markdown_headline(header_depth, found.group(2));
@@ -215,6 +217,42 @@ List<markdown_node> generate_markdown_nodes(String content) {
     }));
 
 
+    bool found_match = false;
+    int earliest_start = -1;
+    markdown_regex earliest_regex = null;
+    for (markdown_regex cur in regular_expressions) {
+        cur.populate_variables(content);
+        if (!cur.has_match)
+            continue;
+
+        found_match = true;
+        if (earliest_start == -1 || cur.start <= earliest_start) {
+            earliest_start = cur.start;
+            earliest_regex = cur;
+        }
+    }
+
+    if (!found_match) {
+        if (content.length > 0) {
+            for (markdown_node cur in generate_markdown_paragraphs(content)) {
+                ret.add(cur);
+            }
+        }
+        return ret;
+    }
+    return earliest_regex.execute();
+}
+
+List<markdown_node> generate_markdown_paragraphs(String content) {
+    List<markdown_node> ret = new List<markdown_node>();
+    List<markdown_regex> regular_expressions = new List<markdown_regex>();
+
+    RegExp empty_line = new RegExp(r"^\s*$", multiLine: true);
+    RegExp paragraph_regex = new RegExp(r"^.*[^\s]+.*$", multiLine: true);
+    regular_expressions.add(new markdown_regex(paragraph_regex, (Match found) {
+                return new markdown_paragraph(found.group(0));
+    }, process: generate_markdown_paragraphs));
+    
     bool found_match = false;
     int earliest_start = -1;
     markdown_regex earliest_regex = null;
