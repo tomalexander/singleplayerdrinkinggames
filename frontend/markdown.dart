@@ -1,9 +1,7 @@
 library view_game;
 
-import 'dart:html';
 import 'dart:json';
 import 'dart:uri';
-import 'util.dart';
 import 'dart:core';
 
 class markdown_node {
@@ -87,7 +85,7 @@ class markdown_emphasis extends markdown_node {
 
 class markdown_strong extends markdown_node {
     String content;
-    markdown_emphasis(String _content) : super() {
+    markdown_strong(String _content) : super() {
         content = _content;
     }
 
@@ -112,16 +110,20 @@ class markdown_plaintext extends markdown_node {
     }
 }
 
-class markdown_field {
-    DivElement content;
-
-    markdown_field(String inp) {
-        content = new Element.html("<div></div>");
-        List<markdown_node> top_nodes = generate_markdown_nodes(inp);
-        for (markdown_node cur in top_nodes) {
-            content.nodes.add(new Text(cur.generate_html()));
-        }
+/** 
+ * Convert markdown to HTML
+ * 
+ * @param inp Markdown formatted text
+ * 
+ * @return HTML formatted text
+ */
+String markdown_to_html(String inp) {
+    String ret = "";
+    List<markdown_node> top_nodes = generate_markdown_nodes(inp);
+    for (markdown_node cur in top_nodes) {
+        ret = "${ret}${cur.generate_html()}";
     }
+    return ret;
 }
 
 main() {
@@ -160,5 +162,5 @@ List<markdown_node> generate_markdown_nodes(String content) {
 
 main_wrapped() {
     String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their country. This is just a\nregular paragraph.\n\nThe quick brown fox jumped over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote";
-    query('#main').children.add(new markdown_field(inp).content);
+    print(markdown_to_html(inp));
 }
