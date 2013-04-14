@@ -4,6 +4,54 @@ import 'dart:json';
 import 'dart:uri';
 import 'dart:core';
 
+class markdown_regex {
+    RegExp regex;
+    Function callback;
+    int start;
+    int end;
+    String before;
+    String after;
+    Match found;
+    bool has_match;
+    markdown_regex(RegExp _regex, Function _callback) {
+        regex = _regex;
+        callback = _callback;
+        start = -1;
+        end = -1;
+        has_match = false;
+    }
+
+    void populate_variables(String inp) {
+        if (regex.hasMatch(inp)) {
+            has_match = true;
+        } else {
+            return;
+        }
+        found = regex.firstMatch(inp);
+        start = found.start;
+        end = found.end;
+        before = inp.substring(0, start);
+        after = inp.substring(end);
+    }
+
+    List<markdown_node> execute() {
+        List<markdown_node> ret = new List<markdown_node>();
+        if (!has_match)
+            return ret;
+        
+        for (markdown_node cur in generate_markdown_nodes(before)) {
+            ret.add(cur);
+        }
+        // call the callback
+        ret.add(callback(found));
+
+        for (markdown_node cur in generate_markdown_nodes(after)) {
+            ret.add(cur);
+        }
+        return ret;
+    }
+}
+
 class markdown_node {
     List<markdown_node> children;
     markdown_node() {
@@ -42,9 +90,10 @@ class markdown_paragraph extends markdown_node {
     }
 
     String generate_html() {
+        return "<p>${content}</p>";
         String ret = "<p>";
         for (markdown_node cur in children) {
-            ret = "${ret}${cur.generate_html();}";
+            ret = "${ret}${cur.generate_html()}";
         }
         ret = "${ret}</p>";
         return ret;
@@ -52,15 +101,16 @@ class markdown_paragraph extends markdown_node {
 }
 
 class markdown_blockquote extends markdown_node {
-    String content;
     markdown_blockquote(String _content) : super() {
-        content = _content;
+        for (markdown_node cur in generate_markdown_nodes(_content)) {
+            children.add(cur);
+        }
     }
 
     String generate_html() {
         String ret = "<blockquote>";
         for (markdown_node cur in children) {
-            ret = "${ret}${cur.generate_html();}";
+            ret = "${ret}${cur.generate_html()}";
         }
         ret = "${ret}</blockquote>";
         return ret;
@@ -131,33 +181,62 @@ main() {
     try {
         main_wrapped();
     } catch (ex) {
-        document.window.alert(ex.toString());
+        print(ex.toString());
     }
 }
 
 List<markdown_node> generate_markdown_nodes(String content) {
     List<markdown_node> ret = new List<markdown_node>();
+    List<markdown_regex> regular_expressions = new List<markdown_regex>();
 
-    RegExp plain_header = new RegExp(r"^(#+) ([^#\n]+)#*\n", multiLine: true);
-    if (plain_header.hasMatch(content)) {
-        Match found = plain_header.firstMatch(content);
-        int start = found.start;
-        int end = found.end;
-        String before = content.substring(0, start);
-        String after = content.substring(end);
-        for (markdown_node cur in generate_markdown_nodes(before)) {
-            ret.add(cur);
+    RegExp plain_header = new RegExp(r"^(#+) ([^#\n]+)#*\n?", multiLine: true);
+    RegExp blockquote = new RegExp(r"(^> ?.*?$\n?)+", multiLine: true);
+    RegExp underline_big_header = new RegExp(r"^(.+)\n=+\n?", multiLine: true);
+    RegExp underline_little_header = new RegExp(r"^(.+)\n-+\n?", multiLine: true);
+    regular_expressions.add(new markdown_regex(plain_header, (Match found) {
+                int header_depth = found.group(1).trim().length;
+                return new markdown_headline(header_depth, found.group(2));
+    }));
+    regular_expressions.add(new markdown_regex(blockquote, (Match found) {
+                // Trim the '> ' at the start of the line
+                String fixed = found.group(0).splitMapJoin("\n", onNonMatch: (String match) {
+                        if (match.length < 2)
+                            return "";
+                        else
+                            return match.substring(2);
+                    });
+                return new markdown_blockquote(fixed);
+    }));
+    regular_expressions.add(new markdown_regex(underline_big_header, (Match found) {
+                return new markdown_headline(1, found.group(1));
+    }));
+    regular_expressions.add(new markdown_regex(underline_little_header, (Match found) {
+                return new markdown_headline(2, found.group(1));
+    }));
+
+
+    bool found_match = false;
+    int earliest_start = -1;
+    markdown_regex earliest_regex = null;
+    for (markdown_regex cur in regular_expressions) {
+        cur.populate_variables(content);
+        if (!cur.has_match)
+            continue;
+
+        found_match = true;
+        if (earliest_start == -1 || cur.start <= earliest_start) {
+            earliest_start = cur.start;
+            earliest_regex = cur;
         }
-        int header_depth = found.group(1).trim().length;
-        ret.add(new markdown_headline(header_depth, found.group(2)));
-        for (markdown_node cur in generate_markdown_nodes(after)) {
-            ret.add(cur);
+    }
+
+    if (!found_match) {
+        if (content.length > 0) {
+            ret.add(new markdown_plaintext(content));
         }
         return ret;
     }
-
-    ret.add(new markdown_plaintext(content));
-    return ret;
+    return earliest_regex.execute();
 }
 
 main_wrapped() {
