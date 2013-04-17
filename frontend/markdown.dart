@@ -88,7 +88,7 @@ class markdown_headline extends markdown_node {
 
 class markdown_paragraph extends markdown_node {
     markdown_paragraph(String _content) : super() {
-        children.add(new markdown_plaintext(_content));
+        children.add(new markdown_plaintext(_content.trim()));
     }
 
     String generate_html() {
@@ -248,7 +248,7 @@ List<markdown_node> generate_markdown_paragraphs(String content) {
     List<markdown_regex> regular_expressions = new List<markdown_regex>();
 
     RegExp empty_line = new RegExp(r"^\s*$", multiLine: true);
-    RegExp paragraph_regex = new RegExp(r"^.*[^\s]+.*$", multiLine: true);
+    RegExp paragraph_regex = new RegExp(r"(^.*[^\s]+.*\n?)+", multiLine: true);
     regular_expressions.add(new markdown_regex(paragraph_regex, (Match found) {
                 return new markdown_paragraph(found.group(0));
     }, process: generate_markdown_paragraphs));
