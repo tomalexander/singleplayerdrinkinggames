@@ -223,8 +223,10 @@ List<markdown_node> generate_markdown_nodes(String content) {
                 String fixed = found.group(0).splitMapJoin("\n", onNonMatch: (String match) {
                         if (match.length < 2)
                             return "";
-                        else
+                        else if (match.startsWith("> "))
                             return match.substring(2);
+                        else
+                            return match.substring(1);
                     });
                 return new markdown_blockquote(fixed);
     }));
