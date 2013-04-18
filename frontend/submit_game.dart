@@ -1,6 +1,7 @@
 library submit_game;
 import 'dart:html';
 import 'login.dart';
+import 'markdown.dart';
 
 class submit_game_form {
   DivElement content;
@@ -57,9 +58,17 @@ class submit_game_form {
     
     de = new Element.html("<div class=\"row\"></div>");
     de.nodes.add(new Element.html("<label class=\"col1\" for=\"instructions\">Instructions:</label>"));
-    de.nodes.add(new Element.html("<textarea class=\"col2\" rows=\"8\" name=\"instructions\" placeholder=\"Instructions\" required>"));
+    TextAreaElement instructions_markdown = new Element.html("<textarea class=\"col2\" rows=\"8\" name=\"instructions\" placeholder=\"Instructions\" required>");
+    de.nodes.add(instructions_markdown);
 
     form.nodes.add(de);
+
+    DivElement instructions_preview = new Element.html("<div class=\"row\"></div>");
+    form.nodes.add(instructions_preview);
+    instructions_markdown.onInput.listen((e) {
+            instructions_preview.innerHtml = markdown_to_html(instructions_markdown.value);
+        });
+    
     
     SubmitButtonInputElement submit = new Element.html("<input type=\"submit\" value=\"Create Game\">");
     form.nodes.add(submit);
