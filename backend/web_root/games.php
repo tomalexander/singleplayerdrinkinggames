@@ -41,12 +41,13 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
         close_db();
         return -3;
     }
-    $insert = "INSERT INTO games (game_name, submitter_id, short_description, long_description) VALUES (:game_name, :submitter_id, :short_description, :long_description)";
+    $insert = "INSERT INTO games (game_name, submitter_id, short_description, long_description, instructions) VALUES (:game_name, :submitter_id, :short_description, :long_description, :instructions)";
     $stmt = $db->prepare($insert);
     $stmt->bindParam(":game_name", $game_name);
     $stmt->bindParam(":submitter_id", $submitter_id);
     $stmt->bindParam(":short_description", $short_desc);
     $stmt->bindParam(":long_description", $long_desc);
+    $stmt->bindParam(":instructions", $instructions);
     if (! $stmt->execute()) {
         close_db();
         print_r($stmt->errorInfo());
@@ -69,27 +70,6 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
         }
         $stmt = $db->prepare($insert);
         if (! $stmt->execute($supp_arr)) {
-            close_db();
-            print_r($stmt->errorInfo());
-            return -2; //statement failed to execute
-        }
-    }
-    
-    // Do the same for instructions
-    if(count($instructions > 0)) {
-        $insert = "INSERT INTO instructions (game_id, instruction) VALUES (?,?)";
-        
-        for($i = 1; $i < count($instructions); $i++) {
-            $insert .= ", (?,?)";
-        }
-        
-        $inst_arr = array();
-        foreach($instructions as $instruction) {
-            $inst_arr_tmp = array($id, $instruction);
-            $inst_arr = array_merge($inst_arr, $inst_arr_tmp);
-        }
-        $stmt = $db->prepare($insert);
-        if (! $stmt->execute($inst_arr)) {
             close_db();
             print_r($stmt->errorInfo());
             return -2; //statement failed to execute
@@ -184,37 +164,6 @@ function get_supplies($game_id) {
 }
 
 /** 
- * Return an array of instructions for the corresponding game id
- * 
- * @param id The game ID
- * 
- * @return array of instructions for the given game or an empty array if none exist
- */
-function get_instructions($game_id) {
-    $db = open_db();
-    $ret = array();
-    if(!game_exists_id($game_id)) {
-        close_db();
-        return $ret;
-    }
-    $query = "SELECT * FROM instructions WHERE game_id = :game_id";
-    $stmt = $db->prepare($query);
-    $stmt->bindParam(":game_id", $game_id);
-    if(!$stmt->execute()) {
-      close_db();
-      print_r($stmt->errorinfo());
-      return $ret;
-    }
-    $result = $stmt->fetchAll();
-    close_db();
-    foreach($result as $row) {
-        $ret[] = htmlspecialchars($row["instruction"]);
-    }
-
-    return $ret;
-}
-
-/** 
  * Get the id for the game name
  * 
  * @param game_name The game to look up
@@ -275,7 +224,7 @@ function get_game($game_id) {
         $ret->short_description = htmlspecialchars($row["short_description"]);
         $ret->long_description = htmlspecialchars($row["long_description"]);
         $ret->supplies = get_supplies($game_id);
-        $ret->instructions = get_instructions($game_id);
+        $ret->instructions = $row["instructions"];
         $query = "SELECT COUNT(*) FROM votes WHERE game_id = :game_id AND vote = 1";
         $stmt = $db->prepare($query);
         $stmt->bindParam(":game_id", $ret->game_id);

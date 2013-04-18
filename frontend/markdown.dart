@@ -1,4 +1,4 @@
-library view_game;
+library markdown_parser;
 
 import 'dart:json';
 import 'dart:uri';
@@ -23,6 +23,11 @@ class markdown_regex {
         process_function = process;
     }
 
+    /** 
+     * Do all the matching and storing of context variables
+     * 
+     * @param inp The markdown text to parse
+     */
     void populate_variables(String inp) {
         if (regex.hasMatch(inp)) {
             has_match = true;
@@ -36,6 +41,12 @@ class markdown_regex {
         after = inp.substring(end);
     }
 
+    /** 
+     * Process the text preceding the match, process the match with its callback, and then process the text following the match
+     * 
+     * 
+     * @return a list of markdown nodes generated
+     */
     List<markdown_node> execute() {
         List<markdown_node> ret = new List<markdown_node>();
         if (!has_match)
@@ -170,6 +181,7 @@ class markdown_plaintext extends markdown_node {
  */
 String markdown_to_html(String inp) {
     String ret = "";
+    inp = inp.replaceAll("\r\n", "\n"); // Handle newlines in a linux fashion
     List<markdown_node> top_nodes = generate_markdown_nodes(inp);
     for (markdown_node cur in top_nodes) {
         ret = "${ret}${cur.generate_html()}";
@@ -186,6 +198,13 @@ main() {
     }
 }
 
+/** 
+ * Handle the processing for most of the markdown types
+ * 
+ * @param content The string to process
+ * 
+ * @return a list of markdown nodes
+ */
 List<markdown_node> generate_markdown_nodes(String content) {
     List<markdown_node> ret = new List<markdown_node>();
     List<markdown_regex> regular_expressions = new List<markdown_regex>();
@@ -243,6 +262,13 @@ List<markdown_node> generate_markdown_nodes(String content) {
     return earliest_regex.execute();
 }
 
+/** 
+ * Generate the paragraph tags for remaining strings
+ * 
+ * @param content The remaining string
+ * 
+ * @return a list of paragraph nodes
+ */
 List<markdown_node> generate_markdown_paragraphs(String content) {
     List<markdown_node> ret = new List<markdown_node>();
     List<markdown_regex> regular_expressions = new List<markdown_regex>();

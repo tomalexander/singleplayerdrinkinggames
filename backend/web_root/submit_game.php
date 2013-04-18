@@ -23,9 +23,6 @@ function main() {
     if(!is_array($supplies)) {
         $supplies = array();
     }
-    if(!is_array($instructions)) {
-        $instructions = array();
-    }
 
     $game_id = create_game($game_name, $submitter_id, $short_desc, $long_desc, $supplies, $instructions);
     if ($game_id == -1)

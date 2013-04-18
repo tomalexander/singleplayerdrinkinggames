@@ -8,6 +8,7 @@ import 'util.dart';
 import 'dart:core';
 
 import 'login.dart';
+import 'markdown.dart';
 
 String encodeMap(Map data) {
     return data.keys.map((k) {
@@ -103,7 +104,10 @@ class view_game_form {
             this.display_pre("Submitter : ${parsed_resp["submitter_username"]}");
             this.display_pre("Short Description : ${parsed_resp["short_description"]}");
             this.display_pre("Long Description : ${parsed_resp["long_description"]}");
-            this.display_pre("Instructions:\n${parsed_resp["instructions"].join("\n")}");
+            DivElement instructions_div = new Element.tag("div");
+            instructions_div.innerHtml = markdown_to_html(parsed_resp["instructions"]);
+            this.content.children.add(instructions_div);
+            
             this.display_pre("Supplies:\n${parsed_resp["supplies"].join("\n")}");
 
             this.display_pre("Upvotes : ${parsed_resp["upvote_count"]}");
