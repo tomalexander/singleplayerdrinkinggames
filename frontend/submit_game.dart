@@ -63,8 +63,11 @@ class submit_game_form {
 
     form.nodes.add(de);
 
-    DivElement instructions_preview = new Element.html("<div class=\"row\"></div>");
-    form.nodes.add(instructions_preview);
+    FieldSetElement fse = new Element.html("<fieldset class=\"row\" style=\"width:80%; margin:0% 10%;\"></fieldset>");
+    fse.nodes.add(new Element.html("<legend style=\"color:black;font-weight:bold;\">Preview Instructions</legend>"));
+    DivElement instructions_preview = new Element.html("<div></div>");
+    fse.nodes.add(instructions_preview);
+    form.nodes.add(fse);
     instructions_markdown.onInput.listen((e) {
             instructions_preview.innerHtml = markdown_to_html(instructions_markdown.value);
         });
