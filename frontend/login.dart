@@ -30,6 +30,9 @@ class login_form
 {
     DivElement content;
     login_form() {
+      /*
+       * Structure for the login box.
+       */
         content = new Element.html("<div>Loading Login Form</div>");
         Map user_data = get_login_details();
         if (user_data == null) {
@@ -44,6 +47,9 @@ class login_form
     }
   
     void create_form() {
+      /*
+       * Generates the form.
+       */
         content.nodes.clear();
         FormElement form = new Element.html("<form action=\"login.php\" method=\"POST\"></form>");
         content.nodes.add(form);

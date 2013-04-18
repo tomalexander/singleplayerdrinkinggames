@@ -7,6 +7,9 @@ class submit_game_form {
   DivElement content;
   
   submit_game_form() {
+    /*
+     * Form to submit a new game to the database
+     */
     content = new Element.html("<div id=\"game-submission\"></div>");
     Map user_data = get_login_details();
     if ( user_data != null) {
@@ -21,6 +24,9 @@ class submit_game_form {
   }
   
   void create_form(user_id) {
+    /*
+     * Generates the form that lets a user submit a new game to the database.
+     */
     content.nodes.clear();
     FormElement form = new FormElement();
     form.action = "submit_game.php";
@@ -79,6 +85,9 @@ class submit_game_form {
   }
   
   void add_supply_item(DivElement to_insert_after, {bool first_item : false}) {
+    /*
+     * Lets a user add an additional "supply" element to the "submit game" form.
+     */
     DivElement new_item = new Element.html("<div class=\"item\"></div>");
     Element new_box = new Element.html("<input id=\"supplies\" name=\"supplies[]\" class=\"supplies\" type=\"text\" placeholder=\"Add Supply Here: 255 characters\" maxlength=\"255\">");
     Element new_add_button = new Element.html("<input id=\"add-supply-button\" name=\"add-supply-button\" class=\"add-supply-button\" type=\"button\" value=\"+\">");

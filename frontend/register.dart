@@ -6,6 +6,9 @@ class register_form
 {
     DivElement content;
     register_form() {
+      /*
+       * Creates the form that allows a user to register on the website.
+       */
         content = new Element.html("<div></div>");
         FormElement form = new Element.html("<form action=\"register.php\" method=\"POST\"></form>");
         content.nodes.add(form);
@@ -20,6 +23,7 @@ class register_form
         InputElement confirm_password = new Element.html("<input type=\"password\" name=\"confirm_password\" required>");
         form.nodes.add(confirm_password);
         confirm_password.onInput.listen((e) {
+          //Checks to see if the passwords match
                 if (password.value != confirm_password.value) {
                     confirm_password.setCustomValidity("The passwords do not match");
                 } else {

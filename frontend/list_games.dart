@@ -6,9 +6,15 @@ import 'nav_bar.dart';
 import 'util.dart';
 
 class list_games_form {
+  /*
+   * Makes a list of the games avalible for the user to view.
+   */
     DivElement content;
 
     list_games_form() {
+      /*
+       * Displays the list of games avalible for the user to view.
+       */
         content = new Element.html("<div></div>");
         content.id = "view_game";
         get_string("list_games.php", "", (resp) {

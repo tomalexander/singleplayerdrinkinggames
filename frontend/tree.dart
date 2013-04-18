@@ -41,6 +41,9 @@ class tree
 
 class tree_element
 {
+  /*
+   * Element of a tree, including functions to show/hide elements of a tree.
+   */
     DivElement content;
     DivElement children;
     DivElement clickable;

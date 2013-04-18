@@ -8,6 +8,10 @@ import 'view_game.dart';
 import 'main_page.dart';
 import 'util.dart';
 
+/*
+ * Calls to the appropriate webpages.
+ */
+
 void display_register() {
     query("#content").children.clear();
     query("#content").children.add(new register_form().content);

@@ -6,6 +6,10 @@ import 'util.dart';
 
 class sidebar {
   DivElement content;
+  
+  /*
+   * Generates the sidebar.
+   */
 
   sidebar() {
     content = new DivElement();
