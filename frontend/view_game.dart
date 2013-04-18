@@ -40,6 +40,17 @@ class view_game_form {
         this.content.children.add(new_pre);
     }
 
+    add_comments() {
+        DivElement disqus_div = new DivElement();
+        disqus_div.id = "disqus_thread";
+        ScriptElement dsq = new ScriptElement();
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//singleplayerdrinkinggames.disqus.com/embed.js';
+        this.content.children.add(disqus_div);
+        this.content.children.add(dsq);
+    }
+
     int process_vote(gameid, vote) {
       /*
        * Allows the user to vote on a game.
@@ -161,7 +172,12 @@ class view_game_form {
             this.display_pre("Upvotes : ${parsed_resp["upvote_count"]}");
             this.display_pre("Downvotes : ${parsed_resp["downvote_count"]}");
             this.vote_buttons(gameid);
+
             //this.display_pre(resp);
+
+            // Add comments
+            this.add_comments();
         });
+
     }
 }
