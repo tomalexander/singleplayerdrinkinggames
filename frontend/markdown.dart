@@ -160,6 +160,21 @@ class markdown_code extends markdown_node {
     }
 }
 
+class markdown_precode extends markdown_node {
+    markdown_precode(String content) : super() {
+        children.add(new markdown_plaintext(htmlspecialchars(content)));
+    }
+
+    String generate_html() {
+        String ret = "<pre><code>";
+        for (markdown_node cur in children) {
+            ret = "${ret}${cur.generate_html()}";
+        }
+        ret = "${ret}</code></pre>";
+        return ret;
+    }
+}
+
 class markdown_emphasis extends markdown_node {
     markdown_emphasis(String content) : super() {
         children.add(new markdown_plaintext(content));
@@ -268,7 +283,7 @@ List<markdown_node> generate_markdown_nodes(String content) {
                         else
                             return match.substring(4);
                     });
-                return new markdown_code(fixed);
+                return new markdown_precode(fixed);
     }));
     regular_expressions.add(new markdown_regex(underline_big_header, (Match found) {
                 return new markdown_headline(1, found.group(1));
