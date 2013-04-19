@@ -7,6 +7,7 @@ import 'submit_game.dart';
 import 'view_game.dart';
 import 'main_page.dart';
 import 'util.dart';
+import 'age_verification.dart';
 
 /*
  * Calls to the appropriate webpages.
@@ -42,8 +43,18 @@ void display_game_submission() {
     query("#content").children.add(new submit_game_form().content);
 }
 
+void display_age_verification() {
+    query("#content").children.clear();
+    query("#content").children.add(new age_verification().content);
+}
+
 void handle_history() {
     // Handle all page routing and history based on "page" url variable
+    String over18 = get_cookie("over18");
+    if (over18 == null || over18 != "true") {
+        display_age_verification();
+        return;
+    }
     String page_name = get_url_variable("page");
     if (page_name == null) {
             display_main_page();

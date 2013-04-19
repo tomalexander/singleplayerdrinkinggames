@@ -92,45 +92,45 @@ String generate_expires_string(DateTime local_time)
 {
     DateTime time = local_time.toUtc();
     String ret = "";
-    if (time.weekday == DateTime.MON) {
+    if (time.weekday == DateTime.MONDAY) {
         ret = "${ret}Mon, ";
-    } else if (time.weekday == DateTime.TUE) {
+    } else if (time.weekday == DateTime.TUESDAY) {
         ret = "${ret}Tue, ";
-    } else if (time.weekday == DateTime.WED) {
+    } else if (time.weekday == DateTime.WEDNESDAY) {
         ret = "${ret}Wed, ";
-    } else if (time.weekday == DateTime.THU) {
+    } else if (time.weekday == DateTime.THURSDAY) {
         ret = "${ret}Thu, ";
-    } else if (time.weekday == DateTime.FRI) {
+    } else if (time.weekday == DateTime.FRIDAY) {
         ret = "${ret}Fri, ";
-    } else if (time.weekday == DateTime.SAT) {
+    } else if (time.weekday == DateTime.SATURDAY) {
         ret = "${ret}Sat, ";
-    } else if (time.weekday == DateTime.SUN) {
+    } else if (time.weekday == DateTime.SUNDAY) {
         ret = "${ret}Sun, ";
     }
     ret = "${ret}${time.day} ";
-    if (time.month == DateTime.JAN) {
+    if (time.month == DateTime.JANUARY) {
         ret = "${ret}Jan ";
-    } else if (time.month == DateTime.FEB) {
+    } else if (time.month == DateTime.FEBRUARY) {
         ret = "${ret}Feb ";
-    } else if (time.month == DateTime.MAR) {
+    } else if (time.month == DateTime.MARCH) {
         ret = "${ret}Mar ";
-    } else if (time.month == DateTime.APR) {
+    } else if (time.month == DateTime.APRIL) {
         ret = "${ret}Apr ";
     } else if (time.month == DateTime.MAY) {
         ret = "${ret}May ";
-    } else if (time.month == DateTime.JUN) {
+    } else if (time.month == DateTime.JUNE) {
         ret = "${ret}Jun ";
-    } else if (time.month == DateTime.JUL) {
+    } else if (time.month == DateTime.JULY) {
         ret = "${ret}Jul ";
-    } else if (time.month == DateTime.AUG) {
+    } else if (time.month == DateTime.AUGUST) {
         ret = "${ret}Aug ";
-    } else if (time.month == DateTime.SEP) {
+    } else if (time.month == DateTime.SEPTEMBER) {
         ret = "${ret}Sep ";
-    } else if (time.month == DateTime.OCT) {
+    } else if (time.month == DateTime.OCTOBER) {
         ret = "${ret}Oct ";
-    } else if (time.month == DateTime.NOV) {
+    } else if (time.month == DateTime.NOVEMBER) {
         ret = "${ret}Nov ";
-    } else if (time.month == DateTime.DEC) {
+    } else if (time.month == DateTime.DECEMBER) {
         ret = "${ret}Dec ";
     }
     ret = "${ret}${time.year} ${time.hour}:${time.minute}:${time.second} GMT";
@@ -147,7 +147,7 @@ String generate_expires_string(DateTime local_time)
 void set_cookie(String name, String value, int seconds)
 {
     if (seconds != null) {
-        DateTime now = new Date.now();
+        DateTime now = new DateTime.now();
         DateTime expires = now.add(new Duration(seconds: seconds));
         document.cookie = "${name}=${value}; expires=${generate_expires_string(expires)}";
     } else {
