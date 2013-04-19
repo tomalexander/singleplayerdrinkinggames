@@ -80,11 +80,10 @@ class markdown_headline extends markdown_node {
     int level;
     markdown_headline(int _level, String content) : super() {
         level = _level;
-        // List<markdown_node> subcontent = generate_markdown_nodes(content);
-        // for (markdown_node cur in subcontent) {
-        //     children.add(cur);
-        // }
-        children.add(new markdown_plaintext(content));
+        List<markdown_node> subcontent = generate_markdown_emphasis(content);
+        for (markdown_node cur in subcontent) {
+            children.add(cur);
+        }
     }
 
     String generate_html() {
@@ -98,8 +97,13 @@ class markdown_headline extends markdown_node {
 }
 
 class markdown_paragraph extends markdown_node {
-    markdown_paragraph(String _content) : super() {
-        children.add(new markdown_plaintext(_content.trim()));
+    markdown_paragraph(String content) : super() {
+        if (content.endsWith("\n"))
+            content = content.substring(0, content.length-1);
+        List<markdown_node> subcontent = generate_markdown_emphasis(content);
+        for (markdown_node cur in subcontent) {
+            children.add(cur);
+        }
     }
 
     String generate_html() {
@@ -130,15 +134,14 @@ class markdown_blockquote extends markdown_node {
 }
 
 class markdown_emphasis extends markdown_node {
-    String content;
-    markdown_emphasis(String _content) : super() {
-        content = _content;
+    markdown_emphasis(String content) : super() {
+        children.add(new markdown_plaintext(content));
     }
 
     String generate_html() {
         String ret = "<em>";
         for (markdown_node cur in children) {
-            ret = "${ret}${cur.generate_html();}";
+            ret = "${ret}${cur.generate_html()}";
         }
         ret = "${ret}</em>";
         return ret;
@@ -277,9 +280,53 @@ List<markdown_node> generate_markdown_paragraphs(String content) {
 
     RegExp empty_line = new RegExp(r"^\s*$", multiLine: true);
     RegExp paragraph_regex = new RegExp(r"(^.*[^\s]+.*\n?)+", multiLine: true);
+    
     regular_expressions.add(new markdown_regex(paragraph_regex, (Match found) {
                 return new markdown_paragraph(found.group(0));
     }, process: generate_markdown_paragraphs));
+    
+    bool found_match = false;
+    int earliest_start = -1;
+    markdown_regex earliest_regex = null;
+    for (markdown_regex cur in regular_expressions) {
+        cur.populate_variables(content);
+        if (!cur.has_match)
+            continue;
+
+        found_match = true;
+        if (earliest_start == -1 || cur.start <= earliest_start) {
+            earliest_start = cur.start;
+            earliest_regex = cur;
+        }
+    }
+
+    if (!found_match) {
+        if (content.length > 0) {
+            for (markdown_node cur in generate_markdown_emphasis(content)) {
+                ret.add(cur);
+            }
+        }
+        return ret;
+    }
+    return earliest_regex.execute();
+}
+
+/** 
+ * Generate the emphasis tags for remaining strings
+ * 
+ * @param content The remaining string
+ * 
+ * @return a list of paragraph nodes
+ */
+List<markdown_node> generate_markdown_emphasis(String content) {
+    List<markdown_node> ret = new List<markdown_node>();
+    List<markdown_regex> regular_expressions = new List<markdown_regex>();
+
+    RegExp single_asterix = new RegExp(r"(?! )\*(?! )([^*]+)(?! )\*(?! )");
+    
+    regular_expressions.add(new markdown_regex(single_asterix, (Match found) {
+                return new markdown_emphasis(found.group(1));
+    }, process: generate_markdown_emphasis));
     
     bool found_match = false;
     int earliest_start = -1;
@@ -306,6 +353,7 @@ List<markdown_node> generate_markdown_paragraphs(String content) {
 }
 
 main_wrapped() {
-    String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their country. This is just a\nregular paragraph.\n\nThe quick brown fox jumped over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote";
+    String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their *country*. This is just a\nregular paragraph.\n\nThe quick brown fox jumped over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote";
+    RegExp single_asterix = new RegExp(r"(?! )\*(?! )[^*]+(?! )\*(?! )");
     print(markdown_to_html(inp));
 }
