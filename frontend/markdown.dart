@@ -228,6 +228,7 @@ List<markdown_node> generate_markdown_nodes(String content) {
 
     RegExp plain_header = new RegExp(r"^(#+) ([^#\n]+)#*\n?", multiLine: true);
     RegExp blockquote = new RegExp(r"(^> ?.*?$\n?)+", multiLine: true);
+    RegExp multiline_code = new RegExp(r"(^    ?.*?$\n?)+", multiLine: true);
     RegExp underline_big_header = new RegExp(r"^(.+)\n=+\n?", multiLine: true);
     RegExp underline_little_header = new RegExp(r"^(.+)\n-+\n?", multiLine: true);
     
@@ -246,6 +247,16 @@ List<markdown_node> generate_markdown_nodes(String content) {
                             return match.substring(1);
                     });
                 return new markdown_blockquote(fixed);
+    }));
+    regular_expressions.add(new markdown_regex(multiline_code, (Match found) {
+                // Trim the '> ' at the start of the line
+                String fixed = found.group(0).splitMapJoin("\n", onNonMatch: (String match) {
+                        if (match.length < 4)
+                            return "";
+                        else
+                            return match.substring(4);
+                    });
+                return new markdown_code(fixed);
     }));
     regular_expressions.add(new markdown_regex(underline_big_header, (Match found) {
                 return new markdown_headline(1, found.group(1));
@@ -401,7 +412,7 @@ List<markdown_node> generate_markdown_emphasis(String content) {
 }
 
 main_wrapped() {
-    String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their `country`. This is just a\nre_gu_lar paragraph.\n\nThe quick brown fox jumped over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote";
+    String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their `country`. This is just a\nre_gu_lar paragraph.\n\nThe quick brown fox jumped over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote\n\n    code block\n    second line code block";
     RegExp single_asterix = new RegExp(r"(?! )\*(?! )[^*]+(?! )\*(?! )");
     print(markdown_to_html(inp));
 }
