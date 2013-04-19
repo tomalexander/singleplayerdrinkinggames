@@ -133,6 +133,21 @@ class markdown_blockquote extends markdown_node {
     }
 }
 
+class markdown_code extends markdown_node {
+    markdown_code(String content) : super() {
+        children.add(new markdown_plaintext(content));
+    }
+
+    String generate_html() {
+        String ret = "<code>";
+        for (markdown_node cur in children) {
+            ret = "${ret}${cur.generate_html()}";
+        }
+        ret = "${ret}</code>";
+        return ret;
+    }
+}
+
 class markdown_emphasis extends markdown_node {
     markdown_emphasis(String content) : super() {
         children.add(new markdown_plaintext(content));
@@ -325,6 +340,8 @@ List<markdown_node> generate_markdown_emphasis(String content) {
     RegExp single_underscore = new RegExp(r"(?! )_(?! )([^_]+)(?! )\_(?! )");
     RegExp double_asterix = new RegExp(r"(?! )\*{2}(?! )([^*]+)(?! )\*{2}(?! )");
     RegExp double_underscore = new RegExp(r"(?! )_{2}(?! )([^_]+)(?! )_{2}(?! )");
+    RegExp single_tick_code = new RegExp(r"(?! )`(?! )([^`]+)(?! )`(?! )");
+    
     RegExp spaced_asterix = new RegExp(r" (\*) ");
     RegExp spaced_underscore = new RegExp(r" (_) ");
     RegExp backslash_asterix = new RegExp(r"\\(\*)");
@@ -342,6 +359,10 @@ List<markdown_node> generate_markdown_emphasis(String content) {
     regular_expressions.add(new markdown_regex(double_underscore, (Match found) {
                 return new markdown_strong(found.group(1));
     }, process: generate_markdown_emphasis));
+    regular_expressions.add(new markdown_regex(single_tick_code, (Match found) {
+                return new markdown_code(found.group(1));
+    }, process: generate_markdown_emphasis));
+
     regular_expressions.add(new markdown_regex(spaced_asterix, (Match found) {
                 return new markdown_plaintext(found.group(1));
     }, process: generate_markdown_emphasis));
@@ -380,7 +401,7 @@ List<markdown_node> generate_markdown_emphasis(String content) {
 }
 
 main_wrapped() {
-    String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their \\*country\\*. This is just a\nre_gu_lar paragraph.\n\nThe quick brown fox jumped over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote";
+    String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their `country`. This is just a\nre_gu_lar paragraph.\n\nThe quick brown fox jumped over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote";
     RegExp single_asterix = new RegExp(r"(?! )\*(?! )[^*]+(?! )\*(?! )");
     print(markdown_to_html(inp));
 }
