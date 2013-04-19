@@ -4,6 +4,18 @@ import 'dart:json';
 import 'dart:uri';
 import 'dart:core';
 
+/** 
+ * Convert special html characters into code, same as the php function
+ * 
+ * @param inp The string containing html characters
+ * 
+ * @return The formatted string
+ */
+String htmlspecialchars(String inp)
+{
+    return inp.replaceAll("&", "&amp;").replaceAll("\"", "&quot;").replaceAll("'", "&#039;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+}
+
 class markdown_regex {
     RegExp regex;
     Function callback;
@@ -135,7 +147,7 @@ class markdown_blockquote extends markdown_node {
 
 class markdown_code extends markdown_node {
     markdown_code(String content) : super() {
-        children.add(new markdown_plaintext(content));
+        children.add(new markdown_plaintext(htmlspecialchars(content)));
     }
 
     String generate_html() {
