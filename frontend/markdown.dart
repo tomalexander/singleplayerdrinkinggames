@@ -149,15 +149,14 @@ class markdown_emphasis extends markdown_node {
 }
 
 class markdown_strong extends markdown_node {
-    String content;
-    markdown_strong(String _content) : super() {
-        content = _content;
+    markdown_strong(String content) : super() {
+        children.add(new markdown_plaintext(content));
     }
 
     String generate_html() {
         String ret = "<strong>";
         for (markdown_node cur in children) {
-            ret = "${ret}${cur.generate_html();}";
+            ret = "${ret}${cur.generate_html()}";
         }
         ret = "${ret}</strong>";
         return ret;
@@ -323,9 +322,37 @@ List<markdown_node> generate_markdown_emphasis(String content) {
     List<markdown_regex> regular_expressions = new List<markdown_regex>();
 
     RegExp single_asterix = new RegExp(r"(?! )\*(?! )([^*]+)(?! )\*(?! )");
+    RegExp single_underscore = new RegExp(r"(?! )_(?! )([^_]+)(?! )\_(?! )");
+    RegExp double_asterix = new RegExp(r"(?! )\*{2}(?! )([^*]+)(?! )\*{2}(?! )");
+    RegExp double_underscore = new RegExp(r"(?! )_{2}(?! )([^_]+)(?! )_{2}(?! )");
+    RegExp spaced_asterix = new RegExp(r" (\*) ");
+    RegExp spaced_underscore = new RegExp(r" (_) ");
+    RegExp backslash_asterix = new RegExp(r"\\(\*)");
+    RegExp backslash_underscore = new RegExp(r"\\(_)");
     
     regular_expressions.add(new markdown_regex(single_asterix, (Match found) {
                 return new markdown_emphasis(found.group(1));
+    }, process: generate_markdown_emphasis));
+    regular_expressions.add(new markdown_regex(single_underscore, (Match found) {
+                return new markdown_emphasis(found.group(1));
+    }, process: generate_markdown_emphasis));
+    regular_expressions.add(new markdown_regex(double_asterix, (Match found) {
+                return new markdown_strong(found.group(1));
+    }, process: generate_markdown_emphasis));
+    regular_expressions.add(new markdown_regex(double_underscore, (Match found) {
+                return new markdown_strong(found.group(1));
+    }, process: generate_markdown_emphasis));
+    regular_expressions.add(new markdown_regex(spaced_asterix, (Match found) {
+                return new markdown_plaintext(found.group(1));
+    }, process: generate_markdown_emphasis));
+    regular_expressions.add(new markdown_regex(spaced_underscore, (Match found) {
+                return new markdown_plaintext(found.group(1));
+    }, process: generate_markdown_emphasis));
+    regular_expressions.add(new markdown_regex(backslash_asterix, (Match found) {
+                return new markdown_plaintext(found.group(1));
+    }, process: generate_markdown_emphasis));
+    regular_expressions.add(new markdown_regex(backslash_underscore, (Match found) {
+                return new markdown_plaintext(found.group(1));
     }, process: generate_markdown_emphasis));
     
     bool found_match = false;
@@ -353,7 +380,7 @@ List<markdown_node> generate_markdown_emphasis(String content) {
 }
 
 main_wrapped() {
-    String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their *country*. This is just a\nregular paragraph.\n\nThe quick brown fox jumped over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote";
+    String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their \\*country\\*. This is just a\nre_gu_lar paragraph.\n\nThe quick brown fox jumped over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote";
     RegExp single_asterix = new RegExp(r"(?! )\*(?! )[^*]+(?! )\*(?! )");
     print(markdown_to_html(inp));
 }
