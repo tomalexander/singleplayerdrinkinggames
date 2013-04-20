@@ -40,13 +40,31 @@ class view_game_form {
         this.content.children.add(new_pre);
     }
 
-    add_comments() {
+    add_comments(String game_name) {
+        /*
+         * Adds the disqus comment bar to the view_game div
+         *
+         * @param game_name The game name to identify the comment
+         * thread we should use.
+         */
+
+        //Set disqus_identified in javascript
+        ScriptElement dsq_page_name= new ScriptElement();
+        dsq_page_name.type = 'text/javascript';
+        dsq_page_name.text = 'disqus_identifier = $game_name';
+
+        //Make thread div so it shows up in the right spot
         DivElement disqus_div = new DivElement();
         disqus_div.id = "disqus_thread";
+
+        //Actual disqus callback
         ScriptElement dsq = new ScriptElement();
         dsq.type = 'text/javascript';
         dsq.async = true;
         dsq.src = '//singleplayerdrinkinggames.disqus.com/embed.js';
+
+        //Add all the elements
+        this.content.children.add(dsq_page_name);
         this.content.children.add(disqus_div);
         this.content.children.add(dsq);
     }
@@ -176,8 +194,7 @@ class view_game_form {
             //this.display_pre(resp);
 
             // Add comments
-            this.add_comments();
+            this.add_comments(gameid);
         });
-
     }
 }
