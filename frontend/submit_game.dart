@@ -19,7 +19,7 @@ class submit_game_form {
       // User not logged in, tell them they're dumb
       content.nodes.clear();
       content.nodes.add(new Text("You must be logged in to submit a game."));
-      //content.nodes.add(new login_form());
+      content.nodes.add(new login_form().content);
     }
   }
   
