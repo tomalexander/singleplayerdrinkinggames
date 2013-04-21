@@ -1,6 +1,8 @@
 library submit_game;
 import 'dart:html';
 import 'login.dart';
+import 'util.dart';
+import 'view_game.dart';
 import 'markdown.dart';
 
 class submit_game_form {
@@ -14,7 +16,7 @@ class submit_game_form {
         Map user_data = get_login_details();
         if ( user_data != null) {
             // User logged in, create form
-            create_form(user_data['id']);
+            create_form(user_data['id'], get_cookie("login_uuid"));
         } else {
             // User not logged in, tell them they're dumb
             content.nodes.clear();
@@ -26,30 +28,29 @@ class submit_game_form {
     /**
      * Generates the form that lets a user submit a new game to the database.
      */   
-    void create_form(user_id) {
+  void create_form(user_id, uuid) {
         content.nodes.clear();
-        FormElement form = new FormElement();
-        form.action = "submit_game.php";
-        form.method = "POST";
+        FormElement form = new Element.html("<form action=\"submit_game.php\" method=\"POST\" onsubmit=\"return false;\"></form>");
         content.nodes.add(form);
-    
-        form.nodes.add(new Element.html("<input type=\"hidden\" name=\"submitter_id\" value=\"${user_id}\">"));
     
         DivElement de = new Element.html("<div class=\"row\"></div>");
         de.nodes.add(new Element.html("<label class=\"col1\" for=\"game-name\">Game Name:</label>"));
-        de.nodes.add(new Element.html("<input class=\"col2\" type=\"text\" name=\"game_name\" maxlength=\"255\" placeholder=\"Game Name Goes Here: 255 characters\" required>"));
+        InputElement game_name = new Element.html("<input class=\"col2\" type=\"text\" name=\"game_name\" maxlength=\"255\" placeholder=\"Game Name Goes Here: 255 characters\" required>");
+        de.nodes.add(game_name);
     
         form.nodes.add(de);
     
         de = new Element.html("<div class=\"row\"></div>");
         de.nodes.add(new Element.html("<label class=\"col1\" for=\"short-description\">Short Description:</label>"));
-        de.nodes.add(new Element.html("<input class=\"col2\" type=\"text\" name=\"short_description\" maxlength=\"255\" placeholder=\"Short Description: 255 characters\" required>"));
+        InputElement short_description = new Element.html("<input class=\"col2\" type=\"text\" name=\"short_description\" maxlength=\"255\" placeholder=\"Short Description: 255 characters\" required>");
+        de.nodes.add(short_description);
     
         form.nodes.add(de);
     
         de = new Element.html("<div class=\"row\"></div>");
         de.nodes.add(new Element.html("<label class=\"col1\" for=\"long-description\">Long Description:</label>"));
-        de.nodes.add(new Element.html("<textarea class=\"col2\" rows=\"4\" name=\"long_description\" maxlength=\"1023\" placeholder=\"Long Description: 1023 characters\" required>"));
+        TextAreaElement long_description = new Element.html("<textarea class=\"col2\" rows=\"4\" name=\"long_description\" maxlength=\"1023\" placeholder=\"Long Description: 1023 characters\" required>");
+        de.nodes.add(long_description);
     
         form.nodes.add(de);
     
@@ -79,9 +80,44 @@ class submit_game_form {
             });
     
     
+        de = new Element.html("<div class=\"row\"></div>");
         SubmitButtonInputElement submit = new Element.html("<input type=\"submit\" value=\"Create Game\">");
-        form.nodes.add(submit);
-        form.onSubmit.listen((e) {submit.disabled = true;});
+        de.nodes.add(submit);
+        form.nodes.add(de);
+        
+        DivElement failures = new Element.html("<div class=\"row\"></div>");
+        form.nodes.add(failures);
+
+        form.onSubmit.listen((e) {
+            //submit.disabled = true; 
+            Map submit_game_vars = new Map();
+            submit_game_vars["submitter_id"] = user_id;
+            submit_game_vars["uuid"] = uuid;
+            submit_game_vars["game_name"] = game_name.value;
+            submit_game_vars["short_description"] = short_description.value;
+            submit_game_vars["long_description"] = long_description.value;
+            submit_game_vars["instructions"] = instructions_markdown.value;
+
+            List supply_list = new List<String>();
+            List<Element> sl = supply_div.queryAll(".supplies");
+            
+            sl.forEach((e) { supply_list.add(e.value); });
+            //window.alert(supply_list.join(", "));
+            String encoded_data = encodeMap(submit_game_vars);
+            encoded_data = encoded_data + "&supplies[]=" + supply_list.join("&supplies[]=");
+            //print(encoded);
+            //window.alert(encoded);
+            String attempted_submit = get_string_synchronous("submit_game.php", encoded_data);
+            if (attempted_submit == "UUID NOT LOGGED IN") {
+                submit.disabled = false;
+                failures.nodes.add(new Element.html("<p>No UUID set, if you are logged in, please re-login</p>"));
+            } else if (attempted_submit == "GAME NAME ALREADY TAKEN") {
+                submit.disabled = false;
+                failures.nodes.add(new Element.html("<p>Game Name Already Taken.</p>"));
+            } else {
+                window.location = "https://singleplayerdrinkinggames.com/";
+            }
+        });
     }
   
     /**
@@ -89,7 +125,7 @@ class submit_game_form {
      */   
     void add_supply_item(DivElement to_insert_after, {bool first_item : false}) {
         DivElement new_item = new Element.html("<div class=\"item\"></div>");
-        Element new_box = new Element.html("<input id=\"supplies\" name=\"supplies[]\" class=\"supplies\" type=\"text\" placeholder=\"Add Supply Here: 255 characters\" maxlength=\"255\">");
+        InputElement new_box = new Element.html("<input id=\"supplies\" name=\"supplies[]\" class=\"supplies\" type=\"text\" placeholder=\"Add Supply Here: 255 characters\" maxlength=\"255\">");
         Element new_add_button = new Element.html("<input id=\"add-supply-button\" name=\"add-supply-button\" class=\"add-supply-button\" type=\"button\" value=\"+\">");
         Element new_remove_button = new Element.html("<input id=\"remove-supply-button\" name=\"remove-supply-button\" class=\"remove-supply-button\" type=\"button\" value=\"-\">");
     
