@@ -18,7 +18,6 @@ def get_uuid():
 def call_server(address, data=None):
     if data is not None:
         response = urllib.request.urlopen("https://singleplayerdrinkinggames.com/" + address, urllib.parse.urlencode(data).encode("UTF-8"))
-        print("Calling:", "https://singleplayerdrinkinggames.com/" + address, urllib.parse.urlencode(data).encode("UTF-8"))
         return response.read().decode("UTF-8")
     else:
         response = urllib.request.urlopen("https://singleplayerdrinkinggames.com/" + address)
@@ -66,7 +65,7 @@ def register_check():
     passfail("Username already taken", username_taken == "Username already taken")
 
 def login_check():
-    """Check login.php"""
+    """Check login.php and get_login_details.php"""
     global account_uuid
     passfail = print_closure("login_check")
     print("Performing Account Login Check")
@@ -77,6 +76,9 @@ def login_check():
     successful_login = call_server("login.php", {"username": account_username, "password": account_password})
     passfail("Successful Login", len(successful_login) == 23)
     account_uuid = successful_login
+
+    login_details = json.loads(call_server("get_login_details.php", {"uuid": account_uuid}))
+    passfail("Get Login Details", "error" not in login_details and login_details["username"] == account_username)
 
 def chat_contains_message(data, goal_message):
     for message in data:
@@ -103,18 +105,72 @@ def chat_check():
     passfail("Read message successfully", chat_contains_message(success_map, "Test Message"))
     passfail("Not logged in message did not get read", not chat_contains_message(success_map, "Invalid UUID Message"))
 
+def games_count(data, name):
+    """Counts the number of games that have the provided name"""
+    ret = 0
+    for game in data:
+        if game["game_name"] == name:
+            ret += 1
+    return ret
+
+def games_contains(data, name):
+    """Check to see if the games list contains a game with the provided name"""
+    return games_count(data, name) != 0
+
 def games_check():
     """Check list_games.php and submit_game.php"""
     passfail = print_closure("games_check")
     print("Performing list and submit game check")
 
+    original_games_list = json.loads(call_server("list_games.php"))
+    
     new_game = get_uuid()
     success_game = call_server("submit_game.php", {"game_name": new_game, "submitter_id": 102, "short_description": "test short desc", "long_description": "test long desc", "supplies[]": "test", "instructions": "## Instructions"})
-    passfail("Create a new game", len(success_game) == 0)
-    print(len(success_game), success_game)
 
-    games_list = json.loads(call_server("list_games.php"))
-    first_name = games_list[0]["game_name"]
+    new_games_list = json.loads(call_server("list_games.php"))
+    passfail("Create a new game", games_contains(new_games_list, new_game) and not games_contains(original_games_list, new_game))
+
+    fail_game = call_server("submit_game.php", {"game_name": new_game, "submitter_id": 102, "short_description": "test short desc", "long_description": "test long desc", "supplies[]": "test", "instructions": "## Instructions"})
+    final_games_list = json.loads(call_server("list_games.php"))
+    passfail("Block games with same name as previous game", games_count(final_games_list, new_game) == 1)
+
+def vote_check():
+    """Check get_vote.php and vote.php"""
+    passfail = print_closure("vote_check")
+    print("Performing the vote check")
+    game_id = json.loads(call_server("list_games.php"))[0]["game_id"]
+    
+    not_logged_in = json.loads(call_server("get_vote.php", {"game_id": game_id, "uuid": "invaliduuid"}))
+    passfail("Not logged in vote", not_logged_in["vote"] == 0)
+    
+    invalid_gameid = json.loads(call_server("get_vote.php", {"game_id": -10, "uuid": account_uuid}))
+    passfail("Invalid Game ID", invalid_gameid["vote"] == 0)
+    
+    valid = json.loads(call_server("get_vote.php", {"game_id": game_id, "uuid": account_uuid}))
+    passfail("Valid Get Vote", valid["vote"] == 0)
+
+    call_server("vote.php", {"game_id": game_id, "uuid": account_uuid, "vote": 1})
+    voted = json.loads(call_server("get_vote.php", {"game_id": game_id, "uuid": account_uuid}))
+    passfail("Voted Get Vote", voted["vote"] == 1)
+
+def view_game_check():
+    """Checks view_game.php"""
+    passfail = print_closure("view_game")
+    print("Checking the view game function")
+    game_id = json.loads(call_server("list_games.php"))[0]["game_id"]
+    game = json.loads(call_server("view_game.php", {"gameid": game_id}))
+    passfail("Get a game", game["game_id"] == game_id)
+
+def sidebar_games_check():
+    """Checks the sidebar games"""
+    passfail = print_closure("sidebar_games")
+    print("Checking the sidebar games function")
+    games_list = json.loads(call_server("sidebar_games.php"))
+    passfail("Get at most 5 games for sidebar", len(games_list) <= 5 and len(games_list) > 0)
+
+def cleanup_automated_test():
+    """Cleans up the database"""
+    call_server("cleanup_automated_test.php")
     
 def main():
     """Perform the checks and print the stats"""
@@ -127,6 +183,10 @@ def main():
         return # Can't continue without a successful login
     chat_check()
     games_check()
+    vote_check()
+    view_game_check()
+    sidebar_games_check()
+    cleanup_automated_test()
     print()
     print("Passed Tests:", passed_tests);
     print("Failed Tests:", failed_tests);
