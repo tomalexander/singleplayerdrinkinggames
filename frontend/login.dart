@@ -55,12 +55,12 @@ class login_form
         content.nodes.add(form);
 
         DivElement de = new Element.html("<div class=\"row\"></div>");
-        de.nodes.add(new Element.html("<span style=\"label\">Username:</span>"));
+        de.nodes.add(new Element.html("<span class=\"label\">Username:</span>"));
         de.nodes.add(new Element.html("<input type=\"text\" name=\"username\" class=\"input\" required>"));
         form.nodes.add(de);
 
         de = new Element.html("<div class=\"row\"></div>");
-        de.nodes.add(new Element.html("<span style=\"label\">Password:</span>"));
+        de.nodes.add(new Element.html("<span class=\"label\">Password:</span>"));
         InputElement password = new Element.html("<input type=\"password\" name=\"password\" class=\"input\" required>");
         de.nodes.add(password);
         form.nodes.add(de);
