@@ -5,6 +5,7 @@ import 'login.dart';
 import 'list_games.dart';
 import 'submit_game.dart';
 import 'view_game.dart';
+import 'search.dart';
 import 'main_page.dart';
 import 'util.dart';
 
@@ -38,6 +39,11 @@ void display_game_submission() {
     query("#content").children.add(new submit_game_form().content);
 }
 
+void display_search() {
+    query("#content").children.clear();
+    query("#content").children.add(new search_form().content);
+}
+
 void handle_history() {
     // Handle all page routing and history based on "page" url variable
     String page_name = get_url_variable("page");
@@ -60,6 +66,9 @@ void handle_history() {
         break;
       case "game_submission":
         display_game_submission();
+        break;
+      case "search":
+        display_search();
         break;
       case "index":
         /* Falls Through */

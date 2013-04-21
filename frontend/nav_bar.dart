@@ -8,14 +8,15 @@ class nav_bar
     {
         content = new DivElement();
         content.id = "nav_bar";
-        var link_list = ["Home", "Games", "Booze", "Login", "Register", "Submit Game"];
+        var link_list = ["Home", "Games", "Booze", "Login", "Register", "Submit Game", "Search"];
         var link_map = {
             "Home" : "index",
             "Games" : "list_games",
             "Booze" : "booze",
             "Login" : "login",
             "Register" : "register",
-            "Submit Game" : "game_submission"
+            "Submit Game" : "game_submission",
+            "Search" : "search"
         };
         link_list.forEach( (e) {
             var page = link_map[e];
