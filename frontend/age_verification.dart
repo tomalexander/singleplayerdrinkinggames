@@ -14,7 +14,7 @@ class age_verification
         content.nodes.add(new Element.html("<a href=\"\">I am under 18 years old</a>"));
 
         over.onClick.listen((e) {
-                set_cookie("over18", "true", 86400);
+                set_cookie("over18", "true", seconds: 86400);
                 window.location = "#page=index";
             });
     }

@@ -86,7 +86,7 @@ class login_form
                     submit.disabled = false;
                     failures.nodes.add(new Element.html("<p>Incorrect Username or Password</p>"));
                 } else {
-                    set_cookie("login_uuid", attempted_login, 3600*24*30);
+                    set_cookie("login_uuid", attempted_login, seconds: 3600*24*30);
                     window.location = "https://singleplayerdrinkinggames.com/";
                 }
             });

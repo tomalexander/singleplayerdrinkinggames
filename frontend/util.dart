@@ -144,7 +144,7 @@ String generate_expires_string(DateTime local_time)
  * @param value The value to assign to the cookie
  * @param seconds The number of seconds the cookie should exist, pass null to never expire cookie
  */
-void set_cookie(String name, String value, int seconds)
+void set_cookie(String name, String value, {int seconds: null})
 {
     if (seconds != null) {
         DateTime now = new DateTime.now();
