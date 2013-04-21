@@ -26,6 +26,9 @@ function main() {
     if($user_info == null) {
         die("UUID NOT LOGGED IN");
     }
+    if($submitter_id != $user_info->id) {
+        $submitter_id = $user_info->id;
+    }
 
     if(!is_array($supplies)) {
         $supplies = array();
