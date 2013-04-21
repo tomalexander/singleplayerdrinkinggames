@@ -59,6 +59,7 @@ if ($action == "send") {
         die("{\n    \"error\": \"Failed to execute statement\"\n}");
     }
     close_db();
+    die("{\n    \"message\": \"Successfully sent message\"\n}");
 } else if ($action == "get") {
     //Retrieve messages
     $room = isset($_REQUEST["room"]) ? $_REQUEST["room"] : "main";
