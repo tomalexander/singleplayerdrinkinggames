@@ -9,7 +9,7 @@ class register_form
       /*
        * Creates the form that allows a user to register on the website.
        */
-        content = new Element.html("<div id=\"login-form\"></div>");
+        content = new Element.html("<div id=\"register-form\"></div>");
         FormElement form = new Element.html("<form action=\"register.php\" method=\"POST\"></form>");
         content.nodes.add(form);
 

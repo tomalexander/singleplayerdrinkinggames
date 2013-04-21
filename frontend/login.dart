@@ -33,7 +33,7 @@ class login_form
       /*
        * Structure for the login box.
        */
-        content = new Element.html("<div>Loading Login Form</div>");
+        content = new Element.html("<div id=\"login-form\">Loading Login Form</div>");
         Map user_data = get_login_details();
         if (user_data == null) {
             //User not logged in
@@ -53,15 +53,22 @@ class login_form
         content.nodes.clear();
         FormElement form = new Element.html("<form action=\"login.php\" method=\"POST\"></form>");
         content.nodes.add(form);
-        form.nodes.add(new Text("Username:"));
-        form.nodes.add(new Element.html("<input type=\"text\" name=\"username\" required>"));
-        form.nodes.add(new Element.html("<br>"));
-        form.nodes.add(new Text("Password:"));
-        InputElement password = new Element.html("<input type=\"password\" name=\"password\" required>");
-        form.nodes.add(password);
-        form.nodes.add(new Element.html("<br>"));
-        SubmitButtonInputElement submit = new Element.html("<input type=\"submit\" value=\"Log In\">");
-        form.nodes.add(submit);
+
+        DivElement de = new Element.html("<div class=\"row\"></div>");
+        de.nodes.add(new Element.html("<span style=\"label\">Username:</span>"));
+        de.nodes.add(new Element.html("<input type=\"text\" name=\"username\" class=\"input\" required>"));
+        form.nodes.add(de);
+
+        de = new Element.html("<div class=\"row\"></div>");
+        de.nodes.add(new Element.html("<span style=\"label\">Password:</span>"));
+        InputElement password = new Element.html("<input type=\"password\" name=\"password\" class=\"input\" required>");
+        de.nodes.add(password);
+        form.nodes.add(de);
+
+        de = new Element.html("<div class=\"row\"></div>");
+        SubmitButtonInputElement submit = new Element.html("<input type=\"submit\" value=\"Log In\" class=\"submit\">");
+        de.nodes.add(submit);
         form.onSubmit.listen((e) {submit.disabled = true;});
+        form.nodes.add(de);
     }
 }
