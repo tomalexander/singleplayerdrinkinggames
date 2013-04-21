@@ -2,11 +2,9 @@ library nav_bar;
 import 'dart:html';
 import 'login.dart';
 
-class nav_bar
-{
+class nav_bar {
     DivElement content;
-    nav_bar()
-    {
+    nav_bar() {
         content = new DivElement();
         content.id = "nav_bar";
         var link_list = ["Home", "Games", "Submit Game"];
@@ -18,10 +16,10 @@ class nav_bar
             "Submit Game" : "game_submission"
         };
         link_list.forEach( (e) {
-            var page = link_map[e];
-            var link_html = new Element.html("<a href=/#page=${page}> ${e} </a>");
-            content.children.add(link_html);
-        });
+                var page = link_map[e];
+                var link_html = new Element.html("<a href=/#page=${page}> ${e} </a>");
+                content.children.add(link_html);
+            });
         Map user_data = get_login_details();
         if (user_data == null) {
             //User not logged in

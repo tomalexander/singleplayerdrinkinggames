@@ -11,26 +11,25 @@ import 'login.dart';
 import 'markdown.dart';
 
 
-
+/**
+ * Takes a map, and encodes that into a URI format.
+ * This is done to make varaibles easier to pass into the server.
+ * 
+ * @param data: Data to be encoded.
+ * 
+ * @return String: The data encoded into URI format.
+ */
 String encodeMap(Map data) {
-  /*
-   * Takes a map, and encodes that into a URI format.
-   * This is done to make varaibles easier to pass into the server.
-   * 
-   * @param data: Data to be encoded.
-   * 
-   * @return String: The data encoded into URI format.
-   */
     return data.keys.map((k) {
-        return '${encodeUriComponent(k)}=${encodeUriComponent(data[k])}';
-    }).join('&');
+            return '${encodeUriComponent(k)}=${encodeUriComponent(data[k])}';
+        }).join('&');
 }
 
+/*
+ * Loads the "view game" form, allowing the user to view a selected game's
+ * description, raiting, and other data.
+ */
 class view_game_form {
-  /*
-   * Loads the "view game" form, allowing the user to view a selected game's
-   * description, raiting, and other data.
-   */
   
     DivElement content;
 
@@ -40,14 +39,13 @@ class view_game_form {
         this.content.children.add(new_pre);
     }
 
+    /**
+     * Adds the disqus comment bar to the view_game div
+     *
+     * @param game_name The game name to identify the comment
+     * thread we should use.
+     */
     add_comments(String game_name) {
-        /*
-         * Adds the disqus comment bar to the view_game div
-         *
-         * @param game_name The game name to identify the comment
-         * thread we should use.
-         */
-
         //Set disqus_identified in javascript
         ScriptElement dsq_page_name= new ScriptElement();
         dsq_page_name.type = 'text/javascript';
@@ -69,33 +67,33 @@ class view_game_form {
         this.content.children.add(dsq);
     }
 
-    int process_vote(gameid, vote) {
-      /*
-       * Allows the user to vote on a game.
-       * 
-       * @param vote: Value of the vote. Positive 1 is a postive vote, negative 1 is a negative vote.
-       * @param gameid: ID of the game that is being voted for. 
-       * 
-       * @return int: The total value of votes after the new vote is submitted to the database.
-       */
-      String uuid = get_cookie("login_uuid");
-      var votedata = {"game_id":"$gameid","uuid":"$uuid","vote":"$vote"};
-      String encodedData = encodeMap(votedata);
-      int ret = 0;
-      String resp = get_string_synchronous("vote.php", encodedData);
-      String parsed_resp = parse(resp);
-      ret = parsed_resp["vote"];
-      return ret;
+    /**
+     * Allows the user to vote on a game.
+     * 
+     * @param vote: Value of the vote. Positive 1 is a postive vote, negative 1 is a negative vote.
+     * @param gameid: ID of the game that is being voted for. 
+     * 
+     * @return int: The total value of votes after the new vote is submitted to the database.
+     */
+    int process_vote(gameid, vote) {   
+        String uuid = get_cookie("login_uuid");
+        var votedata = {"game_id":"$gameid","uuid":"$uuid","vote":"$vote"};
+        String encodedData = encodeMap(votedata);
+        int ret = 0;
+        String resp = get_string_synchronous("vote.php", encodedData);
+        String parsed_resp = parse(resp);
+        ret = parsed_resp["vote"];
+        return ret;
     }
 
+    /**
+     * Fetch the total value of the votes from the database in order to display it on the webpage.
+     * 
+     * @param gameid: ID of the game to retreive votes for.
+     * 
+     * @return int: Total values of all the votes.
+     */
     int get_vote(gameid) {
-      /*
-       * Fetch the total value of the votes from the database in order to display it on the webpage.
-       * 
-       * @param gameid: ID of the game to retreive votes for.
-       * 
-       * @return int: Total values of all the votes.
-       */
         String uuid = get_cookie("login_uuid");
         var votedata = {"game_id":gameid,"uuid":uuid};
         String encodedData = encodeMap(votedata);
@@ -106,14 +104,14 @@ class view_game_form {
         return ret;
     }
 
-    void redo_buttons(vote_val, down_button, up_button) {
-      /*
-       * Change the state of the buttons on the page based on how the user voted, if the user voted at all.
-       * 
-       * @param vote_val: Value of the user's vote.
-       * @param down_button: The location of the downvote button.
-       * @param up_button: The location of the upvote button.
-       */
+    /**
+     * Change the state of the buttons on the page based on how the user voted, if the user voted at all.
+     * 
+     * @param vote_val: Value of the user's vote.
+     * @param down_button: The location of the downvote button.
+     * @param up_button: The location of the upvote button.
+     */
+    void redo_buttons(vote_val, down_button, up_button) {   
         if(vote_val == 1) {
             down_button.classes.clear();
             up_button.classes.clear();
@@ -132,16 +130,16 @@ class view_game_form {
         }
     }
     
-    void vote_buttons(gameid) {
-      /*
-       * Construct the vote buttons, and add listeners that let them
-       * vote for the appropriate game when pushed.
-       * 
-       * @param gameid: the ID of the game that the buttons vote for.
-       */
+    /**
+     * Construct the vote buttons, and add listeners that let them
+     * vote for the appropriate game when pushed.
+     * 
+     * @param gameid: the ID of the game that the buttons vote for.
+     */
+    void vote_buttons(gameid) {   
         Map user_data = get_login_details();
         if(user_data == null) {
-          return;
+            return;
         }
 
         var new_pre = new Element.html("<pre></pre>");
@@ -152,13 +150,13 @@ class view_game_form {
         
         //Listeners for the vote buttons
         down_button.onClick.listen((e) {
-            int vote_val = this.process_vote(gameid,-1);
-            this.redo_buttons(vote_val, down_button, up_button);
-          });
+                int vote_val = this.process_vote(gameid,-1);
+                this.redo_buttons(vote_val, down_button, up_button);
+            });
         up_button.onClick.listen((e) {
-            int vote_val = this.process_vote(gameid,1);
-            this.redo_buttons(vote_val, down_button, up_button);
-          });
+                int vote_val = this.process_vote(gameid,1);
+                this.redo_buttons(vote_val, down_button, up_button);
+            });
         
         new_pre.text = "Vote : ";
         new_pre.nodes.add(down_button);
@@ -166,35 +164,35 @@ class view_game_form {
         this.content.children.add(new_pre);
     }
 
+    /**
+     * Displays the view_game_form.
+     */
     view_game_form() {
-      /*
-       * Displays the view_game_form.
-       */
         this.content = new Element.html("<div></div>");
         this.content.id = "view_game";
         var gameid = get_url_variable("gameid");
         var postdata = {"gameid":gameid};
         String encodedData = encodeMap(postdata);
         get_string("view_game.php", encodedData, (resp) {
-            var parsed_resp = parse(resp);
-            this.display_pre("Name : ${parsed_resp["game_name"]}");
-            this.display_pre("Submitter : ${parsed_resp["submitter_username"]}");
-            this.display_pre("Short Description : ${parsed_resp["short_description"]}");
-            this.display_pre("Long Description : ${parsed_resp["long_description"]}");
-            DivElement instructions_div = new Element.tag("div");
-            instructions_div.innerHtml = markdown_to_html(parsed_resp["instructions"]);
-            this.content.children.add(instructions_div);
+                var parsed_resp = parse(resp);
+                this.display_pre("Name : ${parsed_resp["game_name"]}");
+                this.display_pre("Submitter : ${parsed_resp["submitter_username"]}");
+                this.display_pre("Short Description : ${parsed_resp["short_description"]}");
+                this.display_pre("Long Description : ${parsed_resp["long_description"]}");
+                DivElement instructions_div = new Element.tag("div");
+                instructions_div.innerHtml = markdown_to_html(parsed_resp["instructions"]);
+                this.content.children.add(instructions_div);
             
-            this.display_pre("Supplies:\n${parsed_resp["supplies"].join("\n")}");
+                this.display_pre("Supplies:\n${parsed_resp["supplies"].join("\n")}");
 
-            this.display_pre("Upvotes : ${parsed_resp["upvote_count"]}");
-            this.display_pre("Downvotes : ${parsed_resp["downvote_count"]}");
-            this.vote_buttons(gameid);
+                this.display_pre("Upvotes : ${parsed_resp["upvote_count"]}");
+                this.display_pre("Downvotes : ${parsed_resp["downvote_count"]}");
+                this.vote_buttons(gameid);
 
-            //this.display_pre(resp);
+                //this.display_pre(resp);
 
-            // Add comments
-            this.add_comments(gameid);
-        });
+                // Add comments
+                this.add_comments(gameid);
+            });
     }
 }

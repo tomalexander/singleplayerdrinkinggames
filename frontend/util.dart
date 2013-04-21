@@ -9,8 +9,7 @@ import 'dart:html';
  * @param url_data url encoded variables
  * @param callback The function to pass the string to when the data is returned
  */
-void get_string(String address, String url_data, callback)
-{
+void get_string(String address, String url_data, callback) {
     HttpRequest request = new HttpRequest();
   
     request.onLoad.listen((Event event) {
@@ -31,8 +30,7 @@ void get_string(String address, String url_data, callback)
  *
  * @return The output from the call to the server
  */
-String get_string_synchronous(String address, String url_data)
-{
+String get_string_synchronous(String address, String url_data) {
     HttpRequest request = new HttpRequest();
   
     // POST the data to the server
@@ -49,8 +47,7 @@ String get_string_synchronous(String address, String url_data)
  *
  * @return The string value of the cookie, or null if not found
  */
-String get_cookie(String name)
-{
+String get_cookie(String name) {
     List<String> cookies = document.cookie.split(";");
     for (int i = 0; i < cookies.length; ++i) {
         List<String> split = cookies[i].split("=");
@@ -68,8 +65,7 @@ String get_cookie(String name)
  *
  * @return The value of the variable or null if not found
  */
-String get_url_variable(String name)
-{
+String get_url_variable(String name) {
     String hash_string = window.location.hash.replaceFirst('#', '');
     List<String> variables = hash_string.split(";");
     for (int i = 0; i < variables.length; ++i) {
@@ -88,8 +84,7 @@ String get_url_variable(String name)
  *
  * @return The formatted string in UTC
  */
-String generate_expires_string(DateTime local_time)
-{
+String generate_expires_string(DateTime local_time) {
     DateTime time = local_time.toUtc();
     String ret = "";
     if (time.weekday == DateTime.MONDAY) {
@@ -144,8 +139,7 @@ String generate_expires_string(DateTime local_time)
  * @param value The value to assign to the cookie
  * @param seconds The number of seconds the cookie should exist, pass null to never expire cookie
  */
-void set_cookie(String name, String value, {int seconds: null})
-{
+void set_cookie(String name, String value, {int seconds: null}) {
     if (seconds != null) {
         DateTime now = new DateTime.now();
         DateTime expires = now.add(new Duration(seconds: seconds));
@@ -160,7 +154,6 @@ void set_cookie(String name, String value, {int seconds: null})
  *
  * @param name The name of the cookie
  */
-void delete_cookie(String name)
-{
+void delete_cookie(String name) {
     document.cookie = "${name}=; expires=Thu, 01 Jan 1970 00:00:01 GMT";
 }

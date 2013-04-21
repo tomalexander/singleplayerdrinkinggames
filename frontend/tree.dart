@@ -1,8 +1,7 @@
 import 'dart:html';
 import 'dart:json';
 
-class tree
-{
+class tree {
     DivElement content;
     String name;
     List<tree_element> elements;
@@ -20,8 +19,7 @@ class tree
         InputElement hidden_element = new Element.html("<input type=\"hidden\" name=\"${name}\">");
         content.nodes.add(hidden_element);
         Map<int, tree_element> hierarchy = new Map<int, tree_element>();
-        for (int i = 0; i < data.length; ++i)
-        {
+        for (int i = 0; i < data.length; ++i) {
             tree_element parent = null;
             if (data[i][0] != data[i][1]) {
                 parent = hierarchy[data[i][1]];
@@ -39,11 +37,10 @@ class tree
     }
 }
 
-class tree_element
-{
-  /*
-   * Element of a tree, including functions to show/hide elements of a tree.
-   */
+/*
+ * Element of a tree, including functions to show/hide elements of a tree.
+ */
+class tree_element {
     DivElement content;
     DivElement children;
     DivElement clickable;

@@ -11,8 +11,7 @@ import 'dart:core';
  * 
  * @return The formatted string
  */
-String htmlspecialchars(String inp)
-{
+String htmlspecialchars(String inp) {
     return inp.replaceAll("&", "&amp;").replaceAll("\"", "&quot;").replaceAll("'", "&#039;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 }
 

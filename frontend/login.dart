@@ -11,8 +11,7 @@ import 'view_game.dart';
  *
  * @return A map with keys "id" "username" and "email" for the current logged in user, or null if the user is not logged in
  */
-Map get_login_details()
-{
+Map get_login_details() {
     String uuid = get_cookie("login_uuid");
     String response = get_string_synchronous("get_login_details.php", 'uuid=${uuid}');
     try {
@@ -27,13 +26,12 @@ Map get_login_details()
     }
 }
 
-class login_form
-{
+class login_form {
     DivElement content;
+    /**
+     * Structure for the login box.
+     */
     login_form() {
-      /*
-       * Structure for the login box.
-       */
         content = new Element.html("<div id=\"login-form\">Loading Login Form</div>");
         Map user_data = get_login_details();
         if (user_data == null) {
@@ -47,10 +45,10 @@ class login_form
         }
     }
   
+    /**
+     * Generates the form.
+     */
     void create_form() {
-      /*
-       * Generates the form.
-       */
         content.nodes.clear();
         FormElement form = new Element.html("<form action=\"login.php\" method=\"POST\" onsubmit=\"return false;\"></form>");
         content.nodes.add(form);

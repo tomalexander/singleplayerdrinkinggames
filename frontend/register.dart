@@ -4,13 +4,12 @@ import 'nav_bar.dart';
 import 'view_game.dart';
 import 'util.dart';
 
-class register_form
-{
+class register_form {
     DivElement content;
+    /**
+     * Creates the form that allows a user to register on the website.
+     */
     register_form() {
-      /*
-       * Creates the form that allows a user to register on the website.
-       */
         content = new Element.html("<div id=\"register-form\"></div>");
         FormElement form = new Element.html("<form action=\"register.php\" method=\"POST\" onsubmit=\"return false;\"></form>");
         content.nodes.add(form);
@@ -33,7 +32,7 @@ class register_form
         de.nodes.add(confirm_password);
         form.nodes.add(de);
         confirm_password.onInput.listen((e) {
-          //Checks to see if the passwords match
+                //Checks to see if the passwords match
                 if (password.value != confirm_password.value) {
                     confirm_password.setCustomValidity("The passwords do not match");
                 } else {

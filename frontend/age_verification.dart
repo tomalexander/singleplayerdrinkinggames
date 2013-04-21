@@ -2,8 +2,7 @@ library age_verification;
 import 'dart:html';
 import 'util.dart';
 
-class age_verification
-{
+class age_verification {
     DivElement content;
     age_verification() {
         content = new Element.html("<div></div>");

@@ -6,11 +6,10 @@ import 'dart:json';
 import 'nav_bar.dart';
 import 'util.dart';
 
-class chat_box
-{
-  /*
-   * A HTML element that lets the user chat with other users that are also logged in.
-   */
+/*
+ * A HTML element that lets the user chat with other users that are also logged in.
+ */
+class chat_box { 
     String room;
     int last_id;
     DivElement content;
@@ -20,12 +19,12 @@ class chat_box
     Timer refresh;
     String original_hash;
 
+    /**
+     * Sets up the chatbox for a specific room, and adds the proper listeners.
+     * 
+     * @param _room: Room number for the chatbox.
+     */
     chat_box(String _room) {
-      /*
-       * Sets up the chatbox for a specific room, and adds the proper listeners.
-       * 
-       * @param _room: Room number for the chatbox.
-       */
         room = _room;
         original_hash = window.location.hash;
         last_id = 0;
@@ -35,8 +34,7 @@ class chat_box
 
         //Listener for sending messages via "enter" key.
         input_message.onKeyPress.listen((e) {
-                if (e.keyCode == 13)
-                {
+                if (e.keyCode == 13) {
                     send_message();
                 }
             });
@@ -63,10 +61,10 @@ class chat_box
         update_box();
     }
 
+    /**
+     * Sends a message to the chat room.
+     */
     void send_message() {
-      /*
-       * Sends a message to the chat room.
-       */
         if (input_message.value == "")
             return;
         String message = encodeUriComponent(input_message.value);
@@ -75,10 +73,10 @@ class chat_box
         get_string("chat.php", "action=send&room=${encodeUriComponent(room)}&uuid=${uuid}&message=${message}", (String response) {update_box();});
     }
 
+    /**
+     * Updates the message box.
+     */
     void update_box() {
-      /*
-       * Updates the message box.
-       */
         String messages = get_string_synchronous("chat.php", "action=get&room=${encodeUriComponent(room)}&last_id=${last_id}");
         List message_list = parse(messages);
         for (Map message in message_list) {

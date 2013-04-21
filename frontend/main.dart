@@ -57,8 +57,8 @@ void handle_history() {
     }
     String page_name = get_url_variable("page");
     if (page_name == null) {
-            display_main_page();
-            return;
+        display_main_page();
+        return;
     }
     switch (page_name) {
       case "login":
@@ -80,7 +80,7 @@ void handle_history() {
         /* Falls Through */
       default:
         display_main_page();
-        break;
+      break;
     }
 }
 
@@ -93,9 +93,9 @@ main() {
 }
 
 main_wrapped() {
-  query('#main').children.add(new nav_bar().content);
-  DivElement content = new Element.html("<div id=\"content\">content goes here</div>");
-  query('#main').children.add(content);
-  handle_history();
-  window.onPopState.listen((event) {handle_history();});
+    query('#main').children.add(new nav_bar().content);
+    DivElement content = new Element.html("<div id=\"content\">content goes here</div>");
+    query('#main').children.add(content);
+    handle_history();
+    window.onPopState.listen((event) {handle_history();});
 }
