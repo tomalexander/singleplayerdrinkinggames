@@ -15,7 +15,6 @@ include "users.php";
 function main() {
     $uuid = $_REQUEST["uuid"];
     $game_name = $_REQUEST["game_name"];
-    $submitter_id = $_REQUEST["submitter_id"];
     $short_desc = $_REQUEST["short_description"];
     $long_desc = $_REQUEST["long_description"];
     $supplies = $_REQUEST["supplies"];
@@ -26,9 +25,8 @@ function main() {
     if($user_info == null) {
         die("UUID NOT LOGGED IN");
     }
-    if($submitter_id != $user_info->id) {
-        $submitter_id = $user_info->id;
-    }
+    $submitter_id = $user_info->id;
+    
 
     if(!is_array($supplies)) {
         $supplies = array();
