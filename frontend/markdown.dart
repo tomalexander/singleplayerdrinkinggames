@@ -4,6 +4,17 @@ import 'dart:json';
 import 'dart:uri';
 import 'dart:core';
 
+/** 
+ * Convert special html characters into code, same as the php function
+ * 
+ * @param inp The string containing html characters
+ * 
+ * @return The formatted string
+ */
+String htmlspecialchars(String inp) {
+    return inp.replaceAll("&", "&amp;").replaceAll("\"", "&quot;").replaceAll("'", "&#039;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+}
+
 class markdown_regex {
     RegExp regex;
     Function callback;
@@ -80,11 +91,10 @@ class markdown_headline extends markdown_node {
     int level;
     markdown_headline(int _level, String content) : super() {
         level = _level;
-        // List<markdown_node> subcontent = generate_markdown_nodes(content);
-        // for (markdown_node cur in subcontent) {
-        //     children.add(cur);
-        // }
-        children.add(new markdown_plaintext(content));
+        List<markdown_node> subcontent = generate_markdown_emphasis(content);
+        for (markdown_node cur in subcontent) {
+            children.add(cur);
+        }
     }
 
     String generate_html() {
@@ -98,8 +108,13 @@ class markdown_headline extends markdown_node {
 }
 
 class markdown_paragraph extends markdown_node {
-    markdown_paragraph(String _content) : super() {
-        children.add(new markdown_plaintext(_content.trim()));
+    markdown_paragraph(String content) : super() {
+        if (content.endsWith("\n"))
+            content = content.substring(0, content.length-1);
+        List<markdown_node> subcontent = generate_markdown_emphasis(content);
+        for (markdown_node cur in subcontent) {
+            children.add(cur);
+        }
     }
 
     String generate_html() {
@@ -129,16 +144,45 @@ class markdown_blockquote extends markdown_node {
     }
 }
 
+class markdown_code extends markdown_node {
+    markdown_code(String content) : super() {
+        children.add(new markdown_plaintext(htmlspecialchars(content)));
+    }
+
+    String generate_html() {
+        String ret = "<code>";
+        for (markdown_node cur in children) {
+            ret = "${ret}${cur.generate_html()}";
+        }
+        ret = "${ret}</code>";
+        return ret;
+    }
+}
+
+class markdown_precode extends markdown_node {
+    markdown_precode(String content) : super() {
+        children.add(new markdown_plaintext(htmlspecialchars(content)));
+    }
+
+    String generate_html() {
+        String ret = "<pre><code>";
+        for (markdown_node cur in children) {
+            ret = "${ret}${cur.generate_html()}";
+        }
+        ret = "${ret}</code></pre>";
+        return ret;
+    }
+}
+
 class markdown_emphasis extends markdown_node {
-    String content;
-    markdown_emphasis(String _content) : super() {
-        content = _content;
+    markdown_emphasis(String content) : super() {
+        children.add(new markdown_plaintext(content));
     }
 
     String generate_html() {
         String ret = "<em>";
         for (markdown_node cur in children) {
-            ret = "${ret}${cur.generate_html();}";
+            ret = "${ret}${cur.generate_html()}";
         }
         ret = "${ret}</em>";
         return ret;
@@ -146,15 +190,14 @@ class markdown_emphasis extends markdown_node {
 }
 
 class markdown_strong extends markdown_node {
-    String content;
-    markdown_strong(String _content) : super() {
-        content = _content;
+    markdown_strong(String content) : super() {
+        children.add(new markdown_plaintext(content));
     }
 
     String generate_html() {
         String ret = "<strong>";
         for (markdown_node cur in children) {
-            ret = "${ret}${cur.generate_html();}";
+            ret = "${ret}${cur.generate_html()}";
         }
         ret = "${ret}</strong>";
         return ret;
@@ -211,6 +254,7 @@ List<markdown_node> generate_markdown_nodes(String content) {
 
     RegExp plain_header = new RegExp(r"^(#+) ([^#\n]+)#*\n?", multiLine: true);
     RegExp blockquote = new RegExp(r"(^> ?.*?$\n?)+", multiLine: true);
+    RegExp multiline_code = new RegExp(r"(^    ?.*?$\n?)+", multiLine: true);
     RegExp underline_big_header = new RegExp(r"^(.+)\n=+\n?", multiLine: true);
     RegExp underline_little_header = new RegExp(r"^(.+)\n-+\n?", multiLine: true);
     
@@ -229,6 +273,16 @@ List<markdown_node> generate_markdown_nodes(String content) {
                             return match.substring(1);
                     });
                 return new markdown_blockquote(fixed);
+    }));
+    regular_expressions.add(new markdown_regex(multiline_code, (Match found) {
+                // Trim the '> ' at the start of the line
+                String fixed = found.group(0).splitMapJoin("\n", onNonMatch: (String match) {
+                        if (match.length < 4)
+                            return "";
+                        else
+                            return match.substring(4);
+                    });
+                return new markdown_precode(fixed);
     }));
     regular_expressions.add(new markdown_regex(underline_big_header, (Match found) {
                 return new markdown_headline(1, found.group(1));
@@ -277,9 +331,87 @@ List<markdown_node> generate_markdown_paragraphs(String content) {
 
     RegExp empty_line = new RegExp(r"^\s*$", multiLine: true);
     RegExp paragraph_regex = new RegExp(r"(^.*[^\s]+.*\n?)+", multiLine: true);
+    
     regular_expressions.add(new markdown_regex(paragraph_regex, (Match found) {
                 return new markdown_paragraph(found.group(0));
     }, process: generate_markdown_paragraphs));
+    
+    bool found_match = false;
+    int earliest_start = -1;
+    markdown_regex earliest_regex = null;
+    for (markdown_regex cur in regular_expressions) {
+        cur.populate_variables(content);
+        if (!cur.has_match)
+            continue;
+
+        found_match = true;
+        if (earliest_start == -1 || cur.start <= earliest_start) {
+            earliest_start = cur.start;
+            earliest_regex = cur;
+        }
+    }
+
+    if (!found_match) {
+        if (content.length > 0) {
+            for (markdown_node cur in generate_markdown_emphasis(content)) {
+                ret.add(cur);
+            }
+        }
+        return ret;
+    }
+    return earliest_regex.execute();
+}
+
+/** 
+ * Generate the emphasis tags for remaining strings
+ * 
+ * @param content The remaining string
+ * 
+ * @return a list of paragraph nodes
+ */
+List<markdown_node> generate_markdown_emphasis(String content) {
+    List<markdown_node> ret = new List<markdown_node>();
+    List<markdown_regex> regular_expressions = new List<markdown_regex>();
+
+    RegExp single_asterix = new RegExp(r"(?! )\*(?! )([^*]+)(?! )\*(?! )");
+    RegExp single_underscore = new RegExp(r"(?! )_(?! )([^_]+)(?! )\_(?! )");
+    RegExp double_asterix = new RegExp(r"(?! )\*{2}(?! )([^*]+)(?! )\*{2}(?! )");
+    RegExp double_underscore = new RegExp(r"(?! )_{2}(?! )([^_]+)(?! )_{2}(?! )");
+    RegExp single_tick_code = new RegExp(r"(?! )`(?! )([^`]+)(?! )`(?! )");
+    
+    RegExp spaced_asterix = new RegExp(r" (\*) ");
+    RegExp spaced_underscore = new RegExp(r" (_) ");
+    RegExp backslash_asterix = new RegExp(r"\\(\*)");
+    RegExp backslash_underscore = new RegExp(r"\\(_)");
+    
+    regular_expressions.add(new markdown_regex(single_asterix, (Match found) {
+                return new markdown_emphasis(found.group(1));
+    }, process: generate_markdown_emphasis));
+    regular_expressions.add(new markdown_regex(single_underscore, (Match found) {
+                return new markdown_emphasis(found.group(1));
+    }, process: generate_markdown_emphasis));
+    regular_expressions.add(new markdown_regex(double_asterix, (Match found) {
+                return new markdown_strong(found.group(1));
+    }, process: generate_markdown_emphasis));
+    regular_expressions.add(new markdown_regex(double_underscore, (Match found) {
+                return new markdown_strong(found.group(1));
+    }, process: generate_markdown_emphasis));
+    regular_expressions.add(new markdown_regex(single_tick_code, (Match found) {
+                return new markdown_code(found.group(1));
+    }, process: generate_markdown_emphasis));
+
+    regular_expressions.add(new markdown_regex(spaced_asterix, (Match found) {
+                return new markdown_plaintext(found.group(1));
+    }, process: generate_markdown_emphasis));
+    regular_expressions.add(new markdown_regex(spaced_underscore, (Match found) {
+                return new markdown_plaintext(found.group(1));
+    }, process: generate_markdown_emphasis));
+    regular_expressions.add(new markdown_regex(backslash_asterix, (Match found) {
+                return new markdown_plaintext(found.group(1));
+    }, process: generate_markdown_emphasis));
+    regular_expressions.add(new markdown_regex(backslash_underscore, (Match found) {
+                return new markdown_plaintext(found.group(1));
+    }, process: generate_markdown_emphasis));
     
     bool found_match = false;
     int earliest_start = -1;
@@ -306,6 +438,7 @@ List<markdown_node> generate_markdown_paragraphs(String content) {
 }
 
 main_wrapped() {
-    String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their country. This is just a\nregular paragraph.\n\nThe quick brown fox jumped over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote";
+    String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their `country`. This is just a\nre_gu_lar paragraph.\n\nThe quick brown fox jumped over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote\n\n    code block\n    second line code block";
+    RegExp single_asterix = new RegExp(r"(?! )\*(?! )[^*]+(?! )\*(?! )");
     print(markdown_to_html(inp));
 }

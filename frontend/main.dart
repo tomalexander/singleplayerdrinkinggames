@@ -9,6 +9,11 @@ import 'search.dart';
 import 'search_results.dart';
 import 'main_page.dart';
 import 'util.dart';
+import 'age_verification.dart';
+
+/*
+ * Calls to the appropriate webpages.
+ */
 
 void display_register() {
     query("#content").children.clear();
@@ -48,14 +53,23 @@ void display_search() {
 void display_search_results() {
     query("#content").children.clear();
     query("#content").children.add(new search_results_form().content);
+
+void display_age_verification() {
+    query("#content").children.clear();
+    query("#content").children.add(new age_verification().content);
 }
 
 void handle_history() {
     // Handle all page routing and history based on "page" url variable
+    String over18 = get_cookie("over18");
+    if (over18 == null || over18 != "true") {
+        display_age_verification();
+        return;
+    }
     String page_name = get_url_variable("page");
     if (page_name == null) {
-            display_main_page();
-            return;
+        display_main_page();
+        return;
     }
     switch (page_name) {
       case "login":
@@ -83,7 +97,7 @@ void handle_history() {
         /* Falls Through */
       default:
         display_main_page();
-        break;
+      break;
     }
 }
 
@@ -96,9 +110,9 @@ main() {
 }
 
 main_wrapped() {
-  query('#main').children.add(new nav_bar().content);
-  DivElement content = new Element.html("<div id=\"content\">content goes here</div>");
-  query('#main').children.add(content);
-  handle_history();
-  window.onPopState.listen((event) {handle_history();});
+    query('#main').children.add(new nav_bar().content);
+    DivElement content = new Element.html("<div id=\"content\">content goes here</div>");
+    query('#main').children.add(content);
+    handle_history();
+    window.onPopState.listen((event) {handle_history();});
 }
