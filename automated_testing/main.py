@@ -125,12 +125,12 @@ def games_check():
     original_games_list = json.loads(call_server("list_games.php"))
     
     new_game = get_uuid()
-    success_game = call_server("submit_game.php", {"game_name": new_game, "submitter_id": 102, "short_description": "test short desc", "long_description": "test long desc", "supplies[]": "test", "instructions": "## Instructions"})
+    success_game = call_server("submit_game.php", {"game_name": new_game, "submitter_id": -1, "short_description": "test short desc", "long_description": "test long desc", "supplies[]": "test", "instructions": "## Instructions"})
 
     new_games_list = json.loads(call_server("list_games.php"))
     passfail("Create a new game", games_contains(new_games_list, new_game) and not games_contains(original_games_list, new_game))
 
-    fail_game = call_server("submit_game.php", {"game_name": new_game, "submitter_id": 102, "short_description": "test short desc", "long_description": "test long desc", "supplies[]": "test", "instructions": "## Instructions"})
+    fail_game = call_server("submit_game.php", {"game_name": new_game, "submitter_id": -1, "short_description": "test short desc", "long_description": "test long desc", "supplies[]": "test", "instructions": "## Instructions"})
     final_games_list = json.loads(call_server("list_games.php"))
     passfail("Block games with same name as previous game", games_count(final_games_list, new_game) == 1)
 
