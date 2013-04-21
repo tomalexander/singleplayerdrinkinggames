@@ -18,6 +18,7 @@ def get_uuid():
 def call_server(address, data=None):
     if data is not None:
         response = urllib.request.urlopen("https://singleplayerdrinkinggames.com/" + address, urllib.parse.urlencode(data).encode("UTF-8"))
+        print("Calling:", "https://singleplayerdrinkinggames.com/" + address, urllib.parse.urlencode(data).encode("UTF-8"))
         return response.read().decode("UTF-8")
     else:
         response = urllib.request.urlopen("https://singleplayerdrinkinggames.com/" + address)
@@ -94,13 +95,26 @@ def chat_check():
     retrieve_message = call_server("chat.php", {"action": "get", "room": room})
 
     submit_map = json.loads(submit_message)
-    failed_map = jsons.load(failed_login_message)
-    success_map = json.load(retrieve_message)
+    failed_map = json.loads(failed_login_message)
+    success_map = json.loads(retrieve_message)
     
     passfail("Not logged in chat", failed_map["error"] == "UUID NOT LOGGED IN")
     passfail("Sent message successfully", submit_map["message"] == "Successfully sent message")
     passfail("Read message successfully", chat_contains_message(success_map, "Test Message"))
     passfail("Not logged in message did not get read", not chat_contains_message(success_map, "Invalid UUID Message"))
+
+def games_check():
+    """Check list_games.php and submit_game.php"""
+    passfail = print_closure("games_check")
+    print("Performing list and submit game check")
+
+    new_game = get_uuid()
+    success_game = call_server("submit_game.php", {"game_name": new_game, "submitter_id": 102, "short_description": "test short desc", "long_description": "test long desc", "supplies[]": "test", "instructions": "## Instructions"})
+    passfail("Create a new game", len(success_game) == 0)
+    print(len(success_game), success_game)
+
+    games_list = json.loads(call_server("list_games.php"))
+    first_name = games_list[0]["game_name"]
     
 def main():
     """Perform the checks and print the stats"""
@@ -112,6 +126,7 @@ def main():
     if (len(account_uuid) != 23):
         return # Can't continue without a successful login
     chat_check()
+    games_check()
     print()
     print("Passed Tests:", passed_tests);
     print("Failed Tests:", failed_tests);
