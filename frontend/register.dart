@@ -1,6 +1,8 @@
 library register;
 import 'dart:html';
 import 'nav_bar.dart';
+import 'view_game.dart';
+import 'util.dart';
 
 class register_form
 {
@@ -10,12 +12,13 @@ class register_form
        * Creates the form that allows a user to register on the website.
        */
         content = new Element.html("<div id=\"register-form\"></div>");
-        FormElement form = new Element.html("<form action=\"register.php\" method=\"POST\"></form>");
+        FormElement form = new Element.html("<form action=\"register.php\" method=\"POST\" onsubmit=\"return false;\"></form>");
         content.nodes.add(form);
 
         DivElement de = new Element.html("<div class=\"row\"></div>");
         de.nodes.add(new Element.html("<span class=\"label\">Username:</span>"));
-        de.nodes.add(new Element.html("<input type=\"text\" name=\"username\" class=\"input\" required>"));
+        InputElement username = new Element.html("<input type=\"text\" name=\"username\" class=\"input\" required>");
+        de.nodes.add(username);
         form.nodes.add(de);
 
         de = new Element.html("<div class=\"row\"></div>");
@@ -40,13 +43,38 @@ class register_form
         
         de = new Element.html("<div class=\"row\"></div>");
         de.nodes.add(new Element.html("<span class=\"label\">E-Mail:</span>"));
-        de.nodes.add(new Element.html("<input type=\"email\" name=\"email\" class=\"input\" required>"));
+        InputElement email = new Element.html("<input type=\"email\" name=\"email\" class=\"input\" required>");
+        de.nodes.add(email);
         form.nodes.add(de);
 
         de = new Element.html("<div class=\"row\"></div>");
         SubmitButtonInputElement submit = new Element.html("<input type=\"submit\" value=\"Create Account\" class=\"submit\">");
         de.nodes.add(submit);
         form.nodes.add(de);
-        form.onSubmit.listen((e) {submit.disabled = true;});
+
+        DivElement failures = new Element.html("<div class=\"row\"></div>");
+        form.nodes.add(failures);
+
+        form.onSubmit.listen((e) {
+                submit.disabled = true;
+                Map register_vars = new Map();
+                register_vars["username"] = username.value;
+                register_vars["password"] = password.value;
+                register_vars["confirm_password"] = confirm_password.value;
+                register_vars["email"] = email.value;
+                String attempted_register = get_string_synchronous("register.php", encodeMap(register_vars));
+                if (attempted_register == "PASSWORDS DONT MATCH") {
+                    delete_cookie("login_uuid");
+                    submit.disabled = false;
+                    failures.nodes.add(new Element.html("<p>Passwords Don't Match</p>"));
+                } else if (attempted_register == "Username already taken") {
+                    delete_cookie("login_uuid");
+                    submit.disabled = false;
+                    failures.nodes.add(new Element.html("<p>Username already taken</p>"));
+                } else {
+                    set_cookie("login_uuid", attempted_register, seconds: 3600*24*30);
+                    window.location = "https://singleplayerdrinkinggames.com/";
+                }
+            });
     }
 }

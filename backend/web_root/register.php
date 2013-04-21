@@ -19,13 +19,9 @@ function main()
 
     $uuid = create_user($username, $password, $email);
     if ($uuid == 1) {
-        header("refresh:5;url=register.html");
-        setcookie("login_uuid","", time()-3600);
         die("Username already taken");
     }
-    header("Location: https://singleplayerdrinkinggames.com/");
-    setcookie("login_uuid",$uuid, time()+3600*24*30); //Expires in 30 days
-    die();
+    die($uuid);
 }
 
 main();
