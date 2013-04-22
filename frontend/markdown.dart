@@ -269,6 +269,23 @@ class markdown_bullet_list extends markdown_node {
     }
 }
 
+class markdown_link extends markdown_node {
+    String link;
+    markdown_link(String _link, String content) : super() {
+        link = _link;
+        children.add(new markdown_plaintext(content));
+    }
+
+    String generate_html() {
+        String ret = "<a href=\"${link}\">";
+        for (markdown_node cur in children) {
+            ret = "${ret}${cur.generate_html()}";
+        }
+        ret = "${ret}</a>";
+        return ret;
+    }
+}
+
 /** 
  * Convert markdown to HTML
  * 
@@ -454,6 +471,8 @@ List<markdown_node> generate_markdown_emphasis(String content) {
     RegExp spaced_underscore = new RegExp(r" (_) ");
     RegExp backslash_asterix = new RegExp(r"\\(\*)");
     RegExp backslash_underscore = new RegExp(r"\\(_)");
+
+    RegExp link = new RegExp(r"\[([^\]]+)\]\(([^)]+)\)");
     
     regular_expressions.add(new markdown_regex(single_asterix, (Match found) {
                 return new markdown_emphasis(found.group(1));
@@ -483,6 +502,10 @@ List<markdown_node> generate_markdown_emphasis(String content) {
     regular_expressions.add(new markdown_regex(backslash_underscore, (Match found) {
                 return new markdown_plaintext(found.group(1));
     }, process: generate_markdown_emphasis));
+
+    regular_expressions.add(new markdown_regex(link, (Match found) {
+                return new markdown_link(found.group(2), found.group(1));
+    }, process: generate_markdown_emphasis));
     
     bool found_match = false;
     int earliest_start = -1;
@@ -509,6 +532,6 @@ List<markdown_node> generate_markdown_emphasis(String content) {
 }
 
 main_wrapped() {
-    String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their `country`. This is just a\nre_gu_lar paragraph.\n\nThe quick brown fox jumped over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote\n\n    code block\n    second line code block\n- this is\n- elements in\n- a list";
+    String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their `country`. This is just a\nre_gu_lar paragraph.\n\nThe quick brown fox jumped over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote\n\n    code block\n    second line code block\n- this is\n- elements in\n- a list\n[Link Text](http://google.com)";
     print(markdown_to_html(inp));
 }
