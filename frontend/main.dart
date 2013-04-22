@@ -115,7 +115,9 @@ main() {
 }
 
 main_wrapped() {
-    query('#main').children.add(new nav_bar().content);
+    DivElement nav_bar_container = new Element.html("<div id=\"nav_bar_container\"></div>");
+    query('#main').children.add(nav_bar_container);
+    generate_nav_bar();
     DivElement content = new Element.html("<div id=\"content\">content goes here</div>");
     query('#main').children.add(content);
     handle_history();

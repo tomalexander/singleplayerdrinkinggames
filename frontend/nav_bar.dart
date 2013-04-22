@@ -2,6 +2,11 @@ library nav_bar;
 import 'dart:html';
 import 'login.dart';
 
+void generate_nav_bar() {
+    query('#nav_bar_container').children.clear();
+    query('#nav_bar_container').children.add(new nav_bar().content);
+}
+
 class nav_bar {
     DivElement content;
     nav_bar() {

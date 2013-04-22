@@ -3,6 +3,7 @@ library login;
 import 'dart:html';
 import 'dart:json';
 import 'util.dart';
+import 'nav_bar.dart';
 
 /** 
  * Get the login details for the current user
@@ -27,10 +28,12 @@ Map get_login_details() {
 
 class login_form {
     DivElement content;
+    String redirect_target;
     /**
      * Structure for the login box.
      */
-    login_form() {
+    login_form({String redirect: ""}) {
+        redirect_target = redirect;
         content = new Element.html("<div id=\"login-form\">Loading Login Form</div>");
         Map user_data = get_login_details();
         if (user_data == null) {
@@ -84,7 +87,8 @@ class login_form {
                     failures.nodes.add(new Element.html("<p>Incorrect Username or Password</p>"));
                 } else {
                     set_cookie("login_uuid", attempted_login, seconds: 3600*24*30);
-                    window.location = "https://singleplayerdrinkinggames.com/";
+                    window.location = redirect_target;
+                    generate_nav_bar();
                 }
             });
     }

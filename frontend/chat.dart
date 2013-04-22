@@ -35,7 +35,7 @@ class chat_box {
             // User not logged in, tell them they're dumb
             content.nodes.clear();
             content.nodes.add(new Text("You must be logged in to chat."));
-            content.nodes.add(new login_form().content);
+            content.nodes.add(new login_form(redirect: window.location.hash).content);
             return;
         }
         chat_window = new Element.html("<textarea cols=60 rows=20 readonly></textarea>");
