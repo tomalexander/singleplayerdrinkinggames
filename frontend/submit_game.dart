@@ -2,7 +2,6 @@ library submit_game;
 import 'dart:html';
 import 'login.dart';
 import 'util.dart';
-import 'view_game.dart';
 import 'markdown.dart';
 import 'markdown_help.dart';
 
@@ -105,7 +104,7 @@ class submit_game_form {
             
             sl.forEach((e) { supply_list.add(e.value); });
             //window.alert(supply_list.join(", "));
-            String encoded_data = encodeMap(submit_game_vars);
+            String encoded_data = encode_map(submit_game_vars);
             encoded_data = encoded_data + "&supplies[]=" + supply_list.join("&supplies[]=");
             //print(encoded);
             //window.alert(encoded);

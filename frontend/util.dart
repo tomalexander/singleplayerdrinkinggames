@@ -157,3 +157,17 @@ void set_cookie(String name, String value, {int seconds: null}) {
 void delete_cookie(String name) {
     document.cookie = "${name}=; expires=Thu, 01 Jan 1970 00:00:01 GMT";
 }
+
+/**
+ * Takes a map, and encodes that into a URI format.
+ * This is done to make varaibles easier to pass into the server.
+ * 
+ * @param data: Data to be encoded.
+ * 
+ * @return String: The data encoded into URI format.
+ */
+String encode_map(Map data) {
+    return data.keys.map((k) {
+            return '${encodeUriComponent(k)}=${encodeUriComponent(data[k])}';
+        }).join('&');
+}

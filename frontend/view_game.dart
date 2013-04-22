@@ -11,20 +11,6 @@ import 'login.dart';
 import 'markdown.dart';
 
 
-/**
- * Takes a map, and encodes that into a URI format.
- * This is done to make varaibles easier to pass into the server.
- * 
- * @param data: Data to be encoded.
- * 
- * @return String: The data encoded into URI format.
- */
-String encodeMap(Map data) {
-    return data.keys.map((k) {
-            return '${encodeUriComponent(k)}=${encodeUriComponent(data[k])}';
-        }).join('&');
-}
-
 /*
  * Loads the "view game" form, allowing the user to view a selected game's
  * description, raiting, and other data.
@@ -78,7 +64,7 @@ class view_game_form {
     int process_vote(gameid, vote) {   
         String uuid = get_cookie("login_uuid");
         var votedata = {"game_id":"$gameid","uuid":"$uuid","vote":"$vote"};
-        String encodedData = encodeMap(votedata);
+        String encodedData = encode_map(votedata);
         int ret = 0;
         String resp = get_string_synchronous("vote.php", encodedData);
         String parsed_resp = parse(resp);
@@ -96,7 +82,7 @@ class view_game_form {
     int get_vote(gameid) {
         String uuid = get_cookie("login_uuid");
         var votedata = {"game_id":gameid,"uuid":uuid};
-        String encodedData = encodeMap(votedata);
+        String encodedData = encode_map(votedata);
         int ret = 0;
         String resp = get_string_synchronous("get_vote.php", encodedData);
         String parsed_resp = parse(resp);
@@ -172,7 +158,7 @@ class view_game_form {
         this.content.id = "view_game";
         var gameid = get_url_variable("gameid");
         var postdata = {"gameid":gameid};
-        String encodedData = encodeMap(postdata);
+        String encodedData = encode_map(postdata);
         get_string("view_game.php", encodedData, (resp) {
                 var parsed_resp = parse(resp);
                 this.display_pre("Name : ${parsed_resp["game_name"]}");

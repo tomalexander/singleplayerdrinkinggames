@@ -3,7 +3,6 @@ library login;
 import 'dart:html';
 import 'dart:json';
 import 'util.dart';
-import 'view_game.dart';
 
 /** 
  * Get the login details for the current user
@@ -78,7 +77,7 @@ class login_form {
                 Map login_vars = new Map();
                 login_vars["username"] = username.value;
                 login_vars["password"] = password.value;
-                String attempted_login = get_string_synchronous("login.php", encodeMap(login_vars));
+                String attempted_login = get_string_synchronous("login.php", encode_map(login_vars));
                 if (attempted_login == "Log In Failed") {
                     delete_cookie("login_uuid");
                     submit.disabled = false;

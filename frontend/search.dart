@@ -5,7 +5,6 @@ import 'dart:json';
 import 'dart:uri';
 import 'nav_bar.dart';
 import 'util.dart';
-import 'view_game.dart';
 
 class search_form {
     DivElement content;
@@ -35,7 +34,7 @@ class search_form {
                 submit.disabled = true;
                 Map search_vars = new Map();
                 search_vars["keyword"] = keyword.value;
-                String json_results = get_string_synchronous("search.php", encodeMap(search_vars));
+                String json_results = get_string_synchronous("search.php", encode_map(search_vars));
                 List results = parse(json_results);
                 
                 search_results.nodes.clear();

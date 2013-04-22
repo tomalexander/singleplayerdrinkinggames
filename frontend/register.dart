@@ -1,7 +1,6 @@
 library register;
 import 'dart:html';
 import 'nav_bar.dart';
-import 'view_game.dart';
 import 'util.dart';
 
 class register_form {
@@ -61,7 +60,7 @@ class register_form {
                 register_vars["password"] = password.value;
                 register_vars["confirm_password"] = confirm_password.value;
                 register_vars["email"] = email.value;
-                String attempted_register = get_string_synchronous("register.php", encodeMap(register_vars));
+                String attempted_register = get_string_synchronous("register.php", encode_map(register_vars));
                 if (attempted_register == "PASSWORDS DONT MATCH") {
                     delete_cookie("login_uuid");
                     submit.disabled = false;
