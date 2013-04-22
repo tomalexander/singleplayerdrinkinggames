@@ -40,6 +40,7 @@ HOST="singleplayerdrinkinggames.com"
 rsync -rvz --copy-links backend/web_root/* $REMOTEUSER@$HOST:~/singleplayerdrinkinggames.com
 rsync -rvz --copy-links frontend/*.js frontend/*.html frontend/*.less $REMOTEUSER@$HOST:~/singleplayerdrinkinggames.com
 rsync -avz backend/db_functions.php $REMOTEUSER@$HOST:~/
+rsync -rvz --copy-links images $REMOTEUSER@$HOST:~/singleplayerdrinkinggames.com/
 
 HASH=`git rev-parse HEAD`
 USER=`whoami`
