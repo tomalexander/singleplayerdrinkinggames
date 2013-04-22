@@ -84,7 +84,20 @@ function login($username, $password) {
         if ($combined_password == $row["password"]) {
             $uuid = uniqid("", true);
             $userid = get_user_id($username);
-            $db->exec("UPDATE active_logins SET `uuid`=\"{$uuid}\" WHERE userid={$userid}");
+            $update = $db->prepare("UPDATE active_logins SET `uuid`=\"{$uuid}\" WHERE userid={$userid}");
+            $update->execute();
+            if ($update->rowCount == 0) {
+                $insert = "INSERT INTO active_logins (userid, uuid) VALUES (:userid, :uuid)";
+                $stmt = $db->prepare($insert);
+                $stmt->bindParam(":userid", $userid);
+                $stmt->bindParam(":uuid", $uuid);
+                if (! $stmt->execute()) {
+                    close_db();
+                    print_r($stmt->errorInfo());
+                    return 2; //statement failed to execute
+                }
+            }
+            
             close_db();
             return $uuid;
         }
