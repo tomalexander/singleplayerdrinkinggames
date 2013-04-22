@@ -1,0 +1,86 @@
+#+TITLE:     Testing
+#+AUTHOR:    
+#+EMAIL:     alexat3@rpi.edu
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t email:nil author:nil
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:t
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+#+XSLT:
+#+LaTeX_CLASS_OPTIONS: [12pt,letterpaper,bookmarks=false,colorlinks=true,linkcolor=blue,pdfstartview=FitH]
+* Strategy
+Our project uses the Model View Controller design pattern. Our View is implemented in Dart and consists of a GUI that is displayed in a browser. Due to its GUI nature, all of its test cases must be completed manually. The Controller is a PHP backend that recieves URL encoded variables and returns either JSON or plaintext, depending on the situation. This allows us to test the backend automatically by creating a second automated text-based View in the form of a python script. This script queries the server to perform all the tasks that a user can do on the site, and checks the results of those queries to make sure everything is functioning properly. The python script only uses the built-in python standard library so its only dependency is Python3.
+* Test Cases
+** Automated
+*** Mismatching Passwords
+1. Attempt to register an account with password and confirm_password fields not matching
+2. Succeeds if "PASSWORDS DONT MATCH" is returned
+*** Register a new account
+1. Attempt to register an account correctly
+2. UUIDs generated for account name and password
+3. Succeeds if account UUID is returned
+*** Username already taken
+1. Attempt to register another account with the same username
+2. Succeeds if "Username already taken" is returned
+*** Incorrect Login
+1. Attempt to log into the created accout using an incorrect password
+2. Succeeds if "Log In Failed" is returned
+*** Successful Login
+1. Attempt to log into the created account using the correct password
+2. Succeeds if a new account UUID is returned
+*** Get Login Details
+1. Attempt to retrieve the account details of the created account
+2. Succeeds if the username of the returned user matches to new user account
+*** Not logged in chat
+1. Attempt to send a message into the chat room with an invalid log in
+2. Succeeds if "UUID NOT LOGGED IN" is returned
+*** Sent message successfully
+1. Attempt to send a message while correctly logged in
+2. Succeeds if "Successfully sent message" is returned
+*** Read message successfully
+1. Read messages in chat room and attempt to find the message that was just sent
+2. Succeeds if chat contains a message with identical text to the one just sent
+*** Not logged in message did not get read
+1. Read messages in chat room and look for the message that we attempted to send with an invalid log in
+2. Succeeds if it does not find the message sent with the invalid log in
+*** Create a new game
+    :PROPERTIES:
+    :CUSTOM_ID: CreateNewGame
+    :END:
+1. Reads the current game list
+2. Attempts to create a new game with a UUID for the name
+3. Reads the new game list
+4. Succeeds if the game is found in the new game list but not the original game list
+*** Block games with same name as previous game
+1. Attempt to create a new game with the same name as [[#CreateNewGame][Create a new game]]
+2. Read a new game list
+3. Succeeds if the number of games with that name is exactly 1
+*** Not logged in vote
+    :PROPERTIES:
+    :CUSTOM_ID: NotLoggedInVote
+    :END:
+1. Get ID of any game
+2. Attempt to get the vote for that game with an invalid log in
+3. Succeeds if the returned object's vote field is 0
+*** Invalid Game ID
+1. Attempt to get the vote for a game with an id of -10 (which is invalid)
+2. Succeeds if the returned object's vote field is 0
+*** Valid Get Vote
+1. Attempt to get the vote for the game from [[#NotLoggedInVote][Not logged in vote]] with a correct log in
+2. Succeeds if the returned object's vote field is 0
+*** Voted Get Vote
+1. Vote for the game from [[#NotLoggedInVote][Not logged in vote]] with a correct log in
+2. Attempt to get the vote for the game from [[#NotLoggedInVote][Not logged in vote]] with a correct log in
+3. Succeeds if the returned object's vote field is 1
+*** Get a game
+1. Get the first game id from =list_games.php=
+2. Get the game details from =view_game.php= using that ID
+3. Succeeds if their game IDs match
+*** Get at most 5 games for sidebar
+1. Attempt to get the list of random games for the side bar
+2. Succeeds if atleast 1 and no more than 5 are returned
