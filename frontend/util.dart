@@ -1,6 +1,7 @@
 library util;
 
 import 'dart:html';
+import 'dart:uri';
 
 /** 
  * Asynchronously call the server and pass the string of the output to the callback function
