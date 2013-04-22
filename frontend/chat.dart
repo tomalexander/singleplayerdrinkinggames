@@ -5,6 +5,7 @@ import 'dart:uri';
 import 'dart:json';
 import 'nav_bar.dart';
 import 'util.dart';
+import 'login.dart';
 
 /*
  * A HTML element that lets the user chat with other users that are also logged in.
@@ -29,8 +30,17 @@ class chat_box {
         original_hash = window.location.hash;
         last_id = 0;
         content = new Element.html("<div class=\"chat_window\"></div>");
+        Map user_data = get_login_details();
+        if ( user_data == null) {
+            // User not logged in, tell them they're dumb
+            content.nodes.clear();
+            content.nodes.add(new Text("You must be logged in to chat."));
+            content.nodes.add(new login_form().content);
+            return;
+        }
         chat_window = new Element.html("<textarea cols=60 rows=20 readonly></textarea>");
         input_message = new Element.html("<input name=\"message\" class=\"chat_input\" required>");
+        chat_window.text = "${chat_window.text}Welcome to room: ${room}\n";
 
         //Listener for sending messages via "enter" key.
         input_message.onKeyPress.listen((e) {

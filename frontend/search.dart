@@ -10,8 +10,7 @@ class search_form {
     DivElement content;
 
     search_form() {
-        content = new Element.html("<div>Search</div>");
-        content.id = "search";
+        content = new Element.html("<div id=\"search\">Search</div>");
 
 		content.nodes.clear();
         
@@ -23,8 +22,7 @@ class search_form {
         form.nodes.add(keyword);
         form.nodes.add(new Element.html("<br>"));
         
-        SubmitButtonInputElement submit = new Element.html("<input type=\"submit\" value=\"Search\">");
-		submit.id = "searchbutton";
+        SubmitButtonInputElement submit = new Element.html("<input type=\"submit\" value=\"Search\" id=\"searchbutton\">");
         form.nodes.add(submit);
 
         DivElement search_results = new Element.html("<div></div>");

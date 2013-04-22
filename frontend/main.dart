@@ -9,6 +9,7 @@ import 'search.dart';
 import 'main_page.dart';
 import 'util.dart';
 import 'age_verification.dart';
+import 'chat.dart';
 
 /*
  * Calls to the appropriate webpages.
@@ -54,6 +55,15 @@ void display_age_verification() {
     query("#content").children.add(new age_verification().content);
 }
 
+void display_chat() {
+    query("#content").children.clear();
+    String room = get_url_variable("room");
+    if (room == null)
+        query("#content").children.add(new chat_box("main").content);
+    else
+        query("#content").children.add(new chat_box(room).content);
+}
+
 void handle_history() {
     // Handle all page routing and history based on "page" url variable
     String over18 = get_cookie("over18");
@@ -84,6 +94,9 @@ void handle_history() {
         break;
       case "search":
         display_search();
+        break;
+      case "chat":
+        display_chat();
         break;
       case "index":
         /* Falls Through */
