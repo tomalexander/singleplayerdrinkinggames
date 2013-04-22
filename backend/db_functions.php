@@ -8,8 +8,7 @@ $db_connections = 0;
  * 
  * @return the database object
  */
-function open_db()
-{
+function open_db() {
     global $global_db, $db_connections;
     if ($db_connections > 0) {
         $db_connections += 1;
@@ -25,8 +24,7 @@ function open_db()
  * 
  * 
  */
-function close_db()
-{
+function close_db() {
     global $global_db, $db_connections;
     if ($db_connections > 0) {
         $db_connections -= 1;

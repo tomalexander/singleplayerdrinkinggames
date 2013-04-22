@@ -12,9 +12,7 @@ $action = $_REQUEST["action"];
  * @Param message The actual contents of the message.
  * @Param timestamp The time the message was posted.
  */
-
-class chat_message
-{
+class chat_message {
     public $id;
     public $username;
     public $message;
@@ -24,9 +22,7 @@ class chat_message
 /*
  * Deletes chat messages that are more than 60 seconds old.
  */
-
-function cleanup_old_chats()
-{
+function cleanup_old_chats() {
     $db = open_db();
     $db->exec("DELETE FROM `singleplayerdb`.`chat` WHERE `chat`.`time` < DATE_SUB(NOW(),INTERVAL '60' SECOND)");
     close_db();
