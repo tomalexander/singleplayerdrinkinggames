@@ -4,6 +4,7 @@ import 'login.dart';
 import 'util.dart';
 import 'view_game.dart';
 import 'markdown.dart';
+import 'markdown_help.dart';
 
 class submit_game_form {
     DivElement content;
@@ -87,6 +88,8 @@ class submit_game_form {
         
         DivElement failures = new Element.html("<div class=\"row\"></div>");
         form.nodes.add(failures);
+
+        form.nodes.add(new markdown_help().content);
 
         form.onSubmit.listen((e) {
             //submit.disabled = true; 
