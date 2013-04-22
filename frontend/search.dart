@@ -7,9 +7,17 @@ import 'nav_bar.dart';
 import 'util.dart';
 import 'view_game.dart';
 
+ /**
+  * Allows the user to search the website for a certain keyword.
+  */
 class search_form {
     DivElement content;
 
+    /**
+     * Creates the form that allows a user to search the site based on an input keyword
+     * Upon initiating a search, the form displays either the results as a list of links to game pages
+     * or that no games match the keyword specified
+     */
     search_form() {
         content = new Element.html("<div>Search</div>");
         content.id = "search";

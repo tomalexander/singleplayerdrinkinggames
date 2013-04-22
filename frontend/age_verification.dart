@@ -4,6 +4,11 @@ import 'util.dart';
 
 class age_verification {
     DivElement content;
+
+    /**
+     * Creates the form that prompts viewer to verify if they are at least 18 years of age
+     * before being allow access to the site
+     */
     age_verification() {
         content = new Element.html("<div></div>");
         content.nodes.add(new Element.html("<h2>Please verify your age</h2>"));
