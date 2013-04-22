@@ -16,7 +16,7 @@ import 'markdown.dart';
  * description, raiting, and other data.
  */
 class view_game_form {
-  
+
     DivElement content;
 
     display_pre(content) {
@@ -35,22 +35,35 @@ class view_game_form {
         //Set disqus_identified in javascript
         ScriptElement dsq_page_name= new ScriptElement();
         dsq_page_name.type = 'text/javascript';
-        dsq_page_name.text = 'disqus_identifier = $game_name';
+        dsq_page_name.text = """
+            if (!window.DISQUS) {
+                var disqus_shortname  = "singleplayerdrinkinggames";
+                var disqus_identifier = "gameid_fufufufu_$game_name";
+                var disqus_url = "https://singleplayerdrinkinggames.com";
+             (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            } else {
+                window.DISQUS.reset({
+                    reload: true,
+                    config: function() {
+                        window.alert(this.page.identifier);
+                        this.page.identifier = "gameid_fufufufu_$game_name";
+                        this.page.url = "https://singleplayerdrinkinggames.com#!fu";
+                        window.alert(this.page.identifier);
+                    }});
+            }
+            """;
 
         //Make thread div so it shows up in the right spot
         DivElement disqus_div = new DivElement();
         disqus_div.id = "disqus_thread";
 
-        //Actual disqus callback
-        ScriptElement dsq = new ScriptElement();
-        dsq.type = 'text/javascript';
-        dsq.async = true;
-        dsq.src = '//singleplayerdrinkinggames.disqus.com/embed.js';
-
         //Add all the elements
-        this.content.children.add(dsq_page_name);
         this.content.children.add(disqus_div);
-        this.content.children.add(dsq);
+        this.content.children.add(dsq_page_name);
     }
 
     /**
