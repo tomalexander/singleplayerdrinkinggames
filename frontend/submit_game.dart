@@ -16,7 +16,7 @@ class submit_game_form {
         Map user_data = get_login_details();
         if ( user_data != null) {
             // User logged in, create form
-            create_form(user_data['id'], get_cookie("login_uuid"));
+            create_form(get_cookie("login_uuid"));
         } else {
             // User not logged in, tell them they're dumb
             content.nodes.clear();
@@ -28,7 +28,7 @@ class submit_game_form {
     /**
      * Generates the form that lets a user submit a new game to the database.
      */   
-  void create_form(user_id, uuid) {
+  void create_form(uuid) {
         content.nodes.clear();
         FormElement form = new Element.html("<form action=\"submit_game.php\" method=\"POST\" onsubmit=\"return false;\"></form>");
         content.nodes.add(form);
@@ -91,7 +91,6 @@ class submit_game_form {
         form.onSubmit.listen((e) {
             //submit.disabled = true; 
             Map submit_game_vars = new Map();
-            submit_game_vars["submitter_id"] = user_id;
             submit_game_vars["uuid"] = uuid;
             submit_game_vars["game_name"] = game_name.value;
             submit_game_vars["short_description"] = short_description.value;
