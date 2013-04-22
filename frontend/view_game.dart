@@ -11,26 +11,12 @@ import 'login.dart';
 import 'markdown.dart';
 
 
-/**
- * Takes a map, and encodes that into a URI format.
- * This is done to make varaibles easier to pass into the server.
- * 
- * @param data: Data to be encoded.
- * 
- * @return String: The data encoded into URI format.
- */
-String encodeMap(Map data) {
-    return data.keys.map((k) {
-            return '${encodeUriComponent(k)}=${encodeUriComponent(data[k])}';
-        }).join('&');
-}
-
 /*
  * Loads the "view game" form, allowing the user to view a selected game's
  * description, raiting, and other data.
  */
 class view_game_form {
-  
+
     DivElement content;
 
     display_pre(content) {
@@ -49,22 +35,33 @@ class view_game_form {
         //Set disqus_identified in javascript
         ScriptElement dsq_page_name= new ScriptElement();
         dsq_page_name.type = 'text/javascript';
-        dsq_page_name.text = 'disqus_identifier = $game_name';
+        dsq_page_name.text = """
+            if (!window.DISQUS) {
+                var disqus_shortname  = "singleplayerdrinkinggames";
+                var disqus_identifier = "gameid_fufufufu_$game_name";
+                var disqus_url = "https://singleplayerdrinkinggames.com";
+             (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            } else {
+                window.DISQUS.reset({
+                    reload: true,
+                    config: function() {
+                        this.page.identifier = "gameid_fufufufu_$game_name";
+                        this.page.url = "https://singleplayerdrinkinggames.com#!fu";
+                    }});
+            }
+            """;
 
         //Make thread div so it shows up in the right spot
         DivElement disqus_div = new DivElement();
         disqus_div.id = "disqus_thread";
 
-        //Actual disqus callback
-        ScriptElement dsq = new ScriptElement();
-        dsq.type = 'text/javascript';
-        dsq.async = true;
-        dsq.src = '//singleplayerdrinkinggames.disqus.com/embed.js';
-
         //Add all the elements
-        this.content.children.add(dsq_page_name);
         this.content.children.add(disqus_div);
-        this.content.children.add(dsq);
+        this.content.children.add(dsq_page_name);
     }
 
     /**
@@ -78,7 +75,7 @@ class view_game_form {
     int process_vote(gameid, vote) {   
         String uuid = get_cookie("login_uuid");
         var votedata = {"game_id":"$gameid","uuid":"$uuid","vote":"$vote"};
-        String encodedData = encodeMap(votedata);
+        String encodedData = encode_map(votedata);
         int ret = 0;
         String resp = get_string_synchronous("vote.php", encodedData);
         String parsed_resp = parse(resp);
@@ -96,7 +93,7 @@ class view_game_form {
     int get_vote(gameid) {
         String uuid = get_cookie("login_uuid");
         var votedata = {"game_id":gameid,"uuid":uuid};
-        String encodedData = encodeMap(votedata);
+        String encodedData = encode_map(votedata);
         int ret = 0;
         String resp = get_string_synchronous("get_vote.php", encodedData);
         String parsed_resp = parse(resp);
@@ -172,7 +169,7 @@ class view_game_form {
         this.content.id = "view_game";
         var gameid = get_url_variable("gameid");
         var postdata = {"gameid":gameid};
-        String encodedData = encodeMap(postdata);
+        String encodedData = encode_map(postdata);
         get_string("view_game.php", encodedData, (resp) {
                 var parsed_resp = parse(resp);
                 this.display_pre("Name : ${parsed_resp["game_name"]}");

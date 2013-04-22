@@ -215,6 +215,92 @@ class markdown_plaintext extends markdown_node {
     }
 }
 
+class markdown_list_item extends markdown_node {
+    markdown_list_item(String content) : super() {
+        List<markdown_node> subcontent = generate_markdown_emphasis(content);
+        for (markdown_node cur in subcontent) {
+            children.add(cur);
+        }
+    }
+
+    String generate_html() {
+        String ret = "<li>";
+        for (markdown_node cur in children) {
+            ret = "${ret}${cur.generate_html()}";
+        }
+        ret = "${ret}</li>";
+        return ret;
+    }
+}
+
+class markdown_number_list extends markdown_node {
+    markdown_number_list() : super() {
+    }
+
+    void add_list_item(String content) {
+        children.add(new markdown_list_item(content));
+    }
+
+    String generate_html() {
+        String ret = "<ol>";
+        for (markdown_node cur in children) {
+            ret = "${ret}${cur.generate_html()}";
+        }
+        ret = "${ret}</ol>";
+        return ret;
+    }
+}
+
+class markdown_bullet_list extends markdown_node {
+    markdown_bullet_list() : super() {
+    }
+
+    void add_list_item(String content) {
+        children.add(new markdown_list_item(content));
+    }
+
+    String generate_html() {
+        String ret = "<ul>";
+        for (markdown_node cur in children) {
+            ret = "${ret}${cur.generate_html()}";
+        }
+        ret = "${ret}</ul>";
+        return ret;
+    }
+}
+
+class markdown_link extends markdown_node {
+    String link;
+    markdown_link(String _link, String content) : super() {
+        link = _link;
+        children.add(new markdown_plaintext(content));
+    }
+
+    String generate_html() {
+        String ret = "<a href=\"${link}\">";
+        for (markdown_node cur in children) {
+            ret = "${ret}${cur.generate_html()}";
+        }
+        ret = "${ret}</a>";
+        return ret;
+    }
+}
+
+class markdown_image extends markdown_node {
+    String link;
+    String alt_text;
+    String title;
+    markdown_image(String _link, String _alt_text, String _title) : super() {
+        link = _link;
+        alt_text = _alt_text;
+        title = _title;
+    }
+
+    String generate_html() {
+        return "<img src=\"${link}\" alt=\"${alt_text}\" title=\"${title}\" />";
+    }
+}
+
 /** 
  * Convert markdown to HTML
  * 
@@ -257,6 +343,8 @@ List<markdown_node> generate_markdown_nodes(String content) {
     RegExp multiline_code = new RegExp(r"(^    ?.*?$\n?)+", multiLine: true);
     RegExp underline_big_header = new RegExp(r"^(.+)\n=+\n?", multiLine: true);
     RegExp underline_little_header = new RegExp(r"^(.+)\n-+\n?", multiLine: true);
+    RegExp number_list = new RegExp(r"(^\s*[0-9]+\. ?.*?$\n?)+", multiLine: true);
+    RegExp bullet_list = new RegExp(r"(^\s*[-] ?.*?$\n?)+", multiLine: true);
     
     regular_expressions.add(new markdown_regex(plain_header, (Match found) {
                 int header_depth = found.group(1).trim().length;
@@ -290,7 +378,22 @@ List<markdown_node> generate_markdown_nodes(String content) {
     regular_expressions.add(new markdown_regex(underline_little_header, (Match found) {
                 return new markdown_headline(2, found.group(1));
     }));
-
+    regular_expressions.add(new markdown_regex(number_list, (Match found) {
+                markdown_number_list ret = new markdown_number_list();
+                RegExp number_item = new RegExp(r"^\s*[0-9]+\. ?(.*?)$", multiLine: true);
+                for (Match subfound in number_item.allMatches(found.group(0))) {
+                    ret.add_list_item(subfound.group(1));
+                }
+                return ret;
+    }));
+    regular_expressions.add(new markdown_regex(bullet_list, (Match found) {
+                markdown_bullet_list ret = new markdown_bullet_list();
+                RegExp number_item = new RegExp(r"^\s*[-] ?(.*?)$", multiLine: true);
+                for (Match subfound in number_item.allMatches(found.group(0))) {
+                    ret.add_list_item(subfound.group(1));
+                }
+                return ret;
+    }));
 
     bool found_match = false;
     int earliest_start = -1;
@@ -373,16 +476,19 @@ List<markdown_node> generate_markdown_emphasis(String content) {
     List<markdown_node> ret = new List<markdown_node>();
     List<markdown_regex> regular_expressions = new List<markdown_regex>();
 
-    RegExp single_asterix = new RegExp(r"(?! )\*(?! )([^*]+)(?! )\*(?! )");
-    RegExp single_underscore = new RegExp(r"(?! )_(?! )([^_]+)(?! )\_(?! )");
-    RegExp double_asterix = new RegExp(r"(?! )\*{2}(?! )([^*]+)(?! )\*{2}(?! )");
-    RegExp double_underscore = new RegExp(r"(?! )_{2}(?! )([^_]+)(?! )_{2}(?! )");
-    RegExp single_tick_code = new RegExp(r"(?! )`(?! )([^`]+)(?! )`(?! )");
+    RegExp single_asterix = new RegExp(r"\*(?! )([^*]+)(?! )\*");
+    RegExp single_underscore = new RegExp(r"_(?! )([^_]+)(?! )\_");
+    RegExp double_asterix = new RegExp(r"\*{2}(?! )([^*]+)(?! )\*{2}");
+    RegExp double_underscore = new RegExp(r"_{2}(?! )([^_]+)(?! )_{2}");
+    RegExp single_tick_code = new RegExp(r"`(?! )([^`]+)(?! )`");
     
     RegExp spaced_asterix = new RegExp(r" (\*) ");
     RegExp spaced_underscore = new RegExp(r" (_) ");
     RegExp backslash_asterix = new RegExp(r"\\(\*)");
     RegExp backslash_underscore = new RegExp(r"\\(_)");
+
+    RegExp link = new RegExp(r"(?!!)\[([^\]]+)\]\(([^)]+)\)");
+    RegExp image = new RegExp(r"!\[([^\]]+)\]\(([^) ]+) ?([^)]*)\)");
     
     regular_expressions.add(new markdown_regex(single_asterix, (Match found) {
                 return new markdown_emphasis(found.group(1));
@@ -412,6 +518,14 @@ List<markdown_node> generate_markdown_emphasis(String content) {
     regular_expressions.add(new markdown_regex(backslash_underscore, (Match found) {
                 return new markdown_plaintext(found.group(1));
     }, process: generate_markdown_emphasis));
+
+    regular_expressions.add(new markdown_regex(link, (Match found) {
+                return new markdown_link(found.group(2), found.group(1));
+    }, process: generate_markdown_emphasis));
+    regular_expressions.add(new markdown_regex(image, (Match found) {
+                return new markdown_image(found.group(2), found.group(1), found.group(3));
+    }, process: generate_markdown_emphasis));
+
     
     bool found_match = false;
     int earliest_start = -1;
@@ -438,7 +552,6 @@ List<markdown_node> generate_markdown_emphasis(String content) {
 }
 
 main_wrapped() {
-    String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their `country`. This is just a\nre_gu_lar paragraph.\n\nThe quick brown fox jumped over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote\n\n    code block\n    second line code block";
-    RegExp single_asterix = new RegExp(r"(?! )\*(?! )[^*]+(?! )\*(?! )");
+    String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their `country`. This is just a\nre_gu_lar paragraph.\n\nThe quick brown **fox jumped** over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote\n\n    code block\n    second line code block\n- this is\n- elements in\n- a list\n[Link Text](http://google.com)\n![alt text](http://static.paphus.com/gifs/6KAiUQl.gif)";
     print(markdown_to_html(inp));
 }

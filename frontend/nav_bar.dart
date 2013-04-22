@@ -2,13 +2,18 @@ library nav_bar;
 import 'dart:html';
 import 'login.dart';
 
+void generate_nav_bar() {
+    query('#nav_bar_container').children.clear();
+    query('#nav_bar_container').children.add(new nav_bar().content);
+}
+
 class nav_bar {
     DivElement content;
     nav_bar() {
         content = new DivElement();
         content.id = "nav_bar";
 
-        var link_list = ["Home", "Games", "Booze", "Submit Game", "Search"];
+        var link_list = ["Home", "Games", "Submit Game", "Search", "Chat"];
 
         var link_map = {
             "Home" : "index",
@@ -16,7 +21,8 @@ class nav_bar {
             "Login" : "login",
             "Register" : "register",
             "Submit Game" : "game_submission",
-            "Search" : "search"
+            "Search" : "search",
+            "Chat" : "chat"
         };
         link_list.forEach( (e) {
                 var page = link_map[e];

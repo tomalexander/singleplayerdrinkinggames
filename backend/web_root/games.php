@@ -89,7 +89,7 @@ function create_game($game_name, $submitter_id, $short_desc, $long_desc, $suppli
  */
 function game_exists($game_name) {
     $db = open_db();
-    $query = "SELECT * FROM games WHERE 'game_name' = :game_name";
+    $query = "SELECT game_name FROM games WHERE game_name = :game_name";
     $stmt = $db->prepare($query);
     $stmt->bindParam(":game_name", $game_name);
     if(!$stmt->execute()) {
@@ -99,11 +99,12 @@ function game_exists($game_name) {
     }
     $result = $stmt->fetchAll();
     close_db();
-    if ($result) {
-        return true;
-    } else {
-        return false;
+    foreach($result as $row) {
+        if (strcasecmp($row["game_name"], $game_name) == 0) {
+            return true;
+        }
     }
+    return false;
 }
 
 /** 
@@ -115,7 +116,7 @@ function game_exists($game_name) {
  */
 function game_exists_id($game_id) {
     $db = open_db();
-    $query = "SELECT * FROM games WHERE game_id = :game_id";
+    $query = "SELECT game_id FROM games WHERE game_id = :game_id";
     $stmt = $db->prepare($query);
     $stmt->bindParam(":game_id", $game_id);
     if(!$stmt->execute()) {
@@ -125,11 +126,12 @@ function game_exists_id($game_id) {
     }
     $result = $stmt->fetchAll();
     close_db();
-    if ($result) {
-        return true;
-    } else {
-        return false;
+    foreach($result as $row) {
+        if ($row["game_id"] == $game_id) {
+            return true;
+        }
     }
+    return false;
 }
 
 /** 

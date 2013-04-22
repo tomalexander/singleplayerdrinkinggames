@@ -5,7 +5,6 @@ import 'dart:json';
 import 'dart:uri';
 import 'nav_bar.dart';
 import 'util.dart';
-import 'view_game.dart';
 
  /**
   * Allows the user to search the website for a certain keyword.
@@ -19,8 +18,7 @@ class search_form {
      * or that no games match the keyword specified
      */
     search_form() {
-        content = new Element.html("<div>Search</div>");
-        content.id = "search";
+        content = new Element.html("<div id=\"search\">Search</div>");
 
 		content.nodes.clear();
         
@@ -32,8 +30,7 @@ class search_form {
         form.nodes.add(keyword);
         form.nodes.add(new Element.html("<br>"));
         
-        SubmitButtonInputElement submit = new Element.html("<input type=\"submit\" value=\"Search\">");
-		submit.id = "searchbutton";
+        SubmitButtonInputElement submit = new Element.html("<input type=\"submit\" value=\"Search\" id=\"searchbutton\">");
         form.nodes.add(submit);
 
         DivElement search_results = new Element.html("<div></div>");
@@ -43,7 +40,7 @@ class search_form {
                 submit.disabled = true;
                 Map search_vars = new Map();
                 search_vars["keyword"] = keyword.value;
-                String json_results = get_string_synchronous("search.php", encodeMap(search_vars));
+                String json_results = get_string_synchronous("search.php", encode_map(search_vars));
                 List results = parse(json_results);
                 
                 search_results.nodes.clear();
