@@ -476,11 +476,11 @@ List<markdown_node> generate_markdown_emphasis(String content) {
     List<markdown_node> ret = new List<markdown_node>();
     List<markdown_regex> regular_expressions = new List<markdown_regex>();
 
-    RegExp single_asterix = new RegExp(r"(?! )\*(?! )([^*]+)(?! )\*(?! )");
-    RegExp single_underscore = new RegExp(r"(?! )_(?! )([^_]+)(?! )\_(?! )");
-    RegExp double_asterix = new RegExp(r"(?! )\*{2}(?! )([^*]+)(?! )\*{2}(?! )");
-    RegExp double_underscore = new RegExp(r"(?! )_{2}(?! )([^_]+)(?! )_{2}(?! )");
-    RegExp single_tick_code = new RegExp(r"(?! )`(?! )([^`]+)(?! )`(?! )");
+    RegExp single_asterix = new RegExp(r"\*(?! )([^*]+)(?! )\*");
+    RegExp single_underscore = new RegExp(r"_(?! )([^_]+)(?! )\_");
+    RegExp double_asterix = new RegExp(r"\*{2}(?! )([^*]+)(?! )\*{2}");
+    RegExp double_underscore = new RegExp(r"_{2}(?! )([^_]+)(?! )_{2}");
+    RegExp single_tick_code = new RegExp(r"`(?! )([^`]+)(?! )`");
     
     RegExp spaced_asterix = new RegExp(r" (\*) ");
     RegExp spaced_underscore = new RegExp(r" (_) ");
@@ -552,6 +552,6 @@ List<markdown_node> generate_markdown_emphasis(String content) {
 }
 
 main_wrapped() {
-    String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their `country`. This is just a\nre_gu_lar paragraph.\n\nThe quick brown fox jumped over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote\n\n    code block\n    second line code block\n- this is\n- elements in\n- a list\n[Link Text](http://google.com)\n![alt text](http://static.paphus.com/gifs/6KAiUQl.gif)";
+    String inp = "A First Level Header\n====================\n\nA Second Level Header\n---------------------\n\nNow is the time for all good men to come to\nthe aid of their `country`. This is just a\nre_gu_lar paragraph.\n\nThe quick brown **fox jumped** over the lazy\ndog's back.\n\n### Header 3\n\n> This is a blockquote.\n> \n> This is the second paragraph in the blockquote.\n>\n> ## This is an H2 in a blockquote\n\n    code block\n    second line code block\n- this is\n- elements in\n- a list\n[Link Text](http://google.com)\n![alt text](http://static.paphus.com/gifs/6KAiUQl.gif)";
     print(markdown_to_html(inp));
 }
