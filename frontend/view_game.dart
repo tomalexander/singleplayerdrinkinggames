@@ -49,10 +49,8 @@ class view_game_form {
                 window.DISQUS.reset({
                     reload: true,
                     config: function() {
-                        window.alert(this.page.identifier);
                         this.page.identifier = "gameid_fufufufu_$game_name";
                         this.page.url = "https://singleplayerdrinkinggames.com#!fu";
-                        window.alert(this.page.identifier);
                     }});
             }
             """;
