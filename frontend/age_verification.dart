@@ -10,7 +10,7 @@ class age_verification {
         content.nodes.add(new Element.html("<br>"));
         ButtonElement over = new Element.html("<button>I am at least 18 years old</button>");
         content.nodes.add(over);
-        content.nodes.add(new Element.html("<a href=\"\">I am under 18 years old</a>"));
+        content.nodes.add(new Element.html("<a href=\"http://disney.com/\">I am under 18 years old</a>"));
 
         over.onClick.listen((e) {
                 set_cookie("over18", "true", seconds: 86400);

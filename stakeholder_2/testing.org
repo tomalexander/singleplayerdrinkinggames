@@ -1,0 +1,236 @@
+#+TITLE:     Testing
+#+AUTHOR:    
+#+EMAIL:     alexat3@rpi.edu
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t email:nil author:nil
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:t timestamp:nil
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+#+XSLT:
+#+LaTeX_CLASS_OPTIONS: [12pt,letterpaper,bookmarks=false,colorlinks=true,linkcolor=blue,pdfstartview=FitH]
+* Strategy
+Our project uses the Model View Controller design pattern. Our View is implemented in Dart and consists of a GUI that is displayed in a browser. Due to its GUI nature, all of its test cases must be completed manually. All tests on the View will use the latest version of Google Chrome Stable and Firefox. Internet Explorer is excluded due to their constant disregard for web standards. These tests must be done with the private browsing mode in order to start with a clean-slate of cookies, and to prevent extensions from interfering. The Controller is a PHP backend that receives URL encoded variables and returns either JSON or plain-text, depending on the situation. This allows us to test the backend automatically by creating a second automated text-based View in the form of a python script. This script queries the server to perform all the tasks that a user can do on the site, and checks the results of those queries to make sure everything is functioning properly. The python script only uses the built-in python standard library so its only dependency is Python3.
+* Test Cases
+** Automated
+*** Mismatching Passwords
+1. Attempt to register an account with password and confirm_password fields not matching
+2. Succeeds if "PASSWORDS DONT MATCH" is returned
+*** Register a new account
+1. Attempt to register an account correctly
+2. UUIDs generated for account name and password
+3. Succeeds if account UUID is returned
+*** Username already taken
+1. Attempt to register another account with the same username
+2. Succeeds if "Username already taken" is returned
+*** Incorrect Login
+1. Attempt to log into the created account using an incorrect password
+2. Succeeds if "Log In Failed" is returned
+*** Successful Login
+1. Attempt to log into the created account using the correct password
+2. Succeeds if a new account UUID is returned
+*** Get Login Details
+1. Attempt to retrieve the account details of the created account
+2. Succeeds if the username of the returned user matches to new user account
+*** Not logged in chat
+1. Attempt to send a message into the chat room with an invalid log in
+2. Succeeds if "UUID NOT LOGGED IN" is returned
+*** Sent message successfully
+1. Attempt to send a message while correctly logged in
+2. Succeeds if "Successfully sent message" is returned
+*** Read message successfully
+1. Read messages in chat room and attempt to find the message that was just sent
+2. Succeeds if chat contains a message with identical text to the one just sent
+*** Not logged in message did not get read
+1. Read messages in chat room and look for the message that we attempted to send with an invalid log in
+2. Succeeds if it does not find the message sent with the invalid log in
+*** Create a new game
+1. Reads the current game list
+2. Attempts to create a new game with a UUID for the name
+3. Reads the new game list
+4. Succeeds if the game is found in the new game list but not the original game list
+*** Block games with same name as previous game
+1. Attempt to create a new game with the same name as =Create a new game=
+2. Read a new game list
+3. Succeeds if the number of games with that name is exactly 1
+*** Not logged in vote
+1. Get ID of any game
+2. Attempt to get the vote for that game with an invalid log in
+3. Succeeds if the returned object's vote field is 0
+*** Invalid Game ID
+1. Attempt to get the vote for a game with an id of -10 (which is invalid)
+2. Succeeds if the returned object's vote field is 0
+*** Valid Get Vote
+1. Attempt to get the vote for the game from =Not logged in vote= with a correct log in
+2. Succeeds if the returned object's vote field is 0
+*** Voted Get Vote
+1. Vote for the game from =Not logged in vote= with a correct log in
+2. Attempt to get the vote for the game from =Not logged in vote= with a correct log in
+3. Succeeds if the returned object's vote field is 1
+*** Get a game
+1. Get the first game id from =list_games.php=
+2. Get the game details from =view_game.php= using that ID
+3. Succeeds if their game IDs match
+*** Get at most 5 games for sidebar
+1. Attempt to get the list of random games for the side bar
+2. Succeeds if at least 1 and no more than 5 are returned
+** Manual
+*** Age Verification
+1. Under 18
+   1. Go to https://singleplayerdrinkinggames.com/
+   2. Age verification screen should appear
+   3. Select =I am under 18 years old=
+   4. Succeeds if user is linked to http://disney.com/
+2. Over 18
+   1. Go to https://singleplayerdrinkinggames.com/
+   2. Age verification screen should appear
+   3. Select =I am at least 18 years old=
+   4. Succeeds if user is redirected to the main page
+*** Nav Bar
+1. Hover Highlight
+   1. On any page, move mouse over items on the nav bar
+   2. Succeeds if the links change color when the mouse hovers over them
+2. Login / Register
+   1. Precondition: User is not logged in
+   2. Succeeds if nav bar contains links for Login and Register
+3. Log Out
+   1. Precondition: User is logged in
+   2. Succeeds if Log Out link is visible in nav bar and username is displayed on the right hand side of the bar
+4. Change Page
+   1. Select each page that is on the nav bar
+   2. Succeeds if each link redirects to a correct and unique page
+   3. Note: Some pages require the user to be logged in. They will display a login form before the user can proceed
+*** Sidebar
+1. Random Games
+   1. Click on =Home= in the nav bar
+   2. Wait at most 2 seconds
+   3. Box on right side of page should populate with links for games
+   4. Hit F5 and confirm the new generated list contains different games in a different order
+   5. Succeeds if no more than 5 games display in the box at a time and that they are random
+*** Register
+1. Password Matching
+   1. Precondition: User is not logged in
+   2. Select =Register= in the navigation bar
+   3. Fill in a username, e-mail, and two different password
+   4. Click on the =Create Account= button
+   5. Succeeds if the user is unable to submit the form until the passwords match
+2. Empty Account Name
+   1. Precondition: User is not logged in
+   2. Select =Register= in the navigation bar
+   3. Fill in a e-mail, and two identical password
+   4. Click on the =Create Account= button
+   5. Succeeds if the user is unable to submit the form until the username field has text
+3. Successful Account Creation
+   1. Precondition: User is not logged in
+   2. Select =Register= in the navigation bar
+   3. Fill in a username, e-mail, and two identical password
+   4. Click on the =Create Account= button
+   5. Succeeds if the user is redirected to main page and logged in
+*** Log in/out
+1. Log In
+   1. Precondition: User is logged out
+   2. Select =Login= from the navigation bar
+   3. Fill out a valid username and password
+   4. Click the =Login= button
+   5. Succeeds if the user is directed to the main page and logged in
+2. Log Out
+   1. Precondition: User is logged in
+   2. Select =Log Out= from the navigation bar
+   3. Succeeds if the user is redirected to the main page and logged out
+3. Failed Log In
+   1. Precondition: User is logged out
+   2. Select =Login= from the navigation bar
+   3. Fill out an invalid username and password
+   4. Click the =Login= button
+   5. Succeeds if an error message is displayed below the log in form and the user is able to attempt to log in again
+*** Games
+1. List Games
+   1. Select =Games= from the navigation bar
+   2. Succeeds if the user is presented with a list of links to submitted games
+2. View Game
+   1. Select =Games= from the navigation bar
+   2. Select a game from the list
+   3. Succeeds if the user is presented with the details of the game
+3. Submit Game
+   1. Precondition: User is logged in
+   2. Select =Submit Game= from the navigation bar
+   3. Fill out every field with some information
+   4. Click the =Submit Game= button
+   5. Click =Games= from the navigation bar
+   6. Select the game you just created from the list
+   7. Succeeds if all the information you inserted is present
+4. Same Name
+   1. Precondition: User is logged in
+   2. Select =Submit Game= from the navigation bar
+   3. Fill out every field with some information, using the name of a game that already exists
+   4. Click the =Submit Game= button
+   7. Succeeds if all the user is presented with a message informing them that the name is already taken
+5. Markdown
+   1. Precondition: User is logged in
+   2. Select =Submit Game= from the navigation bar
+   3. Fill out the instructions field with the following items
+      1. A headline starting with "#"
+      2. A block quote with each line starting with "> "
+      3. Code in the middle of a line surrounded by "`"
+      4. A code block with each line starting with "    "
+      5. Part of a word surrounded by "*"
+   4. Succeeds if the following results are true in the preview box
+      | Instruction Item | Expected Result                                   |
+      |------------------+---------------------------------------------------|
+      |                1 | Text becomes a large heading                      |
+      |                2 | Text becomes indented in a blockquote             |
+      |                3 | Text becomes wrapped in a code tag                |
+      |                4 | Text becomes monospaced and wrapped in a code tag |
+      |                5 | Text becomes bold                                 |
+*** Search
+1. Search
+   1. Select =Search= from the navigation bar
+   2. Enter a keyword that appears in a game that already exists
+   3. Succeeds if the user is presented with a list of games that contain that key word
+* Test Results Template
+Name: 
+Date: 
+| Testcase | Title                                       | Pass | Fail | Comments |
+|----------+---------------------------------------------+------+------+----------|
+|    2.1.1 | Mismatching Passwords                       |      |      |          |
+|    2.1.2 | Register a new account                      |      |      |          |
+|    2.1.3 | Username already taken                      |      |      |          |
+|    2.1.4 | Incorrect Login                             |      |      |          |
+|    2.1.5 | Successful Login                            |      |      |          |
+|    2.1.6 | Get Login Details                           |      |      |          |
+|    2.1.7 | Not Logged in chat                          |      |      |          |
+|    2.1.8 | Sent Message Successfully                   |      |      |          |
+|    2.1.9 | Read Message Successfully                   |      |      |          |
+|   2.1.10 | Not logged in message did not get read      |      |      |          |
+|   2.1.11 | Create a new game                           |      |      |          |
+|   2.1.12 | Block games with same name as previous game |      |      |          |
+|   2.1.13 | Not logged in vote                          |      |      |          |
+|   2.1.14 | Invalid Game ID                             |      |      |          |
+|   2.1.15 | Valid Get Vote                              |      |      |          |
+|   2.1.16 | Voted Get Vote                              |      |      |          |
+|   2.1.17 | Get a game                                  |      |      |          |
+|   2.1.18 | Get at most 5 games for sidebar             |      |      |          |
+|----------+---------------------------------------------+------+------+----------|
+|  2.2.1.1 | Under 18                                    |      |      |          |
+|  2.2.1.2 | Over 18                                     |      |      |          |
+|  2.2.2.1 | Hover Highlight                             |      |      |          |
+|  2.2.2.2 | Login / Register                            |      |      |          |
+|  2.2.2.3 | Log Out                                     |      |      |          |
+|  2.2.2.4 | Change Page                                 |      |      |          |
+|  2.2.3.1 | Random Games                                |      |      |          |
+|  2.2.4.1 | Password Matching                           |      |      |          |
+|  2.2.4.2 | Empty Account Name                          |      |      |          |
+|  2.2.4.3 | Successful Account Creation                 |      |      |          |
+|  2.2.5.1 | Log In                                      |      |      |          |
+|  2.2.5.2 | Log Out                                     |      |      |          |
+|  2.2.5.3 | Failed Log In                               |      |      |          |
+|  2.2.6.1 | List Games                                  |      |      |          |
+|  2.2.6.2 | View Game                                   |      |      |          |
+|  2.2.6.3 | Submit Game                                 |      |      |          |
+|  2.2.6.4 | Same Name                                   |      |      |          |
+|  2.2.6.5 | Markdown                                    |      |      |          |
+|  2.2.7.1 | Search                                      |      |      |          |

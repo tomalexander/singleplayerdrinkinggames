@@ -1,0 +1,36 @@
+#+TITLE:     Status Report and Contributions
+#+AUTHOR:    
+#+EMAIL:     
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t author:nil timestamp:nil
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:t todo:t pri:nil tags:t
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+#+XSLT:
+* Contributions
+| Task                     | Name     |
+|--------------------------+----------|
+| Enforce style + comments | Mike     |
+| Test Documents           | Tom      |
+| Code Review              | Tate     |
+| Beta Release             | Everyone |
+* Status Report
+** What We've Done
+- Integrated markdown parser
+- Implemented a sidebar with random games
+- Added disqus for comments
+- Stipped vote stuff out of view games page and put it in its own class
+- Implemented keyword searching
+- Added an over 18 landing page
+- Processing login and register client-side now for consistent feel
+- Only display relevant login, register, log out links based on wheter or not the user is logged in
+- Display the logged in user name in the nav bar
+** Risks Identified
+- Someone managed to break our site with img tags
+** Risks Mitigated
+- Either chrome, php, or mysql uses windows-style newlines which broke the markdown parser, now they’re removed by dart
