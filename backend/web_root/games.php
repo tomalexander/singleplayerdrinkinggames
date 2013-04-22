@@ -93,9 +93,9 @@ function game_exists($game_name) {
     $stmt = $db->prepare($query);
     $stmt->bindParam(":game_name", $game_name);
     if(!$stmt->execute()) {
-      close_db();
-      print_r($stmt->errorinfo());
-      return false;
+        close_db();
+        print_r($stmt->errorinfo());
+        return false;
     }
     $result = $stmt->fetchAll();
     close_db();
@@ -119,9 +119,9 @@ function game_exists_id($game_id) {
     $stmt = $db->prepare($query);
     $stmt->bindParam(":game_id", $game_id);
     if(!$stmt->execute()) {
-      close_db();
-      print_r($stmt->errorinfo());
-      return false;
+        close_db();
+        print_r($stmt->errorinfo());
+        return false;
     }
     $result = $stmt->fetchAll();
     close_db();
@@ -150,9 +150,9 @@ function get_supplies($game_id) {
     $stmt = $db->prepare($query);
     $stmt->bindParam(":game_id", $game_id);
     if(!$stmt->execute()) {
-      close_db();
-      print_r($stmt->errorinfo());
-      return $ret;
+        close_db();
+        print_r($stmt->errorinfo());
+        return $ret;
     }
     $result = $stmt->fetchAll();
     close_db();
@@ -176,9 +176,9 @@ function get_game_id($game_name) {
     $stmt = $db->prepare($query);
     $stmt->bindParam(":game_name", $game_name);
     if(!$stmt->execute()) {
-      close_db();
-      print_r($stmt->errorinfo());
-      return -1;
+        close_db();
+        print_r($stmt->errorinfo());
+        return -1;
     }
     $result = $stmt->fetchAll();
     close_db();
@@ -206,9 +206,9 @@ function get_game($game_id) {
     $stmt = $db->prepare($query);
     $stmt->bindParam(":game_id", $game_id);
     if(!$stmt->execute()) {
-      close_db();
-      print_r($stmt->errorinfo());
-      return -1;
+        close_db();
+        print_r($stmt->errorinfo());
+        return -1;
     }
     $result = $stmt->fetchAll();
     foreach ($result as $row) {

@@ -11,7 +11,6 @@ include "games.php";
  * @Param supplies The supplies required for the game.
  * @Param instructions The instructions for playing the game.
  */
-
 function main() {
     $game_name = $_REQUEST["game_name"];
     $submitter_id = $_REQUEST["submitter_id"];
@@ -25,8 +24,7 @@ function main() {
     }
 
     $game_id = create_game($game_name, $submitter_id, $short_desc, $long_desc, $supplies, $instructions);
-    if ($game_id == -1)
-    {
+    if ($game_id == -1) {
         header("refresh:5;url=https://singleplayerdrinkinggames.com/");
         die("Game Name already taken");
     }

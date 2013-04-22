@@ -9,8 +9,7 @@ include_once "users.php";
  * @Param password: the password that the user is trying to log in with.
  */
 
-function main()
-{
+function main() {
     $username = $_REQUEST["username"];
     $password = $_REQUEST["password"];
     

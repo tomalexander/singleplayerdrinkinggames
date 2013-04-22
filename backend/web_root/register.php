@@ -6,8 +6,7 @@ include "users.php";
  * @Param username: The name the user wants to create an account for.
  * @Param password: the password that goes with the new user's account.
  */
-function main()
-{
+function main() {
     $username = $_REQUEST["username"];
     $password = $_REQUEST["password"];
     $confirm_password = $_REQUEST["confirm_password"];

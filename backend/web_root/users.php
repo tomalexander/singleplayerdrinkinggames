@@ -1,8 +1,7 @@
 <?php
 include_once "../db_functions.php";
 
-class user
-{
+class user {
     public $id;
     public $username;
     public $email;
@@ -17,8 +16,7 @@ class user
  * 
  * @return uuid = success, 1 = username already exists, 2 = mysql query failed
  */
-function create_user($username, $password, $email)
-{
+function create_user($username, $password, $email) {
     $db = open_db();
     if (username_exists($username)) {
         close_db();
@@ -59,8 +57,7 @@ function create_user($username, $password, $email)
  * 
  * @return true if the user exists, false if it does not
  */
-function username_exists($username)
-{
+function username_exists($username) {
     $db = open_db();
     $result = $db->query("SELECT * FROM users WHERE `username`=\"{$username}\"");
     close_db();
@@ -79,8 +76,7 @@ function username_exists($username)
  * 
  * @return the UUID for the user or null if the login fails
  */
-function login($username, $password)
-{
+function login($username, $password) {
     $db = open_db();
     $result = $db->query("SELECT * FROM users WHERE `username`=\"{$username}\"");
     foreach ($result as $row) {
@@ -104,8 +100,7 @@ function login($username, $password)
  * 
  * @return the userid or -1 if not found
  */
-function get_user_id($username)
-{
+function get_user_id($username) {
     $db = open_db();
     $result = $db->query("SELECT * FROM users WHERE `username`=\"{$username}\"");
     close_db();
@@ -122,8 +117,7 @@ function get_user_id($username)
  * 
  * @return the username or null if not found
  */
-function get_user_name($userid)
-{
+function get_user_name($userid) {
     $db = open_db();
     $result = $db->query("SELECT * FROM users WHERE `id`=\"{$userid}\"");
     close_db();
@@ -140,8 +134,7 @@ function get_user_name($userid)
  * 
  * @return a user object for the logged in user or null if they are not logged in
  */
-function get_login($uuid)
-{
+function get_login($uuid) {
     $db = open_db();
     $ret = new user;
     $result = $db->query("SELECT * FROM active_logins WHERE `uuid`=\"{$uuid}\"");

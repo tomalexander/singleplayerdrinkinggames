@@ -9,7 +9,6 @@ include "users.php";
  * @param uuid The id of the user doing the voiting.
  * @param vote The kind of vote being made. +1 is an upvote, -1 is a downvote
  */
-
 function main() {
     $game_id = $_REQUEST["game_id"];
     $uuid = $_REQUEST["uuid"];
