@@ -1,0 +1,40 @@
+#+TITLE:     Best Practices
+#+AUTHOR:    
+#+EMAIL:     alexat3@rpi.edu
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t email:nil author:nil
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:t timestamp:nil
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+#+XSLT:
+#+LaTeX_CLASS_OPTIONS: [12pt,letterpaper,bookmarks=false,colorlinks=true,linkcolor=blue,pdfstartview=FitH]
+* Project Website / Wiki
+Our project opted to use Google Documents rather than a Wiki to organize our efforts to remove the chance of a merge conflict. Our documents can be accessed at the following links:
+- [[https://docs.google.com/document/d/1x-0IIWbSlzBC5nG2vbmnqnbr7asfKhVa1TJX46bkank/edit?usp=sharing][Assignment Backlog]]
+- [[https://docs.google.com/document/d/1xJ87I9ap7F7hJdEd5rxcq9C0jfxUXjH8729aURgiDXA/edit?usp=sharing][Initial Brainstorm + Roster]]
+- [[https://docs.google.com/document/d/15-QGNJ4mush8j36SVrB8JLKLxki2ixyH-Ovxg7tL7Hw/edit?usp=sharing][Design Approach]]
+* Project Management Website
+- Our project is hosted on Github, where we used their repository hosting and their issue tracking system to manage bug fixes.
+- [[https://github.com/craftkiller/singleplayerdrinkinggames]]
+* Documented Coding Standards
+Our coding standard is maintainted on Google Documents in our Design Approach document. [[https://docs.google.com/document/d/15-QGNJ4mush8j36SVrB8JLKLxki2ixyH-Ovxg7tL7Hw/edit?usp=sharing][Design Approach]].
+* Use the basic concepts behind object oriented design
+* Unit Test Tools
+- The server side scripts are tested through an automated python script
+- The script is located in the =automated_testing= folder
+- It requires Python3 to run
+* Bug Tracking System
+- We used the Github issue tracker to label all discovered bugs in the code and monitor their correction.
+- [[https://github.com/craftkiller/singleplayerdrinkinggames/issues?state=closed]]
+* Third Party Component or Tool
+- The comment system on our website uses [[http://disqus.com/][Disqus]], allowing us to embed their already developed and tested comment system into our site. This will significantly reduce spam since they already have anti-spam measures in place.
+* Design Patterns
+- Our code uses the MVC design pattern. We chose this pattern since its perfectly emulates the workflow for an AJAX website.
+  - The Model is the MySQL database which stores all of the state information for the website
+  - The Controller is the PHP scripts which are the only things that interact with the Model. This allows us to tightly control who accesses what information. It also allows for a modular design since the PHP scripts return JSON to the frontend, allowing us to replace the MySQL database with any data storage we want, and allowing us to replace the PHP scripts with any server side script we want.
+  - The View is the dart code which polls the Controller for information and then renders it is a user-friendly fashion.
