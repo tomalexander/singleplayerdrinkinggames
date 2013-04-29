@@ -36,5 +36,21 @@ There are two ways we can compile and deploy the code: Automatically through dep
    2. Change HOST to your server
    3. Change the path in the rsync commands from =~/singleplayerdrinkinggames.com= to your web accessible directory (for ex: =/var/www/=)
 3. Ensure dart2js is located in your =$PATH=. You can confirm this by running =which dart2js=
-4. Run deploy.sh
+4. Edit =backend/db_functions.php=
+   1. Change the MySql host to your MySQL server
+   2. Change dbname to the name of your database
+   3. Change the two parameters that follow dbname to your database username and password respectively
+5. Run deploy.sh
+6. Go to your website and confirm the site loads properly
 ** Manual Deployment
+1. Ensure dart2js is located in your =$PATH=. You can confirm this by running =which dart2js=
+2. Edit =backend/db_functions.php=
+   1. Change the MySql host to your MySQL server
+   2. Change dbname to the name of your database
+   3. Change the two parameters that follow dbname to your database username and password respectively
+3. Enter the folder named =frontend= and run =dart2js -omain.js --minify main.dart=
+4. Copy everything inside =backend/web_root/= into the top-level web accessible directory (sometimes =/var/www/=)
+5. Copy =backend/db_functions.php= to the directory 1 level above the web accessible directory
+6. Copy the =images= folder to the top-level web accessible directory
+7. Copy all =main.js=, =index.html= and =styles.less= to the top-level web accessible directory
+8. Go to your website and confirm the site loads properly
