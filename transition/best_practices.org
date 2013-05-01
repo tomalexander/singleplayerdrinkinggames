@@ -27,6 +27,11 @@ Our project opted to use Google Documents rather than a Wiki to organize our eff
 * Documented Coding Standards
 Our coding standard is maintainted on Google Documents in our Design Approach document. [[https://docs.google.com/document/d/15-QGNJ4mush8j36SVrB8JLKLxki2ixyH-Ovxg7tL7Hw/edit?usp=sharing][Design Approach]].
 * Use the basic concepts behind object oriented design
+- We use the basic principles of object oriented design, specifcally, polymorphism, high cohesion, low coupling, and data encapsulation.
+- Our pages are written in an extremely polymorphic matter with a standardized format for pages creating their objects allowing pages to be swapped easily and a clear ownership module of various DOM elements. Each page is functionally identical to every other page in terms of the external interface. Additionally elements that create objects on the page all present the same standard interface for producing their content div.
+- Our items feature an extremely high degree of cohesion. Each object is responsible for one element on the page, for example the nav_bar object deals with the nav bar, each page object deals with creating its specific page, and other objects such as the sidebar object deal with creating individual elements on the pages.
+- Our module design is extremely decoupled. Most objects have no dependancy on other objects and when they do it is trivial to change what they depend on since the use a standard interface and do not depend on the internals of other objects.
+- The data encapsulation is extremely tight. Data access to the database is encapsulated via the controller interface and inside the controller there are specific objects encapsulating types such as the user and game type. Inside of the view interface data is encapsulated via objects representing displayed data, hiding the actual mechanism of submitting data from the objects using the content elements.
 * Unit Test Tools
 - The server side scripts are tested through an automated python script
 - The script is located in the =automated_testing= folder
