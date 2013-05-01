@@ -21,6 +21,9 @@ Our project opted to use Google Documents rather than a Wiki to organize our eff
 * Project Management Website
 - Our project is hosted on Github, where we used their repository hosting and their issue tracking system to manage bug fixes.
 - [[https://github.com/craftkiller/singleplayerdrinkinggames]]
+* Code Repository
+- Code is stored in a git repository
+- [[https://github.com/craftkiller/singleplayerdrinkinggames]]
 * Documented Coding Standards
 Our coding standard is maintainted on Google Documents in our Design Approach document. [[https://docs.google.com/document/d/15-QGNJ4mush8j36SVrB8JLKLxki2ixyH-Ovxg7tL7Hw/edit?usp=sharing][Design Approach]].
 * Use the basic concepts behind object oriented design
