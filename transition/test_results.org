@@ -1,0 +1,53 @@
+#+TITLE:     Test Results
+#+AUTHOR:    
+#+EMAIL:     alexat3@rpi.edu
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t email:nil author:nil
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:t timestamp:nil
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+#+XSLT:
+#+LaTeX_CLASS_OPTIONS: [12pt,letterpaper,bookmarks=false,colorlinks=true,linkcolor=blue,pdfstartview=FitH]
+* Summary
+Our testing consists of two parts. The first part is an automated test written in python that checks the backend. Following that is manual testing of the front end. 100% of our tests are passing.
+* Automated Test Output
+#+BEGIN_SRC text
+  Performing Python sanity check
+  PASS python_sanity_check: Loading 'null' from json
+  PASS python_sanity_check: Reading list from json
+  PASS python_sanity_check: Reading map from json
+  Performing account registration test
+  PASS register_check: Mismatching Passwords
+  PASS register_check: Register a new account
+  PASS register_check: Username already taken
+  Performing Account Login Check
+  PASS login_check: Incorrect Login
+  PASS login_check: Successful Login
+  PASS login_check: Get Login Details
+  Performing Chat Check
+  PASS chat_check: Not logged in chat
+  PASS chat_check: Sent message successfully
+  PASS chat_check: Read message successfully
+  PASS chat_check: Not logged in message did not get read
+  Performing list and submit game check
+  PASS games_check: Create a new game
+  PASS games_check: Block games with same name as previous game
+  Performing the vote check
+  PASS vote_check: Not logged in vote
+  PASS vote_check: Invalid Game ID
+  PASS vote_check: Valid Get Vote
+  PASS vote_check: Voted Get Vote
+  Checking the view game function
+  PASS view_game: Get a game
+  Checking the sidebar games function
+  PASS sidebar_games: Get at most 5 games for sidebar
+  
+  Passed Tests: 21
+  Failed Tests: 0
+  Total Tests: 21
+#+END_SRC

@@ -1,0 +1,34 @@
+#+TITLE:     Status Report and Contributions
+#+AUTHOR:    
+#+EMAIL:     
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t author:nil timestamp:nil
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:t todo:t pri:nil tags:t
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+#+XSLT:
+* Contributions
+| Task          | Name     |
+|---------------+----------|
+| Final Release | Everyone |
+| Test Results  | Tom      |
+* Status Report
+** What We've Done
+- Fixed single asterix parsing issue in markdown
+- Disqus comments now local to game thread
+- Logging in now works if active login row is deleted from database
+- Fixed security issue with submitting games when not logged in
+- Fixed security issue with submitting games as arbitrary users
+- Login + Register now handled in dart
+- Submitting games now handled in dart
+- Implemented Keyword Search
+- Fixed issue with submitting games with same name as previous game
+- Added a logo to the top of the page (in WebP)
+- Made all code conform to coding standard
+** Risks Identified
+- Logo doesn’t work in firefox because it doesn’t support WebP
